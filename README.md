@@ -3,7 +3,7 @@ Damn Vulnerable GraphQL Application is an intentionally vulnerable implementatio
 
 
 <p align="center">
-  <img src="https://github.com/dolevf/Damn-Vulnerable-GraphQL/blob/master/static/images/dvgql_logo.png?raw=true" width="alt="DVGA"/>
+  <img src="https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application/blob/master/static/images/dvgql_logo.png?raw=true" width="alt="DVGA"/>
 </p>
 
 # Table of Contents
@@ -87,10 +87,10 @@ In your browser, navigate to http://ip.add.re.ss
 In your browser, navigate to http://ip.add.re.ss:5000.
 
 # Screenshots
-![DVGA](https://github.com/dolevf/Damn-Vulnerable-GraphQL/blob/master/static/screenshots/index.png)
-![DVGA](https://github.com/dolevf/Damn-Vulnerable-GraphQL/blob/master/static/screenshots/solution.png)
-![DVGA](https://github.com/dolevf/Damn-Vulnerable-GraphQL/blob/master/static/screenshots/pastes.png)
-![DVGA](https://github.com/dolevf/Damn-Vulnerable-GraphQL/blob/master/static/screenshots/create.png)
+![DVGA](https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application/blob/master/static/screenshots/index.png)
+![DVGA](https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application/blob/master/static/screenshots/solution.png)
+![DVGA](https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application/blob/master/static/screenshots/pastes.png)
+![DVGA](https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application/blob/master/static/screenshots/create.png)
 
 # Mentions
 TBA
@@ -102,3 +102,4 @@ DVGA is intentionally flawed and vulnerable, as such, it comes with no warrantie
 
 # License
 It is distributed under the MIT License. See LICENSE for more information.
+
