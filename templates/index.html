@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Damn Vulnerable GraphQL Application" />
+    <meta name="author" content="Dolev F." />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}"/>
+    <link href="/static/all.css" rel="stylesheet"> 
+    <link rel="stylesheet" href="/static/extra.css" />
+
+    <title>Damn Vulnerable GraphQL Application</title>
+
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/static/simple-sidebar.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="d-flex" id="wrapper">
+      {% include 'sidebar.html' %}
+      <!-- /#sidebar-wrapper -->
+
+      <!-- Page Content -->
+      <div id="page-content-wrapper">
+        {% include 'navbar.html' %}
+        <div class="container-fluid">
+          {% if msg %}
+            <div class="alert alert-info">
+              <h4 class="alert-heading">System Message</h4>
+              <p>{{msg}}</p>
+            </div>
+          {% endif %}
+          <h1 class="mt-4">Damn Vulnerable GraphQL Application</h1>
+          <hr />
+          <h4>Welcome!</h4>
+          <p>
+            Damn Vulnerable GraphQL Application, or DVGA, is a lab
+            simulator of an application running GraphQL, to test and learn by experimenting with a weak implementation.
+          </p>
+          <br />
+          <h4>Getting Started</h4>
+          <p>
+            If you aren't yet familiar with GraphQL, see the GraphQL Resources section below. Otherwise, start poking around and find loopholes! There are GraphQL
+            Implementation flaws as well as general application vulnerabilities.
+          </p>
+          <br />
+          <h4>GraphQL Resources</h4>
+          <p>
+            To learn about GraphQL, and common GraphQL weaknesses and attacks, the following
+            resources may be beneficial:
+          </p>
+          <h5><i class="fa fa-play"></i> Videos</h5>
+          <ul>
+            <li>
+              <a href="https://www.youtube.com/watch?v=ZQL7tL2S0oQ" target="_blank">GraphQL in 40 Minutes</a>
+            </li>
+            <li>
+              <a href="https://www.youtube.com/watch?v=OQCgmftU-Og" target="_blank">Hacking GraphQL For Beginners</a>
+            </li>
+              <li>
+              <a href="https://www.youtube.com/watch?v=NPDp7GHmMa0&t=2580" target="_blank">LevelUp 0x05 - REST in Peace</a>
+            </li>
+            </ul>
+
+            <h5><i class="fa fa-newspaper"></i> Articles</h5>
+            <ul>
+            <li>
+              <a href="https://cheatsheetseries.owasp.org/cheatsheets/GraphQL_Cheat_Sheet.html" target="_blank">OWASP GraphQL Defense</a>
+            </li>
+            <li>
+              <a href="https://labs.bishopfox.com/tech-blog/design-considerations-for-secure-graphql-apis" target="_blank">BishopFox Labs - Design Considerations</a>
+            </li>
+
+            <li>
+              <a href="https://leapgraph.com/graphql-api-security" target="_blank">Leap Graph - How to secure GraphQL APIs</a>
+            </li>
+          </ul>
+          <br />
+          <h4>Got Stuck?</h4>
+          <p>
+            Head over to the <a href="/solutions">Solutions</a> page to reveal
+            the challenge answers.
+          </p>
+          <br />
+          <h4>Bug Reporting</h4>
+          <p>
+            Found a bug? submit an issue on
+            <a href="https://github.com/dolevf/Damn-Vulnerable-GraphQL/issues">GitHub</a>.
+          </p>
+        </div>
+      </div>
+      <!-- /#page-content-wrapper -->
+    </div>
+
+    <!-- /#wrapper -->
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="/static/jquery/jquery.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Menu Toggle Script -->
+    <script>
+      $("#menu-toggle").click(function (e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+      });
+    </script>
+  </body>
+</html>

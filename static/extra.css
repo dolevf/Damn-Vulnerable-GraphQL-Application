@@ -1,0 +1,51 @@
+.withlove {
+  font-size:12px;
+  font-weight: bold;
+  color:purple;
+  letter-spacing: 2px;
+  text-decoration: none;
+}
+
+#toc_container {
+  background: #f9f9f9 none repeat scroll 0 0;
+  border: 1px solid #aaa;
+  display: table;
+  font-size: 95%;
+  margin-bottom: 1em;
+  padding: 20px;
+  width: auto;
+}
+
+.toc_title {
+  font-weight: 700;
+  text-align: center;
+}
+
+#toc_container li, #toc_container ul, #toc_container ul li{
+  list-style: outside none none !important;
+}
+
+.reveal {
+  width:40px;
+  font-size:8px;
+  color:white;
+  background-color:green;
+  font-weight:bold;
+}
+
+pre.bash {
+  background-color: #000;
+  border: 1px solid #000;
+  color: white;
+  padding: 8px;
+  font-family: courier new;
+}
+
+div.pastebox {
+    background-color: lightgrey;
+    width: 300px;
+    border: 3px solid purple;
+    padding: 50px;
+    margin: 20px;
+    word-wrap: break-word;
+}
