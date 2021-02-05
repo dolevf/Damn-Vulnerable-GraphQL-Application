@@ -7,7 +7,7 @@ def run_cmd(cmd):
   return os.popen(cmd).read()
 
 def initialize():
-  return run_cmd('python setup.py')
+  return run_cmd('python3 setup.py')
 
 def generate_uuid():
   return str(uuid.uuid4())[0:6]
