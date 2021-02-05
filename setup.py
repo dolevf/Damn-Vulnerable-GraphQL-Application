@@ -3,7 +3,6 @@ import os
 import shutil
 import config
 import random
-import uuid
 
 from ipaddress import IPv4Network
 
@@ -62,7 +61,7 @@ def pump_db():
   owner = Owner(name='DVGAUser')
   paste = Paste()
   paste.title = random_title()
-  paste.content = f"My First Paste"
+  paste.content = "My First Paste"
   paste.public = False
   paste.owner_id = owner.id
   paste.owner = owner
