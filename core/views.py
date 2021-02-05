@@ -7,6 +7,7 @@ from flask import (
   jsonify,
   render_template,
   redirect,
+  make_response,
   session
 )
 
@@ -32,7 +33,7 @@ class processMiddleware(object):
       if info.context.json is not None:
         query = info.context.json.get('query', None)
         if security.on_denylist(query):
-          raise werkzeug.exceptions.SecurityError('Query is Blacklisted')
+          raise werkzeug.exceptions.SecurityError('Query is on the deny list.')
     return next(root, info, **kwargs)
 
 class IntrospectionMiddleware(object):
@@ -46,7 +47,11 @@ class IntrospectionMiddleware(object):
 class IGQLProtectionMiddleware(object):
   def resolve(self, next, root, info, **kwargs):
     if helpers.is_level_easy():
-      return next(root, info, **kwargs)
+      cookie = request.cookies.get('env')
+      if cookie and helpers.decode_base64(cookie) == 'graphiql:enable':
+        return next(root, info, **kwargs)
+      else:
+        raise werkzeug.exceptions.SecurityError('GraphiQL Access Denied')
 
     raise werkzeug.exceptions.SecurityError('GraphiQL is disabled')
 
@@ -77,22 +82,6 @@ class OwnerObject(SQLAlchemyObjectType):
     model = Owner
     interfaces = (graphene.relay.Node, )
 
-class CreateUser(graphene.Mutation):
-  user = graphene.Field(UserObject)
-
-  class Arguments:
-    username =graphene.String(required=True)
-    password =graphene.String(required=True)
-
-  def mutate(self, info, username, password):
-    user = User.query.filter_by(username=username).first()
-    if user:
-      return CreateUser(user=user)
-    user = User(username=username,password=password)
-    if user:
-      db.session.add(user)
-      db.session.commit()
-    return CreateUser(user=user)
 
 class CreatePaste(graphene.Mutation):
     title = graphene.String()
@@ -184,7 +173,7 @@ class Query(graphene.ObjectType):
   pastes = graphene.List(PasteObject, public=graphene.Boolean())
   paste = graphene.Field(PasteObject, p_id=graphene.String())
   system_update = graphene.String()
-  system_diagnostics = graphene.String(user=graphene.String(), password=graphene.String(), cmd=graphene.String())
+  system_diagnostics = graphene.String(username=graphene.String(), password=graphene.String(), cmd=graphene.String())
   system_health = graphene.String()
   read_and_burn = graphene.Field(PasteObject, p_id=graphene.Int())
 
@@ -200,10 +189,10 @@ class Query(graphene.ObjectType):
     security.simulate_load()
     return 'no updates available'
 
-  def resolve_system_diagnostics(self, info, user, password, cmd='whoami'):
+  def resolve_system_diagnostics(self, info, username, password, cmd='whoami'):
     q = User.query.filter_by(username='admin').first()
     real_passw = q.password
-    res, msg = security.check_creds(user, password, real_passw)
+    res, msg = security.check_creds(username, password, real_passw)
     if res:
       output = f'{cmd}: command not found'
       if security.allowed_cmds(cmd):
@@ -223,7 +212,9 @@ class Query(graphene.ObjectType):
 
 @app.route('/')
 def index():
-  return render_template('index.html')
+  resp = make_response(render_template('index.html'))
+  resp.set_cookie("env", "Z3JhcGhpcWw6ZGlzYWJsZQ==")
+  return resp
 
 @app.route('/about')
 def about():
@@ -268,7 +259,7 @@ def difficulty(level):
   if level in ('easy', 'hard'):
     message = f'Changed difficulty level to {level.capitalize()}'
   else:
-    msg = 'Level must be Beginner or Expert.'
+    message = 'Level must be Beginner or Expert.'
     level = 'easy'
 
   session['difficulty'] = level
@@ -282,8 +273,18 @@ def get_version():
 
 @app.before_request
 def set_difficulty():
-  if session.get('difficulty') == None:
-    session['difficulty'] = 'easy'
+  mode_header = request.headers.get('X-DVGA-MODE', None)
+  if mode_header:
+    if mode_header == 'Beginner':
+      helpers.set_mode('easy')
+    else:
+      helpers.set_mode('hard')
+  else:
+    if session.get('difficulty') == None:
+      if request.endpoint == 'index':
+        helpers.set_mode('easy')
+      else:
+        helpers.set_mode('hard')
 
 schema = graphene.Schema(query=Query, mutation = Mutations)
 

@@ -31,3 +31,5 @@ def is_level_easy():
 def is_level_hard():
   return session.get('difficulty') == 'hard'
 
+def set_mode(mode):
+  session['difficulty'] = mode

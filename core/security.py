@@ -48,11 +48,7 @@ def on_denylist(query):
   normalized_query = ''.join(query.split())
   queries = [
     'query{systemHealth}',
-    '{systemHealth}',
-    'query{__schema{types{name}}}',
-    '{__schema{types{name}}}',
-    'query IntrospectionQuery{__schema{queryType{name}mutationType{name}subscriptionType{name}}}',
-    'query{systemDiagnostics}'
+    '{systemHealth}'
   ]
 
   if normalized_query in queries:
