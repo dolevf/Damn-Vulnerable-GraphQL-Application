@@ -4,11 +4,13 @@ Damn Vulnerable GraphQL Application is an intentionally vulnerable implementatio
 
 <p align="center">
   <img src="https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application/blob/master/static/images/dvgql_logo.png?raw=true" width="alt="DVGA"/>
+  <img src="https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application/blob/master/static/screenshots/main.png?raw=true" width="alt="DVGA"/>
 </p>
 
 # Table of Contents
 * [About DVGA](#about)
 * [Scenarios](#scenarios)
+* [Operation Modes](#operation-modes)
 * [Prerequisites](#prerequisites)
 * [Installation](#installation)
   * [Installation - Docker](#docker)
@@ -22,6 +24,9 @@ Damn Vulnerable GraphQL Application is an intentionally vulnerable implementatio
 Damn Vulnerable GraphQL is a deliberately weak and insecure implementation of GraphQL that provides a safe environment to attack a GraphQL application, allowing developers and IT professionals to test for vulnerabilities.
 
 DVGA has numerous flaws, such as Injections, Code Executions, Bypasses, Denial of Service, and more. See the full list under the [Vulnerabilities](#vulnerabilities) section.
+
+# Operation Modes
+DVGA supports Beginner and Expert level game modes, which will change the exploitation difficulty.
 
 # Scenarios
 * **Denial of Service**
