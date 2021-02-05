@@ -24,7 +24,7 @@ def allowed_cmds(cmd):
   return False
 
 def strip_dangerous_characters(cmd):
-  return cmd.replace('"', '').replace(';','').replace('&', '').replace('|', '')
+  return cmd.replace('"', '').replace(';','').replace('|', '')
 
 def check_creds(username, password, real_password):
   if username != 'admin':
