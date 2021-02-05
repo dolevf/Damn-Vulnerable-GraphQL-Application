@@ -1,4 +1,5 @@
 from config import WEB_UPLOADDIR
+from flask import session
 import base64
 import uuid
 import os
@@ -23,3 +24,10 @@ def save_file(filename, text):
   except Exception as e:
     text = str(e)
   return text
+
+def is_level_easy():
+  return session.get('difficulty') == 'easy'
+
+def is_level_hard():
+  return session.get('difficulty') == 'hard'
+

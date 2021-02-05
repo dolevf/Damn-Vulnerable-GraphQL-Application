@@ -1,10 +1,11 @@
 import config
-
+from os import urandom
 from core.helpers import initialize
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__, static_folder="static/")
+app.secret_key = urandom(24)
 app.config["SQLALCHEMY_DATABASE_URI"] = config.SQLALCHEMY_DATABASE_URI
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = config.SQLALCHEMY_TRACK_MODIFICATIONS
 app.config["UPLOAD_FOLDER"] = config.WEB_UPLOADDIR

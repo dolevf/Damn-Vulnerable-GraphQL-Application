@@ -1,6 +1,8 @@
 import random
 import time
 
+from core import helpers
+
 def simulate_load():
   loads = [200, 300, 400, 500]
   count = 0
@@ -19,12 +21,19 @@ def is_port(port):
   return False
 
 def allowed_cmds(cmd):
-  if cmd.startswith(('ls', 'head', 'echo', 'find', 'ps', 'whoami')):
+  if helpers.is_level_easy():
     return True
+  elif helpers.is_level_hard():
+    if cmd.startswith(('ls', 'head', 'echo', 'find', 'ps', 'whoami', 'tail')):
+      return True
   return False
 
 def strip_dangerous_characters(cmd):
-  return cmd.replace('"', '').replace(';','').replace('&', '').replace('|', '')
+  if helpers.is_level_easy():
+    return cmd
+  elif helpers.is_level_hard():
+    return cmd.replace(';','').replace('&', '')
+  return cmd
 
 def check_creds(username, password, real_password):
   if username != 'admin':
@@ -35,7 +44,6 @@ def check_creds(username, password, real_password):
 
   return (False, 'Password Incorrect')
 
-
 def on_denylist(query):
   normalized_query = ''.join(query.split())
   queries = [
@@ -43,9 +51,11 @@ def on_denylist(query):
     '{systemHealth}',
     'query{__schema{types{name}}}',
     '{__schema{types{name}}}',
-    'query IntrospectionQuery{__schema{queryType{name}mutationType{name}subscriptionType{name}}}'
+    'query IntrospectionQuery{__schema{queryType{name}mutationType{name}subscriptionType{name}}}',
+    'query{systemDiagnostics}'
   ]
 
   if normalized_query in queries:
     return True
   return False
+
