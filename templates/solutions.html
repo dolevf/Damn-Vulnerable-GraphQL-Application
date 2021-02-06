@@ -116,6 +116,14 @@
                 </div>
 
                 <div class="card-body">
+                <p><b>Legend</b></p>
+                <ul>
+                <li><i class="fa fa-newspaper"></i> - GraphQL Official Documentation / Blog Posts</li>
+                <li><i class="fa fa-shield-alt"></i> - GraphQL Security Utility</li>
+                <li><i class="fa fa-bug"></i> - Published Vulnerability (H1, CVE, etc.)</li>
+                </ul>
+                <hr />
+                <br>
                 <p><i><small><i class="fa fa-exclamation"></i> <b>Note</b>: There may be more than one way to exploit any given vulnerability, the solutions demonstrated below aim to illustrate one way of achieving successful exploitation.</small></i></p>
                 <br>
                 <!-- Start -->
@@ -238,7 +246,7 @@ print('Execution Time :: {} seconds'.format(end - start))
               <p>GraphQL Introspection is a special query that uses the <code>__schema</code> field to interrogate GraphQL for its schema.</p>
               <p>Introspection in itself is not a weakness, but a feature. However, if it is made available, it can be used and abused by attackers seeking information about your GraphQL implementation, such as what queries or mutations exist.</p>
               <p>It is recommended to disable introspection in production to avoid data leakages.</p>
-              <p>Note: If introspection query is disabled, attackers may fall back to using the <b>Field Suggestion</b> feature to understand what queries and fields are supported by your GraphQL. Reference <br><a href="#info-suggestions">Information Disclosure :: GraphQL Field Suggestions</a> attack for more information.</p>
+              <p>Note: If introspection query is disabled, attackers may fall back to using the <b>Field Suggestion</b> feature to understand what queries and fields are supported by your GraphQL. Refer to <a href="#info-suggestions">Information Disclosure :: GraphQL Field Suggestions</a> attack for more information.</p>
 
               <h5>Resources</h5>
               <ul>
@@ -256,17 +264,17 @@ print('Execution Time :: {} seconds'.format(end - start))
 # Run Introspection query
 
 query {
-    __schema {
-      queryType { name }
-      mutationType { name }
-      subscriptionType { name }
-    }
+  __schema {
+    queryType { name }
+    mutationType { name }
+    subscriptionType { name }
   }
 }
 
+
 # Expert mode
 
-1. Introspection is disabled, enumeration of fields and dynamic testing is required to under the structure of the application.
+# Introspection is disabled, enumeration of fields and dynamic testing is required to understand the structure of the application.
               </div>
               <!-- End -->
 
@@ -275,8 +283,8 @@ query {
             <h3 style="color:purple" id="info-igql"><b>Information Disclosure :: GraphQL Interface</b></h3>
               <hr />
               <h5>Problem Statement</h5>
-              <p>GraphQL has a an Integrated Development Environment named <code>graphiql</code> that allows constructing queries in a friendly user interface. GraphiQL is usually found in paths such as: <code>/graphiql</code> or <code>__graphiql</code>.<br>
-              GraphiQL makes it easier to query GraphQL for its available operations and fields, using a graphical interface.</p>
+              <p>GraphQL has a an Integrated Development Environment named <code>GraphiQL</code> (note the <code>i</code>) that allows constructing queries in a friendly user interface.</p>
+              <p>GraphiQL is usually found in paths such as: <code>/graphiql</code> or <code>__graphiql</code>, however, it can be in other places too. You can use this <a href="https://github.com/dolevf/nmap-graphql-introspection-nse/blob/6594cce7b590a7194641494ed33c018d9ecd6b89/graphql-introspection.nse#L47" target="_blank">Nmap NSE script</a> to enumerate GraphiQL endpoints.</p>
               <h5>Resources</h5>
               <ul>
                 <li><a href="https://www.apollographql.com/docs/apollo-server/v1/graphiql/" target="_blank"><i class="fa fa-newspaper"></i> Apollo GraphiQL</a></li>
@@ -288,6 +296,10 @@ query {
 # Beginner mode
 
 # Browse to http://host/graphiql
+
+# Expert mode
+
+# GraphiQL will be disabled.
 </pre>
               </div>
               <!-- End -->
