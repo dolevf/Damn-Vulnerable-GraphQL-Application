@@ -24,7 +24,7 @@ def allowed_cmds(cmd):
   if helpers.is_level_easy():
     return True
   elif helpers.is_level_hard():
-    if cmd.startswith(('ls', 'head', 'echo', 'ps' 'whoami', 'tail')):
+    if cmd.startswith(('echo', 'ps' 'whoami', 'tail')):
       return True
   return False
 

