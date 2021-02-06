@@ -34,10 +34,16 @@ from version import VERSION
 class processMiddleware(object):
   def resolve(self, next, root, info, **kwargs):
     if helpers.is_level_hard():
+      array_qry = []
+
       if info.context.json is not None:
-        query = info.context.json.get('query', None)
-        if security.on_denylist(query):
-          raise werkzeug.exceptions.SecurityError('Query is on the deny list.')
+        if isinstance(info.context.json, dict):
+          array_qry.append(info.context.json)
+
+        for q in array_qry:
+          query = q.get('query', None)
+          if security.on_denylist(query):
+            raise werkzeug.exceptions.SecurityError('Query is on the deny list.')
     return next(root, info, **kwargs)
 
 class IntrospectionMiddleware(object):
