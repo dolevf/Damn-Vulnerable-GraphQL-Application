@@ -61,7 +61,7 @@ The following Python3 libraries are required:
 # Installation
 ## Docker
 ### Clone the repository
-`git clone git@github.com:dolevf/Damn-Vulnerable-GraphQL.git && cd Damn-Vulnerable-GraphQL`
+`git clone git@github.com:dolevf/Damn-Vulnerable-GraphQL-Application.git && cd Damn-Vulnerable-GraphQL-Application`
 
 ### Build the Docker image
 `docker build -t dvga .`
@@ -80,7 +80,7 @@ In your browser, navigate to http://ip.add.re.ss
 `cd /opt/`
 
 ### Clone the repository
-`git clone git@github.com:dolevf/Damn-Vulnerable-GraphQL.git && cd Damn-Vulnerable-GraphQL`
+`git clone git@github.com:dolevf/Damn-Vulnerable-GraphQL-Application.git && cd Damn-Vulnerable-GraphQL-Application`
 
 ### Install Requirements
 `pip3 install -r requirements.txt`
