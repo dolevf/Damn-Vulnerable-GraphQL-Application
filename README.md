@@ -67,7 +67,7 @@ The following Python3 libraries are required:
 `docker build -t dvga .`
 
 ### Create a container from the image
-`docker run -t -p 80:5000 dvga`
+`docker run -t -p -e WEB_HOST="0.0.0.0" 80:5000 dvga`
 
 If you need the application to bind on a specific port or interface, use the following command:
 `docker run -e WEB_HOST="0.0.0.0" -e WEB_PORT=8080 -t -p 8080:8080 dvga`
