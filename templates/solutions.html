@@ -119,6 +119,7 @@
                 <p><b>Legend</b></p>
                 <ul>
                 <li><i class="fa fa-newspaper"></i> - GraphQL Official Documentation / Blog Posts</li>
+                <li><i class="fa fa-code"></i> - Code Snippet</li>
                 <li><i class="fa fa-shield-alt"></i> - GraphQL Security Utility</li>
                 <li><i class="fa fa-bug"></i> - Published Vulnerability (H1, CVE, etc.)</li>
                 </ul>
@@ -309,11 +310,12 @@ query {
             <h3 style="color:purple" id="info-suggestions"><b>Information Disclosure :: GraphQL Field Suggestions</b></h3>
               <hr />
               <h5>Problem Statement</h5>
-              <p>GraphQL has a feature for field and operation suggestions. When a developer wants to integrate with a GraphQL API and types an incorrect field as an example, GraphQL will attempt to suggest nearby fields that are similar.</p>
+              <p>GraphQL has a feature for field and operation suggestions. When a developer wants to integrate with a GraphQL API and types an incorrect field, as an example, GraphQL will attempt to suggest nearby fields that are similar.</p>
               <p>Field suggestions is not a vulnerability in itself, but a feature that can be abused to gain more insight into GraphQL's schema, especially when Introspection is not allowed.</p>
 
               <h5>Resources</h5>
               <ul>
+                <li><a href="https://github.com/graphql-python/graphql-core/blob/7d826f0ec0a447cb869dfb891a755dbe8ea9b66f/src/graphql/validation/rules/fields_on_correct_type.py#L23" target="_blank"> <i class="fa fa-code"></i> Python's graphql-core suggestion feature</a></li>
                 <li><a href="https://graphql-ruby.org/schema/introspection" target="_blank"><i class="fa fa-newspaper"></i> GraphQL Introspection</a></li>
                 <li><a href="https://github.com/nikitastupin/clairvoyance" target="_blank"><i class="fa fa-shield-alt"></i> Clairvoyance - GQL Security tool for field enumeration</a></li>
               </ul>
@@ -351,7 +353,7 @@ query {
             <h3 style="color:purple" id="info-ssrf"><b>Information Disclosure :: Server Side Request Forgery</b></h3>
               <hr />
               <h5>Problem Statement</h5>
-              <p>The GraphQL mutation <code>importPaste</code> accepts arbitrary host, port and scheme to import pastes from, and does not restrict input such as localhost or other internal servers from being used. This may allow forging requests on behalf of the application server to target other network nodes.</p>
+              <p>The GraphQL mutation <code>importPaste</code> accepts arbitrary host, port and scheme to import pastes from and does not restrict input such as localhost or other internal servers from being used. This may allow forging requests on behalf of the application server to target other network nodes.</p>
               <h5>Resources</h5>
               <ul>
               <li><a href="https://portswigger.net/web-security/ssrf" target="_blank"><i class="fa fa-newspaper"></i> PortSwigger - Server Side Request Forgery</a></li>
