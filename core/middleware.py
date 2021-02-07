@@ -1,6 +1,7 @@
 import werkzeug
 
 from flask import request
+from core.decorators import run_only_once
 
 from core import (
   helpers, 
@@ -10,7 +11,6 @@ from core import (
 
 # Middleware
 class DepthProtectionMiddleware(object):
-  
   def resolve(self, next, root, info, **kwargs):    
     if helpers.is_level_easy():
       return next(root, info, **kwargs)
@@ -40,7 +40,6 @@ class DepthProtectionMiddleware(object):
     return next(root, info, **kwargs)
 
 class CostProtectionMiddleware(object):
-  
   def resolve(self, next, root, info, **kwargs):
     if helpers.is_level_easy():
       return next(root, info, **kwargs)
@@ -68,8 +67,7 @@ class CostProtectionMiddleware(object):
     
     return next(root, info, **kwargs)
 
-class processMiddleware(object):
-  
+class processMiddleware(object):  
   def resolve(self, next, root, info, **kwargs):
     if helpers.is_level_easy():
       return next(root, info, **kwargs)
@@ -88,7 +86,7 @@ class processMiddleware(object):
     return next(root, info, **kwargs)
 
 class IntrospectionMiddleware(object):
-  
+  @run_only_once
   def resolve(self, next, root, info, **kwargs):
     if helpers.is_level_easy():
       return next(root, info, **kwargs)
@@ -99,7 +97,7 @@ class IntrospectionMiddleware(object):
     return next(root, info, **kwargs)
 
 class IGQLProtectionMiddleware(object):
-  
+  @run_only_once
   def resolve(self, next, root, info, **kwargs):
     if helpers.is_level_hard():
       raise werkzeug.exceptions.SecurityError('GraphiQL is disabled')
