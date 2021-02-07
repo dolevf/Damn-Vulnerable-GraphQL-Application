@@ -1,65 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'partials/base.html' %}
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Damn Vulnerable GraphQL Application">
-  <meta name="author" content="Dolev F.">
-  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-  <link rel="stylesheet" href="/static/all.css">
-  <link rel="stylesheet" href="/static/extra.css">
+{% block header %}
+  {% include 'partials/base_header.html' %}
+{% endblock %}
 
-  <title>Damn Vulnerable GraphQL Application</title>
-
-  <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/static/simple-sidebar.css" rel="stylesheet">
-
-</head>
-
-<body>
-   <div class="d-flex" id="wrapper">
-    {% include 'sidebar.html' %}
-    <!-- /#sidebar-wrapper -->
-
-    <!-- Page Content -->
-    <div id="page-content-wrapper">
-      {% include 'navbar.html' %}
-      <div class="container-fluid">
-        <h1 class="mt-4">About</h1>
-        <hr>
-          <div class="row">
-          <div class="col-md-12">
-          <h4>What is GraphQL?</h4>
-            <p>GraphQL is an open-source data query and manipulation language for APIs, and a runtime for fulfilling queries with existing data, made by Facebook.</p>
-            <br>
-          <h4>What is Damn Vulnerable GraphQL Application?</h4>
-            <p>Damn Vulnerable GraphQL is a weak implementation of GraphQL that provides a safe environment to understand GraphQL as a technology and its attack surface.</p>
-            <p>DVGA has numerous flaws, such as Injections, Code execution, Broken Access Controls, and more. For the full list of vulnerabilities, see <a href="/solutions">Solutions page</a></p>
-            <br>
-          <h4>Current Version</h4>
-            <p>{{version}}</p>
-          </div>
-          </div>
-      </div>
+{% block content %}
+  <!-- Page Content -->
+  <div id="page-content-wrapper">
+    {% include 'partials/navbar.html' %}
+    <div class="container-fluid">
+      <h1 class="mt-4">About</h1>
+      <hr>
+        <div class="row">
+        <div class="col-md-12">
+        <h4>What is GraphQL?</h4>
+          <p>GraphQL is an open-source data query and manipulation language for APIs, and a runtime for fulfilling queries with existing data, made by Facebook.</p>
+          <br>
+        <h4>What is Damn Vulnerable GraphQL Application?</h4>
+          <p>Damn Vulnerable GraphQL is a weak implementation of GraphQL that provides a safe environment to understand GraphQL as a technology and its attack surface.</p>
+          <p>DVGA has numerous flaws, such as Injections, Code execution, Broken Access Controls, and more. For the full list of vulnerabilities, see <a href="/solutions">Solutions page</a></p>
+          <br>
+        <h4>Current Version</h4>
+          <p>{{version}}</p>
+        </div>
+        </div>
     </div>
-    <!-- /#page-content-wrapper -->
+  </div>
+  <!-- /#page-content-wrapper -->
+{% endblock %}
 
-  </div> 
-
-  <!-- /#wrapper -->
-
-  <!-- Bootstrap core JavaScript -->
-  <script src="/static/jquery/jquery.min.js"></script>
-  <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-  <!-- Menu Toggle Script -->
-  <script>
-    $("#menu-toggle").click(function(e) {
-      e.preventDefault();
-      $("#wrapper").toggleClass("toggled");
-    });
-  </script>
-
-</body>
-</html>
+{% block scripts %}
+  {% include 'partials/base_scripts.html' %}
+{% endblock %}

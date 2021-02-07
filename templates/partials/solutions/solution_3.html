@@ -1,0 +1,40 @@
+<!-- Start -->
+<h3 style="color:purple" id="dos-intensive"><b>Denial of Service :: Resource Intensive Query Attack</b></h3>
+<hr />
+<h5>Problem Statement</h5>
+<p>Sometimes, certain queries may be computationally more expensive than others. A query may include certain fields that would trigger more complex backend logic in order to fulfill the query resolution. As attackers,
+    we can abuse it by calling these actions frequently in order to cause resource exhaustion.</p>
+<p>In GraphQL, a concept called Query Cost Analysis exists, which assigns weight values to fields that are more expensive to resolve than others. Using this feature, we can then create an upper threshold to reject
+    queries that are expensive. Alternatively, a cache feature can be implemented to avoid repeating the same request in a short time window.</p>
+<h5>Resources</h5>
+<ul>
+    <li>
+      <a href="https://graphql-ruby.org/queries/complexity_and_depth.html" target="_blank">
+        <i class="fa fa-newspaper"></i> Ruby GraphQL - Complexity and Depth
+      </a>
+    </li>
+</ul>
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-dos-intensive')">Show</button></h5>
+<div id="sol-dos-intensive" style="display:none">
+  <pre class="bash">
+    # Beginner mode
+
+    # We measure the amount of time it takes a query to finish
+    import time
+
+    start = time.time()
+    requests.post('http://host/graphql',
+        json={"query":"query {\n  systemUpdate\n}","variables":[]})
+    end = time.time()
+
+    print('Execution Time :: {} seconds'.format(end - start))
+
+    # Execution Time :: 81.95908403396606 seconds
+
+
+    # Expert mode
+
+    # A Query Cost Analysis protection is implemented which should prevent bulk system updates!
+  </pre>
+</div>
+<!-- End -->

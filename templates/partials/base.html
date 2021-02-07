@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {% block header %}
+  {% endblock %}
+</head>
+
+<body>
+  <div class="d-flex" id="wrapper">
+    {% include 'partials/sidebar.html' %}
+    <!-- /#sidebar-wrapper -->
+
+    {% block content %}
+    {% endblock %}
+  </div>
+  <!-- /#wrapper -->
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="/static/jquery/jquery.min.js"></script>
+  <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/common.js"></script>
+
+  {% block scripts %}
+  {% endblock %}
+</body>
+
+</html>
