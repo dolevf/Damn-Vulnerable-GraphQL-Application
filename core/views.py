@@ -1,8 +1,4 @@
 import graphene
-import werkzeug
-
-from werkzeug.exceptions import HTTPException
-
 
 from flask import (
   Flask,
@@ -23,57 +19,19 @@ from graphene_sqlalchemy import (
 
 from app import app, db
 
-from core import security
-from core import helpers
-from core.models import Owner, Paste, User
+from core import (
+  security,
+  helpers,
+  middleware
+)
+
+from core.models import (
+  Owner, 
+  Paste, 
+  User
+)
 
 from version import VERSION
-
-
-# Middleware
-class processMiddleware(object):
-  def resolve(self, next, root, info, **kwargs):
-    if helpers.is_level_hard():
-      array_qry = []
-
-      if info.context.json is not None:
-        if isinstance(info.context.json, dict):
-          array_qry.append(info.context.json)
-
-        for q in array_qry:
-          query = q.get('query', None)
-          if security.on_denylist(query):
-            raise werkzeug.exceptions.SecurityError('Query is on the deny list.')
-    return next(root, info, **kwargs)
-
-class IntrospectionMiddleware(object):
-  def resolve(self, next, root, info, **kwargs):
-    if helpers.is_level_hard():
-      if info.field_name.lower() in ['__schema', '__introspection']:
-        raise werkzeug.exceptions.SecurityError('Introspection is Disabled')
-
-    return next(root, info, **kwargs)
-
-class IGQLProtectionMiddleware(object):
-  def resolve(self, next, root, info, **kwargs):
-    if helpers.is_level_easy():
-      cookie = request.cookies.get('env')
-      if cookie and helpers.decode_base64(cookie) == 'graphiql:enable':
-        return next(root, info, **kwargs)
-      else:
-        raise werkzeug.exceptions.SecurityError('GraphiQL Access Rejected')
-
-    raise werkzeug.exceptions.SecurityError('GraphiQL is disabled')
-
-  def to_dict(self):
-    return {
-      "id": self.id,
-      "title": self.title,
-      "content": self.content,
-      "public": self.public,
-      "owner":self.owner,
-      "burn":self.burn
-    }
 
 # SQLAlchemy Types
 class UserObject(SQLAlchemyObjectType):
@@ -217,7 +175,9 @@ class Query(graphene.ObjectType):
     return result
 
   def resolve_system_health(self, info):
-    return 'System Load: {}'.format(helpers.run_cmd("uptime | awk -F'averages: ' '{print $2}'"))
+    return 'System Load: {}'.format(
+      helpers.run_cmd("uptime | awk '{print $10, $11, $12}'")
+    )
 
 
 @app.route('/')
@@ -295,18 +255,29 @@ def set_difficulty():
 
 schema = graphene.Schema(query=Query, mutation = Mutations)
 
+gql_middlew = [
+  middleware.CostProtectionMiddleware(),
+  middleware.DepthProtectionMiddleware(),
+  middleware.IntrospectionMiddleware(),
+  middleware.processMiddleware()
+]
+
+igql_middlew = [
+  middleware.IGQLProtectionMiddleware()
+]
+
 app.add_url_rule('/graphql', view_func=GraphQLView.as_view(
   'graphql',
   schema=schema,
-  middleware=[IntrospectionMiddleware(), processMiddleware()],
+  middleware=gql_middlew,
   batch=True
 ))
 
 app.add_url_rule('/graphiql', view_func=GraphQLView.as_view(
   'graphiql',
-  schema=schema,
-  graphiql=True,
-  middleware=[IGQLProtectionMiddleware()],
+  schema = schema,
+  graphiql = True,
+  middleware = igql_middlew,
   batch=True
 ))
 

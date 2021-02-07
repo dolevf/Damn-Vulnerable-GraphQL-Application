@@ -138,9 +138,8 @@ dmypy.json
 cython_debug/
 
 .DS_Store
-queries.txt
-describe.md
 dvga.db
 tests/
 tools/
-dvga.db
+pastes/
+

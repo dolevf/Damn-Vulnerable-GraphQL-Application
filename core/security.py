@@ -1,3 +1,4 @@
+import config
 import random
 import time
 
@@ -55,3 +56,25 @@ def on_denylist(query):
     return True
   return False
 
+def depth_exceeded(depth):
+  depth_allowed = config.MAX_DEPTH
+  if depth > depth_allowed:
+    return True
+  return False
+
+def cost_exceeded(qry_fields):
+  total_cost_allowed = config.MAX_COST
+  total_query_cost   = 0
+  
+  field_cost = {
+    'systemUpdate':10,
+  }
+  
+  for field in qry_fields:
+    if field in field_cost:
+      total_query_cost += field_cost[field]
+  
+  if total_query_cost > total_cost_allowed:
+    return True
+  
+  return False
