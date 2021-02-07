@@ -272,7 +272,7 @@ def difficulty(level):
     message = 'Level must be Beginner or Expert.'
     level = 'easy'
 
-  session['difficulty'] = level
+  helpers.set_mode(level)
 
   return render_template('index.html', msg = message)
 
@@ -285,16 +285,13 @@ def get_version():
 def set_difficulty():
   mode_header = request.headers.get('X-DVGA-MODE', None)
   if mode_header:
-    if mode_header == 'Beginner':
-      helpers.set_mode('easy')
-    else:
+    if mode_header == 'Expert':
       helpers.set_mode('hard')
+    else:
+      helpers.set_mode('easy')
   else:
     if session.get('difficulty') == None:
-      if request.endpoint == 'index':
-        helpers.set_mode('easy')
-      else:
-        helpers.set_mode('hard')
+      helpers.set_mode('easy')
 
 schema = graphene.Schema(query=Query, mutation = Mutations)
 
