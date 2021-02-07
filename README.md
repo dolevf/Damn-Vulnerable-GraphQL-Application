@@ -15,6 +15,7 @@ Damn Vulnerable GraphQL Application is an intentionally vulnerable implementatio
   * [Installation - Docker](#docker)
   * [Installation - Server](#server)
 * [Screenshots](#screenshots)
+* [Maintainers](#maintainers)
 * [Mentions](#mentions)
 * [Disclaimer](#disclaimer)
 * [License](#license)
@@ -69,10 +70,10 @@ The following Python3 libraries are required:
 ### Create a container from the image
 `docker run -t -p 5000:5000 -e WEB_HOST=0.0.0.0 dvga`
 
-If you need the application to bind on a specific port or interface, use the following command:
-`docker run -e WEB_HOST=0.0.0.0 -e WEB_PORT=8080 -t -p 8080:8080 dvga`
+In your browser, navigate to http://localhost:5000
 
-In your browser, navigate to http://ip.add.re.ss
+Optionally, if you need the application to bind on a specific port or interface, use the following command:
+`docker run -e WEB_HOST=0.0.0.0 -e WEB_PORT=8080 -t -p 8080:8080 dvga`
 
 
 # Server
@@ -88,13 +89,17 @@ In your browser, navigate to http://ip.add.re.ss
 ### Run application
 `python3 app.py`
 
-In your browser, navigate to http://ip.add.re.ss:5000.
+In your browser, navigate to http://localhost:5000.
 
 # Screenshots
 ![DVGA](https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application/blob/master/static/screenshots/index.png)
 ![DVGA](https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application/blob/master/static/screenshots/solution.png)
 ![DVGA](https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application/blob/master/static/screenshots/pastes.png)
 ![DVGA](https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application/blob/master/static/screenshots/create.png)
+
+# Maintainers
+* Dolev Farhi
+* Connor McKinnon
 
 # Mentions
 TBA
