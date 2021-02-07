@@ -22,7 +22,7 @@ Damn Vulnerable GraphQL Application is an intentionally vulnerable implementatio
 # About DVGA
 Damn Vulnerable GraphQL is a deliberately weak and insecure implementation of GraphQL that provides a safe environment to attack a GraphQL application, allowing developers and IT professionals to test for vulnerabilities.
 
-DVGA has numerous flaws, such as Injections, Code Executions, Bypasses, Denial of Service, and more. See the full list under the [Vulnerabilities](#vulnerabilities) section.
+DVGA has numerous flaws, such as Injections, Code Executions, Bypasses, Denial of Service, and more. See the full list under the [Scenarios](#scenarios) section.
 
 # Operation Modes
 DVGA supports Beginner and Expert level game modes, which will change the exploitation difficulty.
@@ -67,10 +67,10 @@ The following Python3 libraries are required:
 `docker build -t dvga .`
 
 ### Create a container from the image
-`docker run -t -p -e WEB_HOST="0.0.0.0" 80:5000 dvga`
+`docker run -t -p 5000:5000 -e WEB_HOST=0.0.0.0 dvga`
 
 If you need the application to bind on a specific port or interface, use the following command:
-`docker run -e WEB_HOST="0.0.0.0" -e WEB_PORT=8080 -t -p 8080:8080 dvga`
+`docker run -e WEB_HOST=0.0.0.0 -e WEB_PORT=8080 -t -p 8080:8080 dvga`
 
 In your browser, navigate to http://ip.add.re.ss
 
