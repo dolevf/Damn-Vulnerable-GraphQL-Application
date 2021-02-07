@@ -16,7 +16,10 @@
         {% include 'partials/pastes/import_paste.html' %}
       {% elif page == "upload_paste" %}
         {% include 'partials/pastes/upload_paste.html' %}
-      {% elif page == "my_pastes" or page == "public_pastes" %}
+      {% elif page == "my_pastes" %}
+        {% include 'partials/pastes/my_pastes.html' %}
+      {% elif page == "public_pastes" %}
+        {% include 'partials/pastes/public_pastes.html' %}
       {% endif %}
     </div>
   </div>
