@@ -1,3 +1,4 @@
+# graphql-utilities library
 from functools import wraps
 
 def run_only_once(resolve_func):
@@ -11,11 +12,9 @@ def run_only_once(resolve_func):
                 info.context[decorator_name] = True
                 return resolve_func(self, next, root, info, *args, **kwargs)
             elif not isinstance(info.context, dict) and not getattr(info.context, decorator_name, False):
-                # Graphene: it could be a Context or WSGIRequest object
                 setattr(info.context, decorator_name, True)
                 return resolve_func(self, next, root, info, *args, **kwargs)
 
-        # No context, run_only_once will not work
         return next(root, info, *args, **kwargs)
 
     return wrapper
