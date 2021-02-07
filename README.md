@@ -59,6 +59,9 @@ The following Python3 libraries are required:
 * Graphene
 * Graphene-SQLAlchemy
 
+See [requirements.txt](requirements.txt) for dependencies.
+
+
 # Installation
 ## Docker
 ### Clone the repository
