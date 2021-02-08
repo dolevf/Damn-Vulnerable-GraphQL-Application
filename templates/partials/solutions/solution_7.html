@@ -1,0 +1,33 @@
+<!-- Start -->
+<h3 style="color:purple" id="info-ssrf"><b>Information Disclosure :: Server Side Request Forgery</b></h3>
+<hr />
+<h5>Problem Statement</h5>
+<p>
+  The GraphQL mutation <code>importPaste</code> accepts arbitrary host, port and scheme to import pastes from and does
+  not restrict input such as localhost or other internal servers from being used. This may allow
+  forging requests on behalf of the application server to target other network nodes.</p>
+<h5>Resources</h5>
+<ul>
+  <li>
+    <a href="https://portswigger.net/web-security/ssrf" target="_blank">
+      <i class="fa fa-newspaper"></i> PortSwigger - Server Side Request Forgery
+    </a>
+  </li>
+  <li>
+    <a href="https://owasp.org/www-community/attacks/Server_Side_Request_Forgery" target="_blank">
+      <i class="fa fa-newspaper"></i> OWASP - Server Side Request Forgery
+    </a>
+  </li>
+</ul>
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-info-ssrf')">Show</button></h5>
+<div id="sol-info-ssrf" style="display:none">
+  <pre class="bash">
+    # Beginner and Expert modes
+
+    # Any arbitrary host and ports can be used to make an outbound HTTP request
+    mutation {
+      importPaste(host:"localhost", port:57130, path:"/", scheme:"http")
+    }
+  </pre>
+</div>
+<!-- End -->

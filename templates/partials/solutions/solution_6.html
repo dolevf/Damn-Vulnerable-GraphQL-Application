@@ -1,0 +1,57 @@
+<!-- Start -->
+<h3 style="color:purple" id="info-suggestions"><b>Information Disclosure :: GraphQL Field Suggestions</b></h3>
+<hr />
+<h5>Problem Statement</h5>
+<p>
+  GraphQL has a feature for field and operation suggestions. When a developer wants to integrate with a GraphQL API and types an incorrect field, as an example, GraphQL will attempt to suggest nearby fields that are
+  similar.
+</p>
+<p>
+  Field suggestions is not a vulnerability in itself, but a feature that can be abused to gain more insight into GraphQL's schema, especially when Introspection is not allowed.
+</p>
+
+<h5>Resources</h5>
+<ul>
+  <li>
+    <a href="https://github.com/graphql-python/graphql-core/blob/7d826f0ec0a447cb869dfb891a755dbe8ea9b66f/src/graphql/validation/rules/fields_on_correct_type.py#L23" target="_blank">
+      <i class="fa fa-code"></i> Python's graphql-core suggestion feature
+    </a>
+  </li>
+  <li>
+    <a href="https://graphql-ruby.org/schema/introspection" target="_blank">
+      <i class="fa fa-newspaper"></i> GraphQL Introspection
+    </a>
+  </li>
+  <li>
+    <a href="https://github.com/nikitastupin/clairvoyance" target="_blank">
+      <i class="fa fa-shield-alt"></i> Clairvoyance - GQL Security tool for field enumeration
+    </a>
+  </li>
+</ul>
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-info-suggestions')">Show</button></h5>
+<div id="sol-info-suggestions" style="display:none">
+  <pre class="bash">
+    # Beginner and Expert modes
+
+    # Supplying incorrect fields will trigger GraphQL to disclose fields with similar names
+    query {
+      system
+    }
+
+    >>> Response:
+    {
+      "errors": [
+        {
+          "message": "Cannot query field \"system\" on type \"Query\". Did you mean \"pastes\", \"paste\", \"systemUpdate\" or \"systemHealth\"?",
+          "locations": [
+            {
+              "line": 2,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  </pre>
+</div>
+<!-- End -->

