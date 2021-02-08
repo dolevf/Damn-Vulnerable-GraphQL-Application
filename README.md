@@ -105,7 +105,7 @@ In your browser, navigate to http://localhost:5000.
 * Connor McKinnon
 
 # Mentions
-TBA
+* [OWASP Vulnerable Web Applications Directory](https://owasp.org/www-project-vulnerable-web-applications-directory/)
 
 # Disclaimer
 DVGA is highly insecure, and as such, should not be deployed on internet facing servers. By default, the application is listening on 127.0.0.1 to avoid misconfigurations.
