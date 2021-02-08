@@ -1,4 +1,5 @@
 import graphene
+from db.solutions import solutions as list_of_solutions
 
 from flask import (
   Flask,
@@ -192,7 +193,7 @@ def about():
 
 @app.route('/solutions')
 def solutions():
-  return render_template("solutions.html")
+  return render_template("solutions.html", solutions=list_of_solutions)
 
 @app.route('/create_paste')
 def create_paste():

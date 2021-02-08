@@ -116,36 +116,10 @@
                 <small style="color:grey"><i class="fa fa-info"></i> &nbsp; Some solutions include code snippets that are written in Python and use the requests library for HTTP requests.</small>
               </p>
               <br>
-              {% include 'partials/solutions/solution_1.html' %}
-              <br>
-              {% include 'partials/solutions/solution_2.html' %}
-              <br>
-              {% include 'partials/solutions/solution_3.html' %}
-              <br>
-              {% include 'partials/solutions/solution_4.html' %}
-              <br>
-              {% include 'partials/solutions/solution_5.html' %}
-              <br>
-              {% include 'partials/solutions/solution_6.html' %}
-              <br>
-              {% include 'partials/solutions/solution_7.html' %}
-              <br>
-              {% include 'partials/solutions/solution_8.html' %}
-              <br>
-              {% include 'partials/solutions/solution_9.html' %}
-              <br>
-              {% include 'partials/solutions/solution_10.html' %}
-              <br>
-              {% include 'partials/solutions/solution_11.html' %}
-              <br>
-              {% include 'partials/solutions/solution_12.html' %}
-              <br>
-              {% include 'partials/solutions/solution_13.html' %}
-              <br>
-              {% include 'partials/solutions/solution_14.html' %}
-              <br>
-              {% include 'partials/solutions/solution_15.html' %}
-              <br>
+              {% for solution in solutions %}
+                {% include solution %}
+                <br>
+              {% endfor %}
             </div>
           </div>
         </div>
