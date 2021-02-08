@@ -2,7 +2,7 @@ FROM python:3.7-alpine
 
 LABEL description="Damn Vulnerable GraphQL Application"
 LABEL github="https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application"
-LABEL maintainer="dolev@lethalbit.com"
+LABEL maintainers="Dolev Farhi & Connor McKinnon"
 
 ARG TARGET_FOLDER=/opt/dvga
 WORKDIR $TARGET_FOLDER/
