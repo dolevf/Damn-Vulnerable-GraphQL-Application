@@ -141,5 +141,4 @@ cython_debug/
 dvga.db
 tests/
 tools/
-pastes/
 
