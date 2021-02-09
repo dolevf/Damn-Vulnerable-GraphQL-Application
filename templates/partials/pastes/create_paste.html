@@ -1,0 +1,49 @@
+<h1 class="mt-4">Create a Paste</h1>
+<hr>
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <div class="well well-sm">
+      <fieldset>
+        <!-- Name input-->
+        <div class="form-group">
+          <label class="col-md-3 control-label" for="title">Title</label>
+          <div class="col-md-9">
+            <input id="title" name="title" type="text" placeholder="My New Paste!" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-md-3 control-label" for="visibility">Visibility</label>
+          <div class="col-md-9">
+            <select class="form-control" id="visibility">
+              <option selected>Public</option>
+              <option>Private</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-md-3 control-label" for="message">Your message</label>
+          <div class="col-md-9">
+            <textarea class="form-control" id="content" name="content" placeholder="Please enter your paste body here..." rows="12"></textarea>
+          </div>
+        </div>
+
+        <div class="form-check">
+          <div class="col-md-9">
+            <input class="form-check-input" type="checkbox" onClick="burnSelect()" value="" name="burn" id="burn">
+              <label class="form-check-label" for="burn">
+                Burn After Read
+              </label>
+          </div>
+        </div>
+        <br>
+        <div class="form-group">
+          <div class="col-md-12">
+            <button type="submit" class="btn btn-primary btn-lg" onclick="create_paste();">Submit</button>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+</div>
