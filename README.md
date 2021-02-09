@@ -43,6 +43,7 @@ DVGA supports Beginner and Expert level game modes, which will change the exploi
   * OS Command Injection #2
 * **Injection**
   * Stored Cross Site Scripting
+  * Log spoofing / Log Injection
   * HTML Injection
 * **Authorization Bypass**
   * GraphQL Interface Protection Bypass
