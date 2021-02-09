@@ -1,0 +1,46 @@
+{% extends 'partials/base.html' %}
+
+{% block header %}
+  {% include 'partials/base_header.html' %}
+{% endblock %}
+
+{% block content %}
+  <!-- Page Content -->
+  <div id="page-content-wrapper">
+    {% include 'partials/navbar.html' %}
+    <div class="container-fluid">
+      <h1 class="mt-4">Audit</h1>
+      <hr>
+        <div class="row">
+        <div class="col-md-12">
+        <h4>Recent Audit Log Activity</h4>
+          <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">GraphQL Operation</th>
+              <th scope="col">Date</th>
+            </tr>
+          </thead>
+          {% for i in audit %}
+          <tbody>
+            <tr>
+              <th scope="row">{{loop.index}}. </th>
+              <td>DVGAUser</td>
+              <td>{{i.gqloperation}}</td>
+              <td>{{i.timestamp.strftime('%Y-%m-%d %H:%M:%S')}}</td>
+            </tr>
+          </tbody>
+          {% endfor %}
+          </table>
+        </div>
+        </div>
+    </div>
+  </div>
+  <!-- /#page-content-wrapper -->
+{% endblock %}
+
+{% block scripts %}
+  {% include 'partials/base_scripts.html' %}
+{% endblock %}

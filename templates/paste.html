@@ -32,9 +32,9 @@
       var isChecked = document.getElementById("burn").checked;
       document.getElementById("visibility").disabled = isChecked;
     }
-  
+
     function get_pastes(public=false) {
-      var query = `query {
+      var query = `query getPastes {
         pastes(public:${public}) {
           id
           title
@@ -46,7 +46,7 @@
           }
           }
         }`
-  
+
       fetch('/graphql', {
         method: 'POST',
         headers: {
@@ -85,20 +85,19 @@
         }
       );
     }
-  
+
     function create_paste(){
       var title = document.getElementById('title').value
       var content = document.getElementById('content').value
       var visibility = document.getElementById('visibility').value
       var public = false
       var burn = document.getElementById('burn').checked
-  
+
       if(visibility == "Public") {
         public = true;
       }
-  
-      //var query = `mutation {
-      var query = `mutation ($title: String!, $content: String!, $public: Boolean!, $burn: Boolean!) {
+
+      var query = `mutation CreatePaste ($title: String!, $content: String!, $public: Boolean!, $burn: Boolean!) {
         createPaste(title:$title, content:$content, public:$public, burn: $burn) {
            paste {
              pId
@@ -108,7 +107,7 @@
            }
           }
         }`
-  
+
       fetch('/graphql', {
         method: 'POST',
         headers: {
@@ -146,7 +145,7 @@
         )
       )
     }
-  
+
     function import_paste() {
       const url = document.getElementById('url').value;
       const u = new URL(url);
@@ -154,7 +153,7 @@
       const path = u.pathname;
       const scheme = u.protocol.replace(':', '');
       var port = u.port;
-  
+
       if(!port) {
         if(scheme == 'http') {
           port = 80
@@ -166,13 +165,13 @@
           port = 80
         }
       }
-  
-      var query = `mutation ($host: String!, $port: Int!, $path: String!, $scheme: String!) {
+
+      var query = `mutation ImportPaste ($host: String!, $port: Int!, $path: String!, $scheme: String!) {
         importPaste(host: $host, port: $port, path: $path, scheme: $scheme) {
           result
         }
       }`
-  
+
       fetch('/graphql', {
         method: 'POST',
         headers: {
@@ -205,24 +204,24 @@
         })
       )
     }
-  
+
     function upload_paste() {
       var reader = new FileReader();
       var f = document.getElementById("pastefile").files;
       var content = ''
-  
+
       reader.readAsText(f[0])
-  
+
       reader.onloadend = function () {
         var filename = document.getElementById("pastefile").files[0].name
         content = reader.result
-        var query = `mutation ($filename: String!, $content: String!) {
+        var query = `mutation UploadPaste ($filename: String!, $content: String!) {
           uploadPaste(filename: $filename, content:$content)
           {
             result
           }
         }`
-  
+
         fetch('/graphql', {
                 method: 'POST',
                 headers: {
@@ -256,7 +255,7 @@
         )
       }
     }
-  
+
     window.onload = function() {
       var url = window.location.pathname;
       if(url.match('/my_pastes')){

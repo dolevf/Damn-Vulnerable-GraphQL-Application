@@ -33,3 +33,8 @@ def is_level_hard():
 
 def set_mode(mode):
   session['difficulty'] = mode
+
+def get_opname(operation):
+  if hasattr(operation, 'value'):
+    return operation.value
+  return ''

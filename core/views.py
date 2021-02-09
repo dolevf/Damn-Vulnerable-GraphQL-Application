@@ -27,9 +27,10 @@ from core import (
 )
 
 from core.models import (
-  Owner, 
-  Paste, 
-  User
+  Owner,
+  Paste,
+  User,
+  Audit
 )
 
 from version import VERSION
@@ -51,7 +52,6 @@ class OwnerObject(SQLAlchemyObjectType):
     model = Owner
     interfaces = (graphene.relay.Node, )
 
-
 class CreatePaste(graphene.Mutation):
     title = graphene.String()
     content = graphene.String()
@@ -67,10 +67,15 @@ class CreatePaste(graphene.Mutation):
 
     def mutate(self, info, title, content, public, burn):
       owner = Owner.query.filter_by(name='DVGAUser').first()
-      paste_obj = Paste.create_paste(title=title, content=content, public=public, burn=burn,
-                         owner_id=owner.id, owner=owner, ip_addr=request.remote_addr,
-                         user_agent=request.headers.get('User-Agent', ''))
 
+      paste_obj = Paste.create_paste(
+      title='Imported Paste from File - {}'.format(helpers.generate_uuid()),
+      content=content, public=False, burn=False,
+      owner_id=owner.id, owner=owner, ip_addr=request.remote_addr,
+      user_agent=request.headers.get('User-Agent', '')
+    )
+
+      Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
 
       return CreatePaste(paste=paste_obj)
 
@@ -83,6 +88,8 @@ class DeletePaste(graphene.Mutation):
   def mutate(self, info, title):
     Paste.query.filter_by(title=title).delete()
     db.session.commit()
+
+    Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
 
     return DeletePaste(ok=True)
 
@@ -99,12 +106,15 @@ class UploadPaste(graphene.Mutation):
   def mutate(self, info, filename, content):
     result = helpers.save_file(filename, content)
     owner = Owner.query.filter_by(name='DVGAUser').first()
+
     paste_obj = Paste.create_paste(
       title='Imported Paste from File - {}'.format(helpers.generate_uuid()),
       content=content, public=False, burn=False,
       owner_id=owner.id, owner=owner, ip_addr=request.remote_addr,
       user_agent=request.headers.get('User-Agent', '')
     )
+
+    Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
 
     return UploadPaste(result=result)
 
@@ -129,6 +139,8 @@ class ImportPaste(graphene.Mutation):
         user_agent=request.headers.get('User-Agent', '')
     )
 
+    Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
+
     return ImportPaste(result=cmd)
 
 class Mutations(graphene.ObjectType):
@@ -148,20 +160,24 @@ class Query(graphene.ObjectType):
 
   def resolve_pastes(self, info, public=False):
     query = PasteObject.get_query(info)
+    Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
     return query.filter_by(public=public, burn=False).order_by(Paste.id.desc())
 
   def resolve_paste(self, info, p_id):
     query = PasteObject.get_query(info)
+    Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
     return query.filter_by(id=p_id, burn=False).first()
 
   def resolve_system_update(self, info):
     security.simulate_load()
+    Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
     return 'no updates available'
 
   def resolve_system_diagnostics(self, info, username, password, cmd='whoami'):
     q = User.query.filter_by(username='admin').first()
     real_passw = q.password
     res, msg = security.check_creds(username, password, real_passw)
+    Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
     if res:
       output = f'{cmd}: command not found'
       if security.allowed_cmds(cmd):
@@ -173,9 +189,11 @@ class Query(graphene.ObjectType):
     result = Paste.query.filter_by(id=p_id, burn=True).first()
     Paste.query.filter_by(id=p_id, burn=True).delete()
     db.session.commit()
+    Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
     return result
 
   def resolve_system_health(self, info):
+    Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
     return 'System Load: {}'.format(
       helpers.run_cmd("uptime | awk '{print $10, $11, $12}'")
     )
@@ -214,6 +232,12 @@ def my_paste():
 @app.route('/public_pastes')
 def public_paste():
   return render_template("paste.html", page="public_pastes")
+
+@app.route('/audit')
+def audit():
+  audit = Audit.query.all()
+  return render_template("audit.html", audit=audit)
+
 
 @app.route('/start_over')
 def start_over():
