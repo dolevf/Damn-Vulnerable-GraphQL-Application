@@ -1,0 +1,19 @@
+FROM python:3.7
+
+LABEL description="Damn Vulnerable GraphQL Application"
+LABEL github="https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application"
+LABEL maintainers="Dolev Farhi & Connor McKinnon"
+
+ARG TARGET_FOLDER=/app
+RUN mkdir $TARGET_FOLDER
+WORKDIR $TARGET_FOLDER/
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY . .
+
+RUN python setup.py
+
+EXPOSE 5000/tcp
+CMD [ "uwsgi", "--ini", "app.ini" ]
