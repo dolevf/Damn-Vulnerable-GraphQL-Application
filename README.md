@@ -80,7 +80,7 @@ Optionally, if you need the application to bind on a specific port or interface,
 `docker run -e WEB_HOST=0.0.0.0 -e WEB_PORT=8080 -t -p 8080:8080 dvga`
 
 
-# Server
+## Server
 ### Navigate to /opt
 `cd /opt/`
 
@@ -107,6 +107,7 @@ In your browser, navigate to http://localhost:5000.
 
 # Mentions
 * [OWASP Vulnerable Web Applications Directory](https://owasp.org/www-project-vulnerable-web-applications-directory/)
+* [KitPloit](https://www.kitploit.com/2021/02/damn-vulnerable-graphql-application.html)
 
 # Disclaimer
 DVGA is highly insecure, and as such, should not be deployed on internet facing servers. By default, the application is listening on 127.0.0.1 to avoid misconfigurations.
