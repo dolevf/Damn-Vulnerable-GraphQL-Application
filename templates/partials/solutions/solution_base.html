@@ -1,0 +1,15 @@
+<!-- Start -->
+<h3 style="color:purple" id="dos-batch"><b>{% block title %}{% endblock %}</b></h3>
+<hr />
+<h5>Problem Statement</h5>
+{% block body %}{% endblock %}
+<h5>Resources</h5>
+<ul>
+    {% block resources %}{% endblock %}
+</ul>
+
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('exploit-{{ solution }}')">Show</button></h5>
+<div id="exploit-{{ solution }}" style="display:none">
+    {% block exploits %}{% endblock %}
+</div>
+<!-- End -->

@@ -1,23 +1,25 @@
+{% extends 'partials/solutions/solution_base.html' %}
 <!-- Start -->
-<h3 style="color:purple" id="misc-filewrite"><b>Miscellaneous :: Arbitrary File Write // Path Traversal</b></h3>
-<hr />
-<h5>Problem Statement</h5>
-<p>
-  The mutation <code>uploadPaste</code> allows uploading pastes from the user's computer by specifying the file along
-  with the filename. The pastes are then stored on the server under a dedicated folder. The <code>filename</code>
-  argument allows any string, effectively providing the ability to write the file to any location on the server's
-  filesystem by traversing folders using <code>../../</code>
-</p>
-<h5>Resources</h5>
-<ul>
+{% block title %}Miscellaneous :: Arbitrary File Write // Path Traversal{% endblock %}
+
+{% block body %}
+  <p>
+    The mutation <code>uploadPaste</code> allows uploading pastes from the user's computer by specifying the file along
+    with the filename. The pastes are then stored on the server under a dedicated folder. The <code>filename</code>
+    argument allows any string, effectively providing the ability to write the file to any location on the server's
+    filesystem by traversing folders using <code>../../</code>
+  </p>
+{% endblock %}
+
+{% block resources %}
   <li>
     <a href="https://owasp.org/www-community/attacks/Path_Traversal" target="_blank">
       <i class="fa fa-newspaper"></i> OWASP - Path Traversal
     </a>
   </li>
-</ul>
-<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-misc-filewrite')">Show</button></h5>
-<div id="sol-misc-filewrite" style="display:none">
+{% endblock %}
+
+{% block exploits %}
   <pre class="bash">
     # Traverse the filesystem and place the file where you desire.
     mutation {
@@ -26,5 +28,5 @@
       }
     }
   </pre>
-</div>
+{% endblock %}
 <!-- End -->

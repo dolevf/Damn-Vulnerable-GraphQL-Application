@@ -1,20 +1,23 @@
+{% extends 'partials/solutions/solution_base.html' %}
 <!-- Start -->
-<h3 style="color:purple" id="inj-xss"><b>Injection :: Stored Cross Site Scripting</b></h3>
-<hr />
-<h5>Problem Statement</h5>
-<p>
-  The GraphQL mutations <code>createPaste</code> and <code>importPaste</code> allow creating and importing new pastes. The pastes may include any character without any restrictions. The pastes would then render in
-  the Public and Private paste pages, which would result in a Cross Site Scripting vulnerability (XSS).</p>
-<h5>Resources</h5>
-<ul>
+{% block title %}Injection :: Stored Cross Site Scripting{% endblock %}
+
+{% block body %}
+  <p>
+    The GraphQL mutations <code>createPaste</code> and <code>importPaste</code> allow creating and importing new pastes. The pastes may include any character without any restrictions. The pastes would then render in
+    the Public and Private paste pages, which would result in a Cross Site Scripting vulnerability (XSS).
+  </p>
+{% endblock %}
+
+{% block resources %}
   <li>
     <a href="https://portswigger.net/web-security/cross-site-scripting/stored" target="_blank">
       <i class="fa fa-newspaper"></i> PortSwigger - Stored Cross Site Scripting
     </a>
   </li>
-</ul>
-<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-inj-xss')">Show</button></h5>
-<div id="sol-inj-xss" style="display:none">
+{% endblock %}
+
+{% block exploits %}
   <pre class="bash">
     # Create New Paste allows special characters that would render in HTML.
     mutation {
@@ -28,5 +31,5 @@
       importPaste(host:"localhost", port:80, path:"/xss.html"")
     }
   </pre>
-</div>
+{% endblock %}
 <!-- End -->

@@ -1,20 +1,23 @@
+{% extends 'partials/solutions/solution_base.html' %}
 <!-- Start -->
-<h3 style="color:purple" id="info-introspection"><b>Information Disclosure :: GraphQL Introspection</b></h3>
-<hr />
-<h5>Problem Statement</h5>
-<p>GraphQL Introspection is a special query that uses the <code>__schema</code> field to interrogate GraphQL for its schema.</p>
-<p>
-  Introspection in itself is not a weakness, but a feature. However, if it is made available, it can be used and abused by attackers seeking information about your GraphQL implementation, such as what queries or mutations exist.
-</p>
-<p>
-  It is recommended to disable introspection in production to avoid data leakages.
-</p>
-<p>
-  Note: If introspection query is disabled, attackers may fall back to using the <b>Field Suggestion</b> feature to understand what queries and fields are supported by your GraphQL. Refer to <a href="#info-suggestions">Information Disclosure :: GraphQL Field Suggestions</a>attack for more information.
-</p>
+{% block title %}Information Disclosure :: GraphQL Introspection{% endblock %}
 
-<h5>Resources</h5>
-<ul>
+{% block body %}
+  <p>
+    GraphQL Introspection is a special query that uses the <code>__schema</code> field to interrogate GraphQL for its schema.
+  </p>
+  <p>
+    Introspection in itself is not a weakness, but a feature. However, if it is made available, it can be used and abused by attackers seeking information about your GraphQL implementation, such as what queries or mutations exist.
+  </p>
+  <p>
+    It is recommended to disable introspection in production to avoid data leakages.
+  </p>
+  <p>
+    Note: If introspection query is disabled, attackers may fall back to using the <b>Field Suggestion</b> feature to understand what queries and fields are supported by your GraphQL. Refer to <a href="#info-suggestions">Information Disclosure :: GraphQL Field Suggestions</a>attack for more information.
+  </p>
+{% endblock %}
+
+{% block resources %}
   <li>
     <a href="https://graphql.org/learn/introspection/" target="_blank">
       <i class="fa fa-newspaper"></i> GraphQL - Introspection
@@ -35,9 +38,9 @@
       <i class="fa fa-shield-alt"></i> Clairvoyance - GraphQL Schema Enumeration Discovery Tool
     </a>
   </li>
-</ul>
-<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-info-introspection')">Show</button></h5>
-<div id="sol-info-introspection" style="display:none">
+{% endblock %}
+
+{% block exploits %}
   <pre class="bash">
     # Beginner mode
 
@@ -57,5 +60,5 @@
 
     # Introspection is disabled, enumeration of fields and dynamic testing is required to understand the structure of the application.
   </pre>
-</div>
+{% endblock %}
 <!-- End -->

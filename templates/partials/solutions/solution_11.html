@@ -1,29 +1,32 @@
+{% extends 'partials/solutions/solution_base.html' %}
 <!-- Start -->
-<h3 style="color:purple" id="inj-log"><b>Injection :: Log Injection</b></h3>
-<hr />
-<h5>Problem Statement</h5>
-<p>
-  GraphQL actions such as <code>mutation</code> and <code>query</code> have the ability to take an <code>operation name</code> as part of the query.
-  Here is an example query that uses <code>MyName</code> as an operation name:
-  <pre>query MyName {
-    getMyName
-    {
-      first
-      last
-    }
-  } </pre></p>
+{% block title %}Injection :: Log Injection{% endblock %}
+
+{% block body %}
+  <p>
+    GraphQL actions such as <code>mutation</code> and <code>query</code> have the ability to take an <code>operation name</code> as part of the query.
+    Here is an example query that uses <code>MyName</code> as an operation name:
+    <pre>query MyName {
+      getMyName
+      {
+        first
+        last
+      }
+    } </pre>
+  </p>
   <p>The application is keeping track of all queries and mutations users are executing on this system in order to display them in the audit log.</p>
   <p>However, the application is not doing a fair job at verifying the operation name.</p>
-<h5>Resources</h5>
-<ul>
+{% endblock %}
+
+{% block resources %}
   <li>
     <a href="https://cwe.mitre.org/data/definitions/117.html" target= "_blank">
       <i class="fa fa-newspaper"></i> CWE-117: Improper Output Neutralization for Logs
     </a>
   </li>
-</ul>
-<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-inj-log')">Show</button></h5>
-<div id="sol-inj-log" style="display:none">
+{% endblock %}
+
+{% block exploits %}
   <pre class="bash">
     # Spoof the operation conducted to getPaste instead of createPaste
     mutation getPaste{
@@ -32,5 +35,5 @@
       }
     }
   </pre>
-</div>
+{% endblock %}
 <!-- End -->

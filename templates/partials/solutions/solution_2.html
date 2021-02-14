@@ -1,12 +1,21 @@
+{% extends 'partials/solutions/solution_base.html' %}
 <!-- Start -->
-<h3 id="dos-recursion" style="color:purple"><b>Denial of Service :: Deep Recursion Query Attack</b></h3>
-<hr />
-<h5>Problem Statement</h5>
-<p>In GraphQL, when types reference eachother, it is often possible to build a circular query that grows exponentially to a point it could bring the server down to its knees. Countermeasures such as <code>max_depth</code>                                    can help mitigate these types of attacks.</p>
-<p>The <code>max_depth</code> functionality acts as a safeguard, and defines how deep a query can get, ensuring deeply constructed queries will not be accepted by GraphQL.</p>
-<p>The application offers two types, namely <code>Owner</code> and <code>Paste</code>, which reference eachother (an owner has a paste, and a paste has an owner), allowing a recursive query to be executed successfully.
-<h5>Resources</h5>
-<ul>
+{% block title %}Denial of Service :: Deep Recursion Query Attack{% endblock %}
+
+{% block body %}
+  <p>
+    In GraphQL, when types reference eachother, it is often possible to build a circular query that grows exponentially to a point it could bring the server down to its knees. 
+    Countermeasures such as <code>max_depth</code> can help mitigate these types of attacks.
+  </p>
+  <p>
+    The <code>max_depth</code> functionality acts as a safeguard, and defines how deep a query can get, ensuring deeply constructed queries will not be accepted by GraphQL.
+  </p>
+  <p>
+    The application offers two types, namely <code>Owner</code> and <code>Paste</code>, which reference eachother (an owner has a paste, and a paste has an owner), allowing a recursive query to be executed successfully.
+  </p>
+{% endblock %}
+
+{% block resources %}
   <li>
       <a href="https://www.apollographql.com/blog/securing-your-graphql-api-from-malicious-queries-16130a324a6b/" target="_blank">
         <i class="fa fa-newspaper"></i>  Securing GraphQL API - Apollo
@@ -17,10 +26,9 @@
       <i class="fa fa-bug"></i>  GitLab Issue #30096
     </a>
   </li>
-</ul>
+{% endblock %}
 
-<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-dos-recursion')">Show</button></h5>
-<div style="display:none" id="sol-dos-recursion">
+{% block exploits %}
   <pre class="bash">
     # Beginner mode:
 
@@ -62,5 +70,5 @@
 
     # A depth check is implemented which should prevent malicious queries from going through.
   </pre>
-</div>
+{% endblock %}
 <!-- End -->

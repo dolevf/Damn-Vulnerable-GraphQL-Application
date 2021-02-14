@@ -119,8 +119,10 @@
                 <small style="color:grey"><i class="fa fa-info"></i> &nbsp; Some solutions include code snippets that are written in Python and use the requests library for HTTP requests.</small>
               </p>
               <br>
-              {% for solution in solutions %}
-                {% include solution %}
+              {% for id in solutions %}
+                {% with solution=id %}
+                  {% include "partials/solutions/solution_{}.html".format(id) %}
+                {% endwith %}
                 <br>
               {% endfor %}
             </div>

@@ -1,13 +1,16 @@
+{% extends 'partials/solutions/solution_base.html' %}
 <!-- Start -->
-<h3 style="color:purple" id="info-ssrf"><b>Information Disclosure :: Server Side Request Forgery</b></h3>
-<hr />
-<h5>Problem Statement</h5>
-<p>
-  The GraphQL mutation <code>importPaste</code> accepts arbitrary host, port and scheme to import pastes from and does
-  not restrict input such as localhost or other internal servers from being used. This may allow
-  forging requests on behalf of the application server to target other network nodes.</p>
-<h5>Resources</h5>
-<ul>
+{% block title %}Information Disclosure :: Server Side Request Forgery{% endblock %}
+
+{% block body %}
+  <p>
+    The GraphQL mutation <code>importPaste</code> accepts arbitrary host, port and scheme to import pastes from and does
+    not restrict input such as localhost or other internal servers from being used. This may allow
+    forging requests on behalf of the application server to target other network nodes.
+  </p>
+{% endblock %}
+
+{% block resources %}
   <li>
     <a href="https://portswigger.net/web-security/ssrf" target="_blank">
       <i class="fa fa-newspaper"></i> PortSwigger - Server Side Request Forgery
@@ -18,9 +21,9 @@
       <i class="fa fa-newspaper"></i> OWASP - Server Side Request Forgery
     </a>
   </li>
-</ul>
-<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-info-ssrf')">Show</button></h5>
-<div id="sol-info-ssrf" style="display:none">
+{% endblock %}
+
+{% block exploits %}
   <pre class="bash">
     # Beginner and Expert modes
 
@@ -29,5 +32,5 @@
       importPaste(host:"localhost", port:57130, path:"/", scheme:"http")
     }
   </pre>
-</div>
+{% endblock %}
 <!-- End -->

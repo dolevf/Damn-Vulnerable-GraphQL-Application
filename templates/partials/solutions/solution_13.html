@@ -1,20 +1,22 @@
+{% extends 'partials/solutions/solution_base.html' %}
 <!-- Start -->
-<h3 style="color:purple" id="authzbypass-igql"><b>Authorization Bypass :: GraphQL Interface Protection Bypass</b></h3>
-<hr />
-<h5>Problem Statement</h5>
-<p>
-  GraphiQL is available at the path <code>/graphiql</code> with a poorly implemented authorization check.
-</p>
-<h5>Resources</h5>
-<ul>
+{% block title %}Authorization Bypass :: GraphQL Interface Protection Bypass{% endblock %}
+
+{% block body %}
+  <p>
+    GraphiQL is available at the path <code>/graphiql</code> with a poorly implemented authorization check.
+  </p>
+{% endblock %}
+
+{% block resources %}
   <li>
     <a href="https://cwe.mitre.org/data/definitions/639.html" target="_blank">
       <i class="fa fa-newspaper"></i> CWE-639 - Authorization Bypass Through User-Controlled Key
     </a>
   </li>
-</ul>
-<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-brokenauthz-igql')">Show</button></h5>
-<div id="sol-brokenauthz-igql" style="display:none">
+{% endblock %}
+
+{% block exploits %}
   <pre class="bash">
     # Beginner mode
 
@@ -30,5 +32,5 @@
     # Expert mode
     # GraphiQL interface is disabled.
   </pre>
-</div>
+{% endblock %}
 <!-- End -->
