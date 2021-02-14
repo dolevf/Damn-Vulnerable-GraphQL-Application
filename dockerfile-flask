@@ -15,5 +15,5 @@ COPY . .
 
 RUN python setup.py
 
-EXPOSE 5000/tcp
+EXPOSE 5000
 CMD [ "uwsgi", "--ini", "app.ini" ]
