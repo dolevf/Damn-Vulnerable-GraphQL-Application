@@ -64,9 +64,12 @@ See [requirements.txt](requirements.txt) for dependencies.
 
 
 # Installation
+
 ## Docker
 ### Clone the repository
 `git clone git@github.com:dolevf/Damn-Vulnerable-GraphQL-Application.git && cd Damn-Vulnerable-GraphQL-Application`
+
+Alternatively, pull the image directly from Docker Hub: `docker pull dolevf/dvga`
 
 ### Build the Docker image
 `docker build -t dvga .`
