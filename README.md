@@ -111,7 +111,7 @@ In your browser, navigate to http://localhost:5000.
 # Mentions
 * [OWASP Vulnerable Web Applications Directory](https://owasp.org/www-project-vulnerable-web-applications-directory/)
 * [GraphQL Weekly](https://www.graphqlweekly.com/issues/221/#content)
-* [API Security Weekly](https://dzone.com/articles/api-security-weekly-issue-121)
+* [DZone API Security Weekly](https://dzone.com/articles/api-security-weekly-issue-121)
 * [KitPloit](https://www.kitploit.com/2021/02/damn-vulnerable-graphql-application.html)
 
 # Disclaimer
