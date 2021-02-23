@@ -13,6 +13,7 @@ Damn Vulnerable GraphQL Application is an intentionally vulnerable implementatio
 * [Prerequisites](#prerequisites)
 * [Installation](#installation)
   * [Installation - Docker](#docker)
+  * [Installation - Docker Registry](#docker-registry)
   * [Installation - Server](#server)
 * [Screenshots](#screenshots)
 * [Maintainers](#maintainers)
