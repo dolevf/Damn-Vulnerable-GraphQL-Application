@@ -69,8 +69,6 @@ See [requirements.txt](requirements.txt) for dependencies.
 ### Clone the repository
 `git clone git@github.com:dolevf/Damn-Vulnerable-GraphQL-Application.git && cd Damn-Vulnerable-GraphQL-Application`
 
-Alternatively, pull the image directly from Docker Hub: `docker pull dolevf/dvga`
-
 ### Build the Docker image
 `docker build -t dvga .`
 
@@ -79,9 +77,16 @@ Alternatively, pull the image directly from Docker Hub: `docker pull dolevf/dvga
 
 In your browser, navigate to http://localhost:5000
 
-Optionally, if you need the application to bind on a specific port or interface, use the following command:
-`docker run -e WEB_HOST=0.0.0.0 -e WEB_PORT=8080 -t -p 8080:8080 dvga`
+Note: if you need the application to bind on a specific port (e.g. 8080), use **-e WEB_PORT=8080**.
 
+## Docker Registry
+### Pull the docker image from Docker Hub
+`docker pull dolevf/dvga`
+
+### Create a container from the image
+`docker run -t -p 5000:5000 -e WEB_HOST=0.0.0.0 dolevf/dvga`
+
+In your browser, navigate to http://localhost:5000
 
 ## Server
 ### Navigate to /opt
