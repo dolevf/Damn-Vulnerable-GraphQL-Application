@@ -119,7 +119,7 @@ In your browser, navigate to http://localhost:5000.
 * [GraphQL Weekly](https://www.graphqlweekly.com/issues/221/#content)
 * [DZone API Security Weekly](https://dzone.com/articles/api-security-weekly-issue-121)
 * [KitPloit](https://www.kitploit.com/2021/02/damn-vulnerable-graphql-application.html)
-
+* [tl;dr sec #72](https://tldrsec.com/blog/tldr-sec-072/)
 # Disclaimer
 DVGA is highly insecure, and as such, should not be deployed on internet facing servers. By default, the application is listening on 127.0.0.1 to avoid misconfigurations.
 
