@@ -14,4 +14,5 @@ solutions = [
     "partials/solutions/solution_13.html",
     "partials/solutions/solution_14.html",
     "partials/solutions/solution_15.html",
+    "partials/solutions/solution_16.html",
 ]
