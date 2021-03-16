@@ -111,8 +111,12 @@ In your browser, navigate to http://localhost:5000.
 ![DVGA](https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application/blob/master/static/screenshots/create.png)
 
 # Maintainers
-* Dolev Farhi
-* Connor McKinnon
+* [Dolev Farhi](https://github.com/dolevf)
+* [Connor McKinnon](https://github.com/connormckinnon93)
+
+# Contributors
+A big Thank You to our those who helped make DVGA better.
+ * [Halfluke](https://github.com/halfluke)
 
 # Mentions
 * [OWASP Vulnerable Web Applications Directory](https://owasp.org/www-project-vulnerable-web-applications-directory/)
