@@ -35,6 +35,7 @@ def set_mode(mode):
   session['difficulty'] = mode
 
 def get_opname(operation):
-  if hasattr(operation, 'name'):
+  try:
     return operation.name.value
-  return ''
+  except graphql.error.located_error.GraphQLLocatedError: 
+    return "No Operation"

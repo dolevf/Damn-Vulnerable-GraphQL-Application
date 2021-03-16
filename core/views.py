@@ -69,11 +69,11 @@ class CreatePaste(graphene.Mutation):
       owner = Owner.query.filter_by(name='DVGAUser').first()
 
       paste_obj = Paste.create_paste(
-      title='Imported Paste from File - {}'.format(helpers.generate_uuid()),
-      content=content, public=False, burn=False,
-      owner_id=owner.id, owner=owner, ip_addr=request.remote_addr,
-      user_agent=request.headers.get('User-Agent', '')
-    )
+        title=title,
+        content=content, public=public, burn=burn,
+        owner_id=owner.id, owner=owner, ip_addr=request.remote_addr,
+        user_agent=request.headers.get('User-Agent', '')
+      )
 
       Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
 
