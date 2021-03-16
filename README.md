@@ -116,7 +116,7 @@ In your browser, navigate to http://localhost:5000.
 * [Connor McKinnon](https://github.com/connormckinnon93)
 
 # Contributors
-A big Thank You to our those who helped make DVGA better.
+A big Thank You to the kind people who helped make DVGA better:
  * [Halfluke](https://github.com/halfluke)
 
 # Mentions
