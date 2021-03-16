@@ -35,6 +35,6 @@ def set_mode(mode):
   session['difficulty'] = mode
 
 def get_opname(operation):
-  if hasattr(operation, 'value'):
-    return operation.value
+  if hasattr(operation, 'name'):
+    return operation.name.value
   return ''

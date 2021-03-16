@@ -107,7 +107,7 @@ class UploadPaste(graphene.Mutation):
     result = helpers.save_file(filename, content)
     owner = Owner.query.filter_by(name='DVGAUser').first()
 
-    paste_obj = Paste.create_paste(
+    Paste.create_paste(
       title='Imported Paste from File - {}'.format(helpers.generate_uuid()),
       content=content, public=False, burn=False,
       owner_id=owner.id, owner=owner, ip_addr=request.remote_addr,
@@ -132,7 +132,7 @@ class ImportPaste(graphene.Mutation):
     cmd = helpers.run_cmd(f'curl --insecure {url}')
 
     owner = Owner.query.filter_by(name='DVGAUser').first()
-    paste_obj = Paste.create_paste(
+    Paste.create_paste(
         title='Imported Paste from URL - {}'.format(helpers.generate_uuid()),
         content=cmd, public=False, burn=False,
         owner_id=owner.id, owner=owner, ip_addr=request.remote_addr,
