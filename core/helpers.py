@@ -37,5 +37,5 @@ def set_mode(mode):
 def get_opname(operation):
   try:
     return operation.name.value
-  except graphql.error.located_error.GraphQLLocatedError: 
+  except:
     return "No Operation"
