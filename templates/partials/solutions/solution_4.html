@@ -1,61 +1,48 @@
 <!-- Start -->
-<h3 style="color:purple" id="info-introspection"><b>Information Disclosure :: GraphQL Introspection</b></h3>
+<h3 style="color:purple" id="dos-fielddup"><b>Denial of Service :: Field Duplication Attack</b></h3>
 <hr />
 <h5>Problem Statement</h5>
-<p>GraphQL Introspection is a special query that uses the <code>__schema</code> field to interrogate GraphQL for its schema.</p>
+<p>Various GraphQL implementation do not bother de-duplicating repeating fields in GraphQL, allowing the user to multiply the same requested fields as they wish.</p>
+<p>This causes extra load on the server to return the same fields over and over again.</p>
+<p>There are a few ways in which this issue can be mitigated:</p>
 <p>
-  Introspection in itself is not a weakness, but a feature. However, if it is made available, it can be used and abused by attackers seeking information about your GraphQL implementation, such as what queries or mutations exist.
+<ul>
+  <li>Field De-Duplication</li>
+  <li>Query Cost Analysis</li>
+</ul>
 </p>
-<p>
-  It is recommended to disable introspection in production to avoid data leakages.
-</p>
-<p>
-  Note: If introspection query is disabled, attackers may fall back to using the <b>Field Suggestion</b> feature to understand what queries and fields are supported by your GraphQL. Refer to <a href="#info-suggestions">Information Disclosure :: GraphQL Field Suggestions</a>attack for more information.
-</p>
-
+<p><b>Field De-Duplication</b> can be achieved by using a middleware function to traverse the schema and remove any duplications, or simply analyze repeating patterns in order to reject the query.<br></p>
+<p><b>Query Cost Analysis</b> will be beneficial against these attacks, since each field will ultimately result in increased cost.</p>
 <h5>Resources</h5>
 <ul>
-  <li>
-    <a href="https://graphql.org/learn/introspection/" target="_blank">
-      <i class="fa fa-newspaper"></i> GraphQL - Introspection
-    </a>
-  </li>
-  <li>
-    <a href="https://graphql-ruby.org/schema/introspection" target="_blank">
-      <i class="fa fa-newspaper"></i> Ruby GraphQL - Introspection Guide
-    </a>
-  </li>
-  <li>
-    <a href="https://github.com/szki/shapeshifter" target="_blank">
-      <i class="fa fa-shield-alt"></i> ShapeShifter - GQL Security tool for Schema Extraction
-    </a>
-  </li>
-  <li>
-    <a href="https://github.com/nikitastupin/clairvoyance" target="_blank">
-      <i class="fa fa-shield-alt"></i> Clairvoyance - GraphQL Schema Enumeration Discovery Tool
-    </a>
-  </li>
+    <li>
+      <a href="https://graphql-ruby.org/queries/complexity_and_depth.html" target="_blank">
+        <i class="fa fa-newspaper"></i> Ruby GraphQL - Complexity and Depth
+      </a>
+    </li>
 </ul>
-<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-info-introspection')">Show</button></h5>
-<div id="sol-info-introspection" style="display:none">
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-dos-fielddup')">Show</button></h5>
+<div id="sol-dos-fielddup" style="display:none">
   <pre class="bash">
-    # Beginner mode
+# Beginner mode
 
-    # Navigate to http://host/igraphql
-    # Run Introspection query
-
-    query {
-      __schema {
-        queryType { name }
-        mutationType { name }
-        subscriptionType { name }
+query {
+  pastes {
+    owner {
+      pastes {
+        edges {
+          node {
+            ipAddr # 1
+            ipAddr # 2
+            ipAddr # 3
+            ipAddr # 4
+            ...
+            ipAddr # 10,000
+          }
+        }
       }
     }
-
-
-    # Expert mode
-
-    # Introspection is disabled, enumeration of fields and dynamic testing is required to understand the structure of the application.
-  </pre>
+  }
+}</pre>
 </div>
 <!-- End -->

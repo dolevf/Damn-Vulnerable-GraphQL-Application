@@ -1,36 +1,40 @@
 <!-- Start -->
-<h3 style="color:purple" id="info-igql"><b>Information Disclosure :: GraphQL Interface</b></h3>
+<h3 style="color:purple" id="dos-aliases"><b>Denial of Service :: Aliases based Attack</b></h3>
 <hr />
 <h5>Problem Statement</h5>
+<p>In GraphQL, it is possible to run multiple queries without needing to batch them together.</p>
+<p>If batching is disabled, you could build a query composed of multiple aliases calling the same query or mutation, if the server is not analyzing the cost of the query, it will be possible to overwhelm the server's resources by using expensive queries using aliases.</p>
 <p>
-  GraphQL has a an Integrated Development Environment named <code>GraphiQL</code> (note the <code>i</code>) that allows constructing queries in a friendly user interface.
+<ul>
+  <li>Query Middleware</li>
+  <li>Query Cost Analysis</li>
+</ul>
 </p>
-<p>
-  GraphiQL is usually found in paths such as: <code>/graphiql</code> or <code>__graphiql</code>, however, it can be in other places too. You can use this <a href="https://github.com/dolevf/nmap-graphql-introspection-nse/blob/6594cce7b590a7194641494ed33c018d9ecd6b89/graphql-introspection.nse#L47" target="_blank">Nmap NSE script</a> to enumerate GraphiQL endpoints.
-</p>
+<p><b>Query Middleware</b> is needed to identify the use of aliases in order to make a decision (reject/allow) based on your business logic.<br></p>
+<p><b>Query Cost Analysis</b> will be beneficial against these attacks, since each query will ultimately result in increased cost.</p>
 <h5>Resources</h5>
 <ul>
-  <li>
-    <a href="https://www.apollographql.com/docs/apollo-server/v1/graphiql/" target="_blank">
-      <i class="fa fa-newspaper"></i> Apollo GraphiQL
-    </a>
-  </li>
-  <li>
-    <a href="https://www.gatsbyjs.com/docs/how-to/querying-data/running-queries-with-graphiql/" target="_blank">
-      <i class="fa fa-newspaper"></i> Gatsby on GraphiQL
-    </a>
-  </li>
+    <li>
+      <a href="https://graphql.org/learn/queries/#aliases" target="_blank">
+        <i class="fa fa-newspaper"></i> GraphQL - Aliases
+      </a>
+    </li>
+    <li>
+      <a href="https://graphql-ruby.org/queries/complexity_and_depth.html" target="_blank">
+        <i class="fa fa-newspaper"></i> Ruby GraphQL - Complexity and Depth
+      </a>
+    </li>
 </ul>
-<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-info-igql')">Show</button></h5>
-<div id="sol-info-igql" style="display:none">
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-dos-aliases')">Show</button></h5>
+<div id="sol-dos-aliases" style="display:none">
   <pre class="bash">
-    # Beginner mode
+# Beginner mode
+# q1, q2 and q3 represent the aliases.
 
-    # Browse to http://host/graphiql
-
-    # Expert mode
-
-    # GraphiQL will be disabled.
-  </pre>
+query {
+  q1: systemUpdate
+  q2: systemUpdate
+  q3: systemUpdate
+}</pre>
 </div>
 <!-- End -->

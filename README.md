@@ -35,6 +35,8 @@ DVGA supports Beginner and Expert level game modes, which will change the exploi
   * Batch Query Attack
   * Deep Recursion Query Attack
   * Resource Intensive Query Attack
+  * Field Duplication Attack
+  * Aliases based Attack
 * **Information Disclosure**
   * GraphQL Introspection
   * GraphiQL Interface

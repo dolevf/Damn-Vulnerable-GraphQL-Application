@@ -30,6 +30,14 @@
       <p>If you are interacting with DVGA programmatically, you can set a specific game mode (such as Beginner, or Expert) by passing the HTTP Request Header <code>X-DVGA-MODE</code> with either <code>Beginner</code> or <code>Expert</code> as values.</p>
       <p>If the Header is not set, DVGA will default to <u>Easy mode</u>.</p>
       <br />
+      <h4>Difficulty Level Explanation</h4>
+      <h5>Beginner</h5>
+      <p>
+        DVGA's Beginner level is literally the default GraphQL implementation without any restrictions, security controls, or other protections. This is what you would get out of the box in most of the GraphQL implementations without hardening, with the addition of other custom vulnerabilities.
+      </p>
+      <h5>Hard</h5>
+      <p>DVGA's Hard level is a hardened GraphQL implementation which contains a few security controls against malicious queries, such as Cost Based Analysis, Query Depth, Field De-dup checks, etc.</p>
+      <br />
       <h4>GraphQL Resources</h4>
       <p>
         To learn about GraphQL, and common GraphQL weaknesses and attacks, the following

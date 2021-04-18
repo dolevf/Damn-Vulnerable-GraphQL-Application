@@ -14,7 +14,6 @@ def simulate_load():
     if count > limit:
       return
 
-
 def is_port(port):
   if isinstance(port, int):
     if port >= 0 and port <= 65535:
@@ -56,6 +55,12 @@ def on_denylist(query):
     return True
   return False
 
+def operation_name_allowed(operation_name):
+  opnames_allowed = ['CreatePaste', 'getPastes', 'UploadPaste', 'ImportPaste']
+  if operation_name in opnames_allowed:
+    return True
+  return False
+
 def depth_exceeded(depth):
   depth_allowed = config.MAX_DEPTH
   if depth > depth_allowed:
@@ -65,16 +70,16 @@ def depth_exceeded(depth):
 def cost_exceeded(qry_fields):
   total_cost_allowed = config.MAX_COST
   total_query_cost   = 0
-  
+
   field_cost = {
     'systemUpdate':10,
   }
-  
+
   for field in qry_fields:
     if field in field_cost:
       total_query_cost += field_cost[field]
-  
+
   if total_query_cost > total_cost_allowed:
     return True
-  
+
   return False

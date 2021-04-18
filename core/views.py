@@ -202,7 +202,7 @@ class Query(graphene.ObjectType):
 @app.route('/')
 def index():
   resp = make_response(render_template('index.html'))
-  resp.set_cookie("env", "Z3JhcGhpcWw6ZGlzYWJsZQ==")
+  resp.set_cookie("env", "graphiql:disable")
   return resp
 
 @app.route('/about')
@@ -284,7 +284,8 @@ gql_middlew = [
   middleware.CostProtectionMiddleware(),
   middleware.DepthProtectionMiddleware(),
   middleware.IntrospectionMiddleware(),
-  middleware.processMiddleware()
+  middleware.processMiddleware(),
+  middleware.OpNameProtectionMiddleware()
 ]
 
 igql_middlew = [

