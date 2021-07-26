@@ -1,0 +1,26 @@
+{% extends 'partials/base.html' %}
+
+{% block header %}
+    {% include 'partials/base_header.html' %}
+{% endblock %}
+
+{% block content %}
+<!-- Page Content -->
+<div id="page-content-wrapper">
+    {% include 'partials/navbar.html' %}
+    <div class="container-fluid">
+        <h1 class="mt-4">Forbidden</h1>
+        <hr>
+        <div class="row">
+            <div class="col-md-12">
+               Your current role is not allowed access to this feature.
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /#page-content-wrapper -->
+{% endblock %}
+
+{% block scripts %}
+    {% include 'partials/base_scripts.html' %}
+{% endblock %}

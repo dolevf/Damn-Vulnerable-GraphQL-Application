@@ -1,268 +1,30 @@
 {% extends 'partials/base.html' %}
 
 {% block header %}
-  {% include 'partials/base_header.html' %}
+    {% include 'partials/base_header.html' %}
 {% endblock %}
 
 {% block content %}
-  <!-- Page Content -->
-  <div id="page-content-wrapper">
+<!-- Page Content -->
+<div id="page-content-wrapper">
     {% include 'partials/navbar.html' %}
     <div class="container-fluid">
-    <div id="result"></div>
-      {% if page == "create_paste" %}
+        <div id="result"></div>
+        {% if page == "create_paste" %}
         {% include 'partials/pastes/create_paste.html' %}
-      {% elif page == "import_paste" %}
+        {% elif page == "import_paste" %}
         {% include 'partials/pastes/import_paste.html' %}
-      {% elif page == "upload_paste" %}
+        {% elif page == "upload_paste" %}
         {% include 'partials/pastes/upload_paste.html' %}
-      {% elif page == "my_pastes" %}
+        {% elif page == "my_pastes" %}
         {% include 'partials/pastes/my_pastes.html' %}
-      {% elif page == "public_pastes" %}
+        {% elif page == "public_pastes" %}
         {% include 'partials/pastes/public_pastes.html' %}
-      {% endif %}
+        {% endif %}
     </div>
-  </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
-  {% include 'partials/base_scripts.html' %}
-  <script>
-    function burnSelect() {
-      var isChecked = document.getElementById("burn").checked;
-      document.getElementById("visibility").disabled = isChecked;
-    }
-
-    function get_pastes(public=false) {
-      var query = `query getPastes {
-        pastes(public:${public}) {
-          id
-          title
-          content
-          ipAddr
-          userAgent
-          owner {
-            name
-          }
-          }
-        }`
-
-      fetch('/graphql', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-          query
-        })
-      }).then(
-        r => r.json()
-      ).then(
-        (object) => {
-          for(var i = 0; i < object['data']['pastes'].length; i++) {
-            var obj = object.data.pastes[i];
-            var title = obj.title
-            var content = obj.content
-            var public = obj.public
-            var owner = obj.owner.name
-            var ip_addr = obj.ipAddr
-            var uas = obj.userAgent
-
-            $("#gallery").append(
-              `<div class="card-header">
-                <i class="fa fa-paste"></i> &nbsp; ${title}
-              </div>
-              <div class="card-body">
-                <p class="card-text">
-                <pre>${content}</pre>
-                <br><hr />
-                <i class="fa fa-user"></i>
-                <i><small><b>${owner}</b><br>- ${ip_addr}<br>- (${uas})</small></i></p>
-              </div>`
-            )
-          }
-        }
-      );
-    }
-
-    function create_paste(){
-      var title = document.getElementById('title').value
-      var content = document.getElementById('content').value
-      var visibility = document.getElementById('visibility').value
-      var public = false
-      var burn = document.getElementById('burn').checked
-
-      if(visibility == "Public") {
-        public = true;
-      }
-
-      var query = `mutation CreatePaste ($title: String!, $content: String!, $public: Boolean!, $burn: Boolean!) {
-        createPaste(title:$title, content:$content, public:$public, burn: $burn) {
-           paste {
-             pId
-             content
-             title
-             burn
-           }
-          }
-        }`
-
-      fetch('/graphql', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-          query,
-          variables: { title, content, public, burn },
-        })
-      }).then(
-        r => r.json()
-      ).then(
-        (data => {
-          if (data.data.createPaste.paste.burn == true) {
-              var host = window.location.protocol + "//" + window.location.host;
-              var p_id = parseInt(data.data.createPaste.paste.pId)
-              url = host + `/graphql?query=query%20readAndBurn%20%7B%0A%20%20readAndBurn(pId%3A${p_id})%7B%0A%20%20%20%20title%0A%20%20%20%20content%0A%20%20%20%20burn%0A%20%20%7D%0A%7D%0A`
-              $("#result").append(
-                `<div class="alert alert-success">
-                <h4 class="alert-heading">Well done!</h4>
-                <p>Paste was created successfully</p>
-                <p>Here is your paste <a href="${url}">link</a></p>
-                </div>`
-              )
-            } else {
-              $("#result").append(
-                `<div class="alert alert-success">
-                <h4 class="alert-heading">Well done!</h4>
-                <p>Paste was created successfully</p>
-                </div>`
-              )
-            }
-          }
-        )
-      )
-    }
-
-    function import_paste() {
-      const url = document.getElementById('url').value;
-      const u = new URL(url);
-      const host = u.hostname;
-      const path = u.pathname;
-      const scheme = u.protocol.replace(':', '');
-      var port = u.port;
-
-      if(!port) {
-        if(scheme == 'http') {
-          port = 80
-        }
-        else if(scheme == 'https') {
-          port = 443
-        }
-        else {
-          port = 80
-        }
-      }
-
-      var query = `mutation ImportPaste ($host: String!, $port: Int!, $path: String!, $scheme: String!) {
-        importPaste(host: $host, port: $port, path: $path, scheme: $scheme) {
-          result
-        }
-      }`
-
-      fetch('/graphql', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-          query,
-          variables: {host, port, path, scheme}
-        })
-      }).then(
-        r => r.json()
-      ).then(
-        (data => {
-          if (data.data.importPaste != "error") {
-            $("#result").append(
-              `<div class="alert alert-success">
-              <h4 class="alert-heading">Success!</h4>
-              <p>Paste was imported successfully</p>
-              </div>`
-            )
-          } else {
-            $("#result").append(
-              `<div class="alert alert-danger">
-              <h4 class="alert-heading">Error!</h4>
-              <p>Paste failed to import.</p>
-              </div>`
-            )
-          }
-        })
-      )
-    }
-
-    function upload_paste() {
-      var reader = new FileReader();
-      var f = document.getElementById("pastefile").files;
-      var content = ''
-
-      reader.readAsText(f[0])
-
-      reader.onloadend = function () {
-        var filename = document.getElementById("pastefile").files[0].name
-        content = reader.result
-        var query = `mutation UploadPaste ($filename: String!, $content: String!) {
-          uploadPaste(filename: $filename, content:$content)
-          {
-            result
-          }
-        }`
-
-        fetch('/graphql', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json',
-                },
-                body: JSON.stringify({
-                  query,
-                  variables: {content, filename}
-                })
-        }).then(
-          r => r.json()
-        ).then(
-          (data => {
-            if (!data.hasOwnProperty('errors')) {
-              $("#result").append(
-                `<div class="alert alert-success">
-                <h4 class="alert-heading">Success!</h4>
-                <p>File was uploaded successfully</p>
-                </div>`
-              )
-            } else {
-              $("#result").append(
-                `<div class="alert alert-danger">
-                <h4 class="alert-heading">Error!</h4>
-                <p>Paste failed to import.</p>
-                </div>`
-              )
-            }
-          })
-        )
-      }
-    }
-
-    window.onload = function() {
-      var url = window.location.pathname;
-      if(url.match('/my_pastes')){
-        get_pastes(public=false);
-      } else if (url.match('/public_pastes')) {
-        get_pastes(public=true);
-      }
-    }
-  </script>
+    {% include 'partials/base_scripts.html' %}
 {% endblock %}

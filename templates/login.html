@@ -1,0 +1,32 @@
+{% extends 'partials/base.html' %}
+
+{% block header %}
+  {% include 'partials/base_header.html' %}
+{% endblock %}
+
+{% block content %}
+<!-- Page Content -->
+<div id="page-content-wrapper">
+    <div class="container-fluid center">
+        <h1 style="margin-top:150px;">Please login</h1>
+        <form action="/login" method="POST" class="col-md-4">
+            <div class="form-group">
+                <div class="input-group">
+                    <input type="text" name="username" class="form-control" placeholder="Username" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <input type="password" name="password" class="form-control" placeholder="Password">
+                </div>
+            </div>
+            <button class="btn btn-primary btn-block" type="submit">Log in</button>
+        </form>
+    </div>
+</div>
+<!-- /#page-content-wrapper -->
+{% endblock %}
+
+{% block scripts %}
+{% include 'partials/base_scripts.html' %}
+{% endblock %}

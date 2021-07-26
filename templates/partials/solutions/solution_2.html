@@ -4,7 +4,7 @@
 <h5>Problem Statement</h5>
 <p>In GraphQL, when types reference eachother, it is often possible to build a circular query that grows exponentially to a point it could bring the server down to its knees. Countermeasures such as <code>max_depth</code>                                    can help mitigate these types of attacks.</p>
 <p>The <code>max_depth</code> functionality acts as a safeguard, and defines how deep a query can get, ensuring deeply constructed queries will not be accepted by GraphQL.</p>
-<p>The application offers two types, namely <code>Owner</code> and <code>Paste</code>, which reference eachother (an owner has a paste, and a paste has an owner), allowing a recursive query to be executed successfully.
+<p>The application offers two types, namely <code>User</code> and <code>Paste</code>, which reference eachother (an user has a paste, and a paste has an user), allowing a recursive query to be executed successfully.
 <h5>Resources</h5>
 <ul>
   <li>
@@ -26,19 +26,19 @@
 
 query {
   pastes {
-    owner {
+    user {
       paste {
         edges {
           node {
-              owner {
+              user {
                 paste {
                   edges {
                     node {
-                      owner {
+                      user {
                         paste {
                           edges {
                             node {
-                              owner {
+                              user {
                                 id
                               }
                             }

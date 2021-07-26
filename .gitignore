@@ -142,3 +142,8 @@ dvga.db
 tests/
 tools/
 
+
+.vs/
+__pycache__/
+env/
+
