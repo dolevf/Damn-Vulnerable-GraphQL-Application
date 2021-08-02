@@ -66,7 +66,18 @@ def access_controlled_for(allowed_roles='user'):
                     print('prv claim empty or absent in the jwt token. Defaulting to "user" role')
                     user_roles = ['user']
                 except jwt.exceptions.InvalidSignatureError as err:
-                    return make_response(redirect('/'))
+                    rsp = make_response(redirect('/'))
+                    rsp.headers['WWW-Authenticate'] = 'Basic realm: Invalid JWT signature.'
+                    return rsp
+                except jwt.exceptions.ExpiredSignatureError as err:
+                    rsp = make_response(redirect('/'))
+                    rsp.headers['WWW-Authenticate'] = 'Basic realm: Expired JWT token.'
+                    return rsp
+                except jwt.exceptions.MissingRequiredClaimError as err:
+                    rsp = make_response(redirect('/'))
+                    rsp.headers['WWW-Authenticate'] = 'Basic realm: Missing JWT claim.'
+                    return rsp
+
             
             if not any(role in allowed_roles for role in user_roles):
                 return make_response(redirect('/forbidden'))
