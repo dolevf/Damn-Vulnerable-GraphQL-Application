@@ -31,7 +31,7 @@ def make_easy_token(request):
                     'exp': datetime.utcnow() + timedelta(seconds=120000), # Deliberately long
                     'prv': user.roles # Deliberately added to the token
                 },
-                app.secret_key
+                app.secret_key,
             )
 
 

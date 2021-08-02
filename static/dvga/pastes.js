@@ -24,12 +24,14 @@ function burnSelect() {
 }
 
 function getPastesByUsername(username) {
+    document.getElementById('gallery').innerHTML = ''
     var query = `query getPastesByUsername {
                             pastes(username:"${username}") {
                                 id
                                 title
                                 content
                                 ipAddr
+                                public
                                 userAgent
                                 user {
                                     username
@@ -50,19 +52,23 @@ function getPastesByUsername(username) {
         r => r.json()
     ).then(
         (object) => {
-            for (var i = 0; i < object['data']['pastes'].length; i++) {
-                var obj = object.data.pastes[i];
-                var id = atob(obj.id).split(':')[1]
-                var title = obj.title
-                var content = obj.content
-                var user = obj.user.username
-                var ip_addr = obj.ipAddr
-                var uas = obj.userAgent
+            var pastes = object['data']['pastes']
+            for (var i = 0; i < pastes.length; i++) {
+                var paste =   pastes[i];
+                var id =        atob(paste.id).split(':')[1]
+                var title =     paste.title
+                var content =   paste.content
+                var user =      paste.user.username
+                var public =    paste.public
+                var ip_addr =   paste.ipAddr
+                var uas =       paste.userAgent
 
-                $("#gallery").append(
-                    `<div class="card-header">
+                if (public) {
+                    $("#gallery").append(
+                        `<div class="card-header">
                         <i class="fa fa-paste"></i> &nbsp; ${title}
-                        <button id="paste-${id}" class="btn btn-primary btn-sm float-right" title="Moderators click here to make the paste private" onclick="demoderatePaste('${id}')">DeModerate</button>
+                        <span class="alert alert-warning float-right" style="height: 30px; line-height: 0px; margin-left:10px; border:1px solid #856404;">Public</span>
+                        <button id="paste-${id}" class="btn btn-primary btn-sm float-right" style="height: 30px; line-height: 0px;" title="Moderators click here to make the paste private" onclick="moderatePaste('${id}', true)">Moderate</button>
                     </div>
                     <div class="card-body">
                         <p class="card-text">
@@ -72,13 +78,33 @@ function getPastesByUsername(username) {
                             <i><small><b>${user}</b><br>- ${ip_addr}<br>- (${uas})</small></i>
                         </p>
                     </div>`
-                )
+                    )
+                }
+                else {
+                    $("#gallery").append(
+                        `<div class="card-header">
+                        <i class="fa fa-paste"></i> &nbsp; ${title}
+                        <span class="alert alert-info float-right" style="height: 30px; line-height: 0px; margin-left:10px; margin-left:10px; border:1px solid #0c5460">Private</span>
+                        <button id="paste-${id}" class="btn btn-primary btn-sm float-right" style="height: 30px; line-height: 0px;" title="Moderators click here to make the paste public" onclick="demoderatePaste('${id}', true)">DeModerate</button>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            <pre>${content}</pre>
+                            <br><hr />
+                            <i class="fa fa-user"></i>
+                            <i><small><b>${user}</b><br>- ${ip_addr}<br>- (${uas})</small></i>
+                        </p>
+                    </div>`         
+                    )
+                }
+
             }
         }
     );
 }
 
 function getPublicPastes() {
+    document.getElementById('gallery').innerHTML = ''
     var query = `query getPublicPastes {
                             publicPastes {
                                 id
@@ -104,19 +130,19 @@ function getPublicPastes() {
     }).then(
         r => r.json()
     ).then(
-        (object) => {
-            for (var i = 0; i < object['data']['publicPastes'].length; i++) {
-                var obj = object.data.publicPastes[i];
+        function (object){
+            var pastes = object['data']['publicPastes']
+            for (var i = 0; i < pastes.length; i++) {
+                var obj =   pastes[i];
                 var id =        atob(obj.id).split(':')[1]
                 var title =     obj.title
                 var content =   obj.content
                 var user =      obj.user.username
                 var ip_addr =   obj.ipAddr
                 var uas =       obj.userAgent
-
                 var moderation = ""
                 if (getUserRolesFromJWT().indexOf('moderator') > -1) {
-                    moderation = `<button id="paste-${id}" class="btn btn-primary btn-sm float-right" title="Moderators click here to make the paste private" onclick="moderatePaste('${id}')">Moderate</button>`
+                    moderation = `<button id="paste-${id}" class="btn btn-primary btn-sm float-right" title="Moderators click here to make this paste private" onclick="moderatePaste('${id}')">Moderate</button>`
                 }
                     
 
@@ -135,10 +161,16 @@ function getPublicPastes() {
                     </div>`
                 )
             }
+
+            return pastes
+                    
         }
     );
 }
-function moderatePaste(id) {
+
+
+function moderatePaste(id, my_pastes) {
+
     var query = `mutation ModeratePaste {
 	                 moderatePaste(id:${id}, visibility:false) {
   	                     ok
@@ -155,10 +187,18 @@ function moderatePaste(id) {
             query,
         })
     })
+
+    if (my_pastes == true) {
+        console.log('refreshing now ========================')
+        getPastesByUsername(getUsernameFromJWT())
+    } else {
+        getPublicPastes()
+    }
+    
     
 }
 
-function demoderatePaste(id) {
+function demoderatePaste(id, my_pastes) {
     var query = `mutation ModeratePaste {
 	                 moderatePaste(id:${id}, visibility:true) {
   	                     ok
@@ -175,7 +215,14 @@ function demoderatePaste(id) {
             query,
         })
     })
-    
+
+    if (my_pastes == true) {
+        console.log('refreshing now ======================== demoderate')
+        getPastesByUsername(getUsernameFromJWT())
+    } else {
+        getPublicPastes()
+    }
+
 }
 
 function parseJwt(token) {
@@ -187,7 +234,6 @@ function parseJwt(token) {
 
     return JSON.parse(jsonPayload);
 };
-
 
 function create_paste() {
     var title = document.getElementById('title').value

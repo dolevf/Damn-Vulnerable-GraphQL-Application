@@ -88,7 +88,7 @@ def login():
     if token:
         session['authenticated'] = True
         token = app.schema.execute(query).data['loginVerify']['accessToken']
-        rsp.set_cookie('dvga_jwt', token)    
+        rsp.set_cookie('dvga_jwt', token)
     else:
         rsp.headers['WWW-Authenticate'] = 'Basic realm: Authentication failure.'
     return rsp
