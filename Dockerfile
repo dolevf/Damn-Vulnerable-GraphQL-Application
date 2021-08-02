@@ -25,5 +25,5 @@ COPY stuffing.py /opt/dvga$VERSION_SUFFIX/
 
 RUN python setup.py
 
-EXPOSE 8000/tcp
+EXPOSE 5000/tcp
 CMD ["python3", "app.py"]
