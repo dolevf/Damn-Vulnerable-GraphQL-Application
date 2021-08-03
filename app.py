@@ -44,7 +44,7 @@ if __name__ == '__main__':
         DepthProtectionMiddleware(),
         IntrospectionMiddleware(),
         ProcessMiddleware(),
-        OpNameProtectionMiddleware()
+        OpNameProtectionMiddleware(),
     ]
 
     igql_middlew = [IGQLProtectionMiddleware()]

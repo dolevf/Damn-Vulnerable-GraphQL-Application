@@ -7,6 +7,8 @@ from .decorators import run_only_once
 
 
 # Middleware
+
+
 class DepthProtectionMiddleware(object):
     def resolve(self, next, root, info, **kwargs):
         if level_is_easy():

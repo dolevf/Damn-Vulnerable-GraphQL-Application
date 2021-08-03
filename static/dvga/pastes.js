@@ -44,6 +44,7 @@ function getPastesByUsername(username) {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
+            'Cache-Control': 'no-cache, no-store, max-age=0',
         },
         body: JSON.stringify({
             query
