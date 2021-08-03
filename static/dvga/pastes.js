@@ -23,7 +23,12 @@ function burnSelect() {
     document.getElementById("visibility").disabled = isChecked;
 }
 
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 function getPastesByUsername(username) {
+   
     document.getElementById('gallery').innerHTML = ''
     var query = `query getPastesByUsername {
                             pastes(username:"${username}") {
@@ -170,8 +175,8 @@ function getPublicPastes() {
 }
 
 
-function moderatePaste(id, my_pastes) {
-
+async function moderatePaste(id, my_pastes) {
+    await delay(500)
     var query = `mutation ModeratePaste {
 	                 moderatePaste(id:${id}, visibility:false) {
   	                     ok
@@ -199,14 +204,15 @@ function moderatePaste(id, my_pastes) {
     
 }
 
-function demoderatePaste(id, my_pastes) {
+async function demoderatePaste(id, my_pastes) {
+
     var query = `mutation ModeratePaste {
 	                 moderatePaste(id:${id}, visibility:true) {
   	                     ok
                      }
                  }`
 
-    fetch('/graphql', {
+    fetch('/graphql?nocache=' + (Math.random() + 1).toString(36).substring(7), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
