@@ -7,6 +7,20 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                <li class="nav-item active dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="difficulty" role="button" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-cubes"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="difficultyDropDown">
+                        <a class="dropdown-item" href="/difficulty/easy">
+                            Beginner {% if session['difficulty'] == "easy" %} <i class="fa fa-check"></i> {% endif %}
+                        </a>
+                        <a class="dropdown-item" href="/difficulty/hard">
+                            Expert (Hardened) {% if session['difficulty'] == "hard" %} <i class="fa fa-check"></i> {% endif %}
+                        </a>
+                    </div>
+                </li>
                 {% if session['difficulty'] == "easy" %}
                 <li class="nav-item active">
                     <div class="nav-link">
@@ -31,20 +45,6 @@
                     <a class="nav-link" href="mailto:dolev@lethalbit.com">
                         <i class="fa fa-envelope"></i>
                     </a>
-                </li>
-                <li class="nav-item active dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="difficulty" role="button" data-toggle="dropdown"
-                       aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-cubes"></i>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="difficultyDropDown">
-                        <a class="dropdown-item" href="/difficulty/easy">
-                            Beginner {% if session['difficulty'] == "easy" %} <i class="fa fa-check"></i> {% endif %}
-                        </a>
-                        <a class="dropdown-item" href="/difficulty/hard">
-                            Expert (Hardened) {% if session['difficulty'] == "hard" %} <i class="fa fa-check"></i> {% endif %}
-                        </a>
-                    </div>
                 </li>
                 <li class="nav-item active dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="helpDropDown" role="button" data-toggle="dropdown"
