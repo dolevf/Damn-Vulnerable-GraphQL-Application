@@ -119,12 +119,14 @@ class Query(graphene.ObjectType):
             return result_set
 
         elif level_is_hard:
-            username = 'user' # Removing the defaulting vulnerability
             query = PasteObject.get_query(info)
-            user = User.query.filter_by(username=username).first()
-            Audit.create_audit_entry(gqloperation=get_opname(info.operation))
-            # Removin SQL injection condition
-            return query.filter_by(public=True, burn=False, user_id=user.id).order_by(Paste.id.desc())
+            try:
+                user = User.query.filter_by(username=username).first()
+                Audit.create_audit_entry(gqloperation=get_opname(info.operation))
+                # Removin SQL injection condition
+                return query.filter_by(public=True, burn=False, user_id=user.id).order_by(Paste.id.desc())
+            except graphql.error.located_error.GraphQLLocatedError as err:
+                return None
 
     def resolve_paste(self, info, p_id):
         query = PasteObject.get_query(info)
