@@ -175,8 +175,7 @@ function getPublicPastes() {
 }
 
 
-async function moderatePaste(id, my_pastes) {
-    await delay(500)
+function moderatePaste(id, my_pastes) {
     var query = `mutation ModeratePaste {
 	                 moderatePaste(id:${id}, visibility:false) {
   	                     ok
@@ -195,7 +194,6 @@ async function moderatePaste(id, my_pastes) {
     })
 
     if (my_pastes == true) {
-        console.log('refreshing now ========================')
         getPastesByUsername(getUsernameFromJWT())
     } else {
         getPublicPastes()
@@ -204,15 +202,14 @@ async function moderatePaste(id, my_pastes) {
     
 }
 
-async function demoderatePaste(id, my_pastes) {
-
+function demoderatePaste(id, my_pastes) {
     var query = `mutation ModeratePaste {
 	                 moderatePaste(id:${id}, visibility:true) {
   	                     ok
                      }
                  }`
 
-    fetch('/graphql?nocache=' + (Math.random() + 1).toString(36).substring(7), {
+    fetch('/graphql', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -224,7 +221,6 @@ async function demoderatePaste(id, my_pastes) {
     })
 
     if (my_pastes == true) {
-        console.log('refreshing now ======================== demoderate')
         getPastesByUsername(getUsernameFromJWT())
     } else {
         getPublicPastes()

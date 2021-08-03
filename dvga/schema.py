@@ -95,6 +95,11 @@ class Query(graphene.ObjectType):
                    """
                 
             result_set = []
+            
+            
+            # Force update of all objects. Useful after repeated use of the moderate feature
+            db.session.flush()
+
             for r in db.engine.execute(query, username): 
                 # Deliberately rebuilding the related User object here 
                 # which introduces an access control vuln to the user's password
@@ -302,9 +307,10 @@ class ModeratePaste(graphene.Mutation):
         visibility = graphene.Boolean(required=True)
         
     def mutate(self, info, id, visibility):
-        udpated_paste = Paste.query.filter_by(id=id).first()
-        udpated_paste.public = visibility
+        updated_paste = Paste.query.filter_by(id=id).first()
+        updated_paste.public = visibility
         db.session.commit()
+        
         ok = True
         Audit.create_audit_entry(gqloperation=get_opname(info.operation))   
         return ModeratePaste(ok=True)
