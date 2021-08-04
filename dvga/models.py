@@ -5,11 +5,12 @@ from app import db
 # Models
 class User(db.Model):
     __tablename__ = 'users'
-    id =        db.Column(db.Integer,    primary_key=True)
-    username =  db.Column(db.String(20), unique=False, nullable=False)
-    password =  db.Column(db.String(20), nullable=False)
-    roles =     db.Column(db.String(30), default="user")
-    paste =     db.relationship('Paste', backref='User', lazy='dynamic')
+    id =        db.Column(db.Integer,       primary_key=True)
+    username =  db.Column(db.String(20),    unique=False, nullable=False)
+    password =  db.Column(db.String(20),    nullable=False)
+    email =     db.Column(db.String(100),   nullable=False)
+    roles =     db.Column(db.String(30),    default="user")
+    paste =     db.relationship('Paste',    backref='User', lazy='dynamic')
     
     @classmethod
     def create_user(cls, **kw):
@@ -46,9 +47,9 @@ class Paste(db.Model):
 
 class Audit(db.Model):
     __tablename__ = 'audits'
-    id =            db.Column(db.Integer, primary_key=True)
+    id =            db.Column(db.Integer,   primary_key=True)
     gqloperation =  db.Column(db.String)
-    timestamp =     db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    timestamp =     db.Column(db.DateTime,  default=datetime.datetime.utcnow)
 
     @classmethod
     def create_audit_entry(cls, **kw):

@@ -35,7 +35,7 @@ if __name__ == '__main__':
     from dvga.schema import *
     from dvga.routes import *
 
-    app.schema = graphene.Schema(query=Query, mutation=Mutations)
+    app.schema = graphene.Schema(query=Query, mutation=Mutations, )
     
     auth = GraphQLAuth(app)
 
@@ -67,6 +67,8 @@ if __name__ == '__main__':
                          batch=         True
                      )
     )
+
+
     app.run(debug=      config.WEB_DEBUG,
             host=       config.WEB_HOST,
             port=       config.WEB_PORT,

@@ -1,4 +1,10 @@
+import datetime
 import graphene
+import re
+
+from graphql.language import ast
+
+from graphene.types import Scalar
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from graphene_sqlalchemy import SQLAlchemyConnectionField
 
@@ -9,6 +15,7 @@ from flask import render_template
 from flask import redirect
 from flask import make_response
 from flask import session
+
 from flask_graphql import GraphQLView
 from flask_graphql_auth import AuthInfoField
 from flask_graphql_auth import GraphQLAuth
@@ -27,13 +34,36 @@ from .helpers import *
 from .models import *
 
 ##############################################################################
+# Custom Scalars
+##############################################################################
+
+class EmailScalar(Scalar):
+    email_regex = re.compile(r"^[a-zA-Z0-9.! #$%&'*+/=? ^_`{|}~-]+@[a-zA-Z0-9-]+(?:\. [a-zA-Z0-9-]+)*$")
+    @staticmethod
+    def serialize(value):
+        return value
+    @staticmethod
+    def parse_literal(node):
+        if isinstance(node, ast.StringValue):
+            return email_regex.search(node.value)
+    @staticmethod
+    def parse_value(value):
+        return email_regex.search(value)
+
+##############################################################################
 # Types
 ##############################################################################
 
 class UserObject(SQLAlchemyObjectType):
+    email = graphene.Field(EmailScalar())
     class Meta:
         model = User
         interfaces = (graphene.relay.Node, )
+
+    email = EmailScalar()
+
+    def resolve_extra_field(self, info):
+        return "hello!"
 
 class PasteObject(SQLAlchemyObjectType):
     p_id = graphene.String(source='id')
@@ -60,6 +90,9 @@ class Query(graphene.ObjectType):
                                          password=  graphene.String(), 
                                          cmd=       graphene.String()) 
 
+    def resolve_users(self, info):
+        return User.query.all()
+    
     def resolve_user(self, info, username):
         user = User.query.filter_by(username=username).first()
         Audit.create_audit_entry(gqloperation=get_opname(info.operation))

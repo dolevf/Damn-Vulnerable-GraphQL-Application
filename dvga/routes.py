@@ -43,6 +43,8 @@ def set_difficulty():
     else:
         if session.get('difficulty') == None:
             set_mode('easy')
+ 
+
 
 @app.route('/')
 def index():

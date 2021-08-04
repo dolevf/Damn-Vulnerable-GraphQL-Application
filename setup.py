@@ -31,10 +31,10 @@ def pump_db():
 
     # Users we want to make sure to have
     users = [
-                User(username="admin",   password='123456',  roles='user,moderator,admin'),
-                User(username="mak",     password='123456',  roles='user,moderator'),
-                User(username="bob",     password='123456',  roles='user'),
-                User(username="eva",     password='123456',  roles='user'),
+                User(username="admin",   password='123456',  roles='user,moderator,admin',  email="admin@dvga.com"),
+                User(username="mak",     password='123456',  roles='user,moderator',        email="mak@dvga.com"),
+                User(username="bob",     password='123456',  roles='user',                  email="bob@dvga.com"),
+                User(username="eva",     password='123456',  roles='user',                  email="eva@dvga.com"),
             ]  
     
     for u in users:
@@ -73,10 +73,12 @@ def pump_db():
     # Other users to fill up database
     stuffing_users = []
     for _ in range(0, 10):
+        username = random.choice(usernames)
         u = User(
                 username =  random.choice(usernames),
                 password =  random.choice(weak_passwords),
-                roles = 'user'
+                roles = 'user',
+                email = username + "@dvga.com",
             )
         stuffing_users.append(u)
         db.session.add(u)
