@@ -81,7 +81,9 @@ def access_controlled_for(allowed_roles='user'):
                     rsp = make_response(redirect('/'))
                     rsp.headers['WWW-Authenticate'] = 'Basic realm: Missing JWT claim.'
                     return rsp
-
+                except jwt.exceptions.DecodeError as err:
+                    print(err)
+                    print('====> Check if @token_required is put after @access_controlled_for. If yes, invert order.')
             
             if not any(role in allowed_roles for role in user_roles):
                 return make_response(redirect('/forbidden'))
