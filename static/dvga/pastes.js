@@ -1,30 +1,6 @@
-function getCookie(name) {
-    var cookieArr = document.cookie.split(";");
-    for (var i = 0; i < cookieArr.length; i++) {
-        var cookiePair = cookieArr[i].split("=");
-        if (name == cookiePair[0].trim()) {
-            return decodeURIComponent(cookiePair[1]);
-        }
-    }
-    return null;
-}
-
-
-function getUsernameFromJWT() {
-    return JSON.parse(atob(getCookie('dvga_jwt').split('.')[1]))['sub']
-}
-
-function getUserRolesFromJWT() {
-    return JSON.parse(atob(getCookie('dvga_jwt').split('.')[1]))['prv']
-}
-
 function burnSelect() {
     var isChecked = document.getElementById("burn").checked;
     document.getElementById("visibility").disabled = isChecked;
-}
-
-function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 function getPastesByUsername(username) {
@@ -228,15 +204,7 @@ function demoderatePaste(id, my_pastes) {
 
 }
 
-function parseJwt(token) {
-    var base64Url = token.split('.')[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
 
-    return JSON.parse(jsonPayload);
-};
 
 function create_paste() {
     var title = document.getElementById('title').value

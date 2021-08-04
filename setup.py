@@ -75,7 +75,7 @@ def pump_db():
     for _ in range(0, 10):
         username = random.choice(usernames)
         u = User(
-                username =  random.choice(usernames),
+                username =  username,
                 password =  random.choice(weak_passwords),
                 roles = 'user',
                 email = username + "@dvga.com",

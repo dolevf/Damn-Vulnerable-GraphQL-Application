@@ -36,6 +36,10 @@ def token_required(f):
 
         if 'Cookie' in request.headers:
             try:
+                # Deliberately using the server serssion to store the token although security
+                # authentication, authorization and the duration thereof should only be provided 
+                # by checking the token claims and its signature.
+
                 # Deliberately update the token in session on each call to this decorator
                 # This adds weird session fixation conditions 
                 session['jwt'] = request.headers.get('Cookie').split('=')[2] 

@@ -86,9 +86,9 @@ class Query(graphene.ObjectType):
     read_and_burn =      graphene.Field(PasteObject, p_id=      graphene.Int())
     system_update =      graphene.String()
     system_health =      graphene.String()
-    system_diagnostics = graphene.String(username=  graphene.String(), 
-                                         password=  graphene.String(), 
-                                         cmd=       graphene.String()) 
+    system_diagnostics = graphene.String(username=   graphene.String(), 
+                                         password=   graphene.String(), 
+                                         cmd=        graphene.String()) 
 
     def resolve_users(self, info):
         return User.query.all()

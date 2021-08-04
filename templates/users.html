@@ -1,0 +1,39 @@
+﻿{% extends 'partials/base.html' %}
+
+{% block header %}
+    {% include 'partials/base_header.html' %}
+{% endblock %}
+
+{% block content %}
+<div id="page-content-wrapper">
+    {% include 'partials/navbar.html' %}
+    <div class="container-fluid">
+        {% if msg %}
+        <div class="alert alert-info">
+            <h4 class="alert-heading">System Message</h4>
+            <p>{{msg}}</p>
+        </div>
+        {% endif %}
+        <h1 class="mt-4">Manage users</h1>
+
+        <hr class="mt-2 mb-5">
+    
+        <table class="table"  id="users_list">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Roles</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+        {% endblock %}
+
+        {% block scripts %}
+        {% include 'partials/base_scripts.html' %}
+        <script type="text/javascript" src="/static/dvga/users.js"></script>
+        {% endblock %}

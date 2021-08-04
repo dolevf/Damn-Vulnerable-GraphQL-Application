@@ -151,6 +151,14 @@ def my_paste():
 def public_paste():
     return render_template("paste.html", page="public_pastes")
 
+
+@app.route('/users')
+@token_required
+@access_controlled_for(allowed_roles='admin')
+def users():
+    return render_template("users.html", page="users")
+
+
 @app.route('/audit')
 @access_controlled_for(allowed_roles='user')
 @token_required
