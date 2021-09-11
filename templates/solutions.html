@@ -20,6 +20,17 @@
                 <p class="toc_title">Table of Contents</p>
                   <ul class="toc_list">
                     <li>
+                      <b>Reconnaissance</b>
+                      <ul>
+                        <li>
+                          <a href="#recon-detection">Detecting GraphQL</a>
+                        </li>
+                        <li>
+                          <a href="#recon-fingerprinting">Fingerprinting GraphQL</a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li>
                       <b>Denial of Service</b>
                       <ul>
                         <li>
@@ -124,14 +135,16 @@
                 <br>
                 <small style="color:grey"><i class="fa fa-info"></i> &nbsp; Some solutions include code snippets that are written in Python and use the requests library for HTTP requests.</small>
               </p>
-
-              <h3 style="color:purple"><b>GraphQL Fingerprinting</b></h3>
+              
+              <h3 style="color:purple"><b>Getting Started</b></h3>
+              <p>The first essential step in every security test is to gain a bit of insight into the technology the remote server is using. By knowing the technologies in use, you can start building up a plan how to attack the application or the underlying infrastructure.</p>
+              <p>For GraphQL, a tool called <a href="https://github.com/dolevf/graphw00f" target="_blank">graphw00f</a> exists. Let's explore how it can help us achieve detection and fingerprinting of GraphQL.</p>
+              <h3 style="color:purple" id="recon-detection"><b>Detecting GraphQL</b></h3>
               <hr />
-              <p>The first essential step in every security test is to gain a bit of insight into the technology the remote server is using. By knowing the technologies used, you can build up a plan how to attack the application or the underlying infrastructure.</p>
-              <p>For GraphQL, a tool called <a href="https://github.com/dolevf/graphw00f" target="_blank">graphw00f</a> exists which fingerprints GraphQL servers in order to determine the underlying implementation. By knowing what implementation it is, you can explore what security mechanisms likely exist or don't exist on the GraphQL server.</p>
-              <p>Point graphw00f at DVGA to figure out what technology it's running.</p>
-              <p><pre>
-$> python3 main.py -t http://dvga.example.local:5000/graphql
+              <p>Detecting where GraphQL lives is pretty trivial, there are common places where you would typically see a graphql endpoint. For example, <i>/graphql</i>, <i>/v1/graphql</i>, etc.</p>
+              <p>Point graphw00f at DVGA to figure out where GraphQL lives:</p>
+              <p><b><pre>
+$>  python3 graphw00f.py -d -t http://localhost:5000/graphql                 
                 +-------------------+                 
                 |     graphw00f     |                 
                 +-------------------+                 
@@ -148,10 +161,23 @@ $> python3 main.py -t http://dvga.example.local:5000/graphql
                     |   Node Z   |                      
                     +------------+    
 
-                graphw00f - v1.0.2 
+                graphw00f - v1.0.3 
           The fingerprinting tool for GraphQL
-            Dolev Farhi (dolev@lethalbit.com)
+           Dolev Farhi (dolev@lethalbit.com)
   
+Checking http://dvga.example.local:5000/graphql
+[*] Found GraphQL at http://dvga.example.local:5000/graphql
+[*] You can now try and fingerprint GraphQL using: graphw00f.py -t http://dvga.example.local:5000/graphql
+</pre></b>
+            </p>
+
+              <h3 style="color:purple" id="recon-fingerprinting"><b>Fingerprinting GraphQL</b></h3>
+              <hr />
+              <p>graphw00f can try and fingerprint GraphQL servers in order to determine the underlying implementation. By knowing what specific engine runs GraphQL, you can map what security mechanisms you may face during an assessment.</p>
+              <p>Point graphw00f at DVGA to figure out what technology it's running.</p>
+              <p><b><pre>
+$> python3 graphw00f.py -t http://dvga.example.local:5000/graphql -f
+                
 [*] Checking if GraphQL is available at http://dvga.example.local:5000/graphql...
 [*] Found GraphQL...
 [*] Attempting to fingerprint...
@@ -160,7 +186,7 @@ $> python3 main.py -t http://dvga.example.local:5000/graphql
 [!] Technologies: Python
 [!] Homepage: https://graphene-python.org
 [*] Completed.
-              </pre>
+              </pre></b>
             </p>
             <p>As you can see, DVGA runs graphene. Use the Attack Surface Matrix to see <a href="https://github.com/dolevf/graphw00f/blob/main/docs/graphene.md">how Graphene ships GrapQL by default from a security perspective</a>.</p>
               <br>
