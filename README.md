@@ -31,6 +31,9 @@ DVGA has numerous flaws, such as Injections, Code Executions, Bypasses, Denial o
 DVGA supports Beginner and Expert level game modes, which will change the exploitation difficulty.
 
 # Scenarios
+* **Reconnaissance**
+  * Discovering GraphQL
+  * Fingerprinting GraphQL
 * **Denial of Service**
   * Batch Query Attack
   * Deep Recursion Query Attack
