@@ -135,6 +135,8 @@ A big Thank You to the kind people who helped make DVGA better:
 * [Brakeing Security 2021-007](https://brakeingsecurity.com/2021-007-news-google-asking-for-oss-to-embrace-standards-insider-threat-at-yandex-vectr-discussion)
 * [Yes We Hack - How to Exploit GraphQL](https://blog.yeswehack.com/yeswerhackers/how-exploit-graphql-endpoint-bug-bounty/)
 * [GraphQL Editor](https://blog.graphqleditor.com/dvga)
+* [GraphQL Hacking (Portuguese)](https://www.youtube.com/watch?v=4gXOerUZ7fw)
+* [InQL GraphQL Scanner Demo](https://www.youtube.com/watch?v=KOCBeJmTs78)
                                                                                                                                               
 # Disclaimer
 DVGA is highly insecure, and as such, should not be deployed on internet facing servers. By default, the application is listening on 127.0.0.1 to avoid misconfigurations.
