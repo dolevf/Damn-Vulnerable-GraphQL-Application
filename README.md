@@ -80,9 +80,9 @@ See [requirements.txt](requirements.txt) for dependencies.
 `docker build -t dvga .`
 
 ### Create a container from the image
-`docker run -t -p 5000:5000 -e WEB_HOST=0.0.0.0 dvga`
+`docker run -t -p 5013:5013 -e WEB_HOST=0.0.0.0 dvga`
 
-In your browser, navigate to http://localhost:5000
+In your browser, navigate to http://localhost:5013
 
 Note: if you need the application to bind on a specific port (e.g. 8080), use **-e WEB_PORT=8080**.
 
@@ -91,9 +91,9 @@ Note: if you need the application to bind on a specific port (e.g. 8080), use **
 `docker pull dolevf/dvga`
 
 ### Create a container from the image
-`docker run -t -p 5000:5000 -e WEB_HOST=0.0.0.0 dolevf/dvga`
+`docker run -t -p 5013:5013 -e WEB_HOST=0.0.0.0 dolevf/dvga`
 
-In your browser, navigate to http://localhost:5000
+In your browser, navigate to http://localhost:5013
 
 ## Server
 ### Navigate to /opt
@@ -108,7 +108,7 @@ In your browser, navigate to http://localhost:5000
 ### Run application
 `python3 app.py`
 
-In your browser, navigate to http://localhost:5000.
+In your browser, navigate to http://localhost:5013.
 
 # Screenshots
 ![DVGA](https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application/blob/master/static/screenshots/index.png)

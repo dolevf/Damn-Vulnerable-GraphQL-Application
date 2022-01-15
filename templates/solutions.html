@@ -145,7 +145,7 @@
               <p>Detecting where GraphQL lives is pretty trivial, there are common places where you would typically see a graphql endpoint. For example, <i>/graphql</i>, <i>/v1/graphql</i>, etc.</p>
               <p>Point graphw00f at DVGA to figure out where GraphQL lives:</p>
               <p><b><pre>
-$>  python3 graphw00f.py -d -t http://localhost:5000/graphql                 
+$>  python3 graphw00f.py -d -t http://localhost:5013/graphql                 
                 +-------------------+                 
                 |     graphw00f     |                 
                 +-------------------+                 
@@ -166,9 +166,9 @@ $>  python3 graphw00f.py -d -t http://localhost:5000/graphql
           The fingerprinting tool for GraphQL
            Dolev Farhi (dolev@lethalbit.com)
   
-Checking http://dvga.example.local:5000/graphql
-[*] Found GraphQL at http://dvga.example.local:5000/graphql
-[*] You can now try and fingerprint GraphQL using: graphw00f.py -t http://dvga.example.local:5000/graphql
+Checking http://dvga.example.local:5013/graphql
+[*] Found GraphQL at http://dvga.example.local:5013/graphql
+[*] You can now try and fingerprint GraphQL using: graphw00f.py -t http://dvga.example.local:5013/graphql
 </pre></b>
             </p>
 
@@ -177,9 +177,9 @@ Checking http://dvga.example.local:5000/graphql
               <p>graphw00f can try and fingerprint GraphQL servers in order to determine the underlying implementation. By knowing what specific engine runs GraphQL, you can map what security mechanisms you may face during an assessment.</p>
               <p>Point graphw00f at DVGA to figure out what technology it's running.</p>
               <p><b><pre>
-$> python3 graphw00f.py -t http://dvga.example.local:5000/graphql -f
+$> python3 graphw00f.py -t http://dvga.example.local:5013/graphql -f
                 
-[*] Checking if GraphQL is available at http://dvga.example.local:5000/graphql...
+[*] Checking if GraphQL is available at http://dvga.example.local:5013/graphql...
 [*] Found GraphQL...
 [*] Attempting to fingerprint...
 [*] Discovered GraphQL Engine: (Graphene)
