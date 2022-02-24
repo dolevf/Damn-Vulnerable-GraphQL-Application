@@ -140,6 +140,9 @@ A big Thank You to the kind people who helped make DVGA better:
 * [H4ck3d - Security Conference 2021 (Spanish)](https://youtu.be/hg_kVoy-W1s)
 * [Christina Hasternath - GraphQLConf 2021](https://www.youtube.com/watch?v=tPO1jl0tCKg)
 * [Hacking APIs (Ch14) by Corey Ball - No Starch Press](https://nostarch.com/hacking-apis)
+* [Hacking Simplified Part #1](https://www.youtube.com/watch?v=w0QOAacuPgQ)
+* [Hacking Simplified Part #2](https://www.youtube.com/watch?v=YA-mL9Z8SNI)
+
                                                                                                                                               
 # Disclaimer
 DVGA is highly insecure, and as such, should not be deployed on internet facing servers. By default, the application is listening on 127.0.0.1 to avoid misconfigurations.
