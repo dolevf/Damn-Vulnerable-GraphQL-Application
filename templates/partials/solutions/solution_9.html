@@ -26,7 +26,9 @@
 
 # Any arbitrary host and ports can be used to make an outbound HTTP request
 mutation {
-  importPaste(host:"localhost", port:57130, path:"/", scheme:"http")
+  importPaste(host:"localhost", port:57130, path:"/", scheme:"http") {
+    result
+  }
 }</pre>
 </div>
 <!-- End -->

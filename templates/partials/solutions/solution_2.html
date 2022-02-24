@@ -27,22 +27,17 @@
 query {
   pastes {
     owner {
-      paste {
-        edges {
-          node {
-              owner {
-                paste {
-                  edges {
-                    node {
-                      owner {
-                        paste {
-                          edges {
-                            node {
-                              owner {
-                                id
-                              }
-                            }
-                          }
+      pastes {
+        owner {
+          pastes {
+            owner {
+              pastes {
+                owner {
+                  pastes {
+                    owner {
+                      pastes {
+                        owner {
+                          name
                         }
                       }
                     }
@@ -55,6 +50,7 @@ query {
       }
     }
   }
+}
 
 # Expert mode
 

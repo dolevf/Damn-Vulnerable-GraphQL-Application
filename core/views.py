@@ -2,11 +2,8 @@ import graphene
 from db.solutions import solutions as list_of_solutions
 
 from flask import (
-  Flask,
   request,
-  jsonify,
   render_template,
-  redirect,
   make_response,
   session
 )
@@ -14,8 +11,7 @@ from flask import (
 from flask_graphql import GraphQLView
 
 from graphene_sqlalchemy import (
-  SQLAlchemyObjectType,
-  SQLAlchemyConnectionField
+  SQLAlchemyObjectType
 )
 
 from app import app, db
@@ -39,19 +35,16 @@ from version import VERSION
 class UserObject(SQLAlchemyObjectType):
   class Meta:
     model = User
-    interfaces = (graphene.relay.Node, )
 
 class PasteObject(SQLAlchemyObjectType):
   p_id = graphene.String(source='id')
   class Meta:
     model = Paste
-    interfaces = (graphene.relay.Node, )
 
 class OwnerObject(SQLAlchemyObjectType):
   class Meta:
     model = Owner
-    interfaces = (graphene.relay.Node, )
-
+    
 class CreatePaste(graphene.Mutation):
     title = graphene.String()
     content = graphene.String()
@@ -150,7 +143,6 @@ class Mutations(graphene.ObjectType):
   import_paste = ImportPaste.Field()
 
 class Query(graphene.ObjectType):
-  node = graphene.relay.Node.Field()
   pastes = graphene.List(PasteObject, public=graphene.Boolean())
   paste = graphene.Field(PasteObject, p_id=graphene.String())
   system_update = graphene.String()

@@ -25,7 +25,7 @@ class Owner(db.Model):
   __tablename__ = 'owners'
   id = db.Column(db.Integer, primary_key=True)
   name = db.Column(db.String)
-  paste = db.relationship('Paste', backref='Owner', lazy='dynamic')
+  paste = db.relationship('Paste', lazy='dynamic')
 
 class Paste(db.Model):
   __tablename__ = 'pastes'
