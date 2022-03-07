@@ -61,7 +61,7 @@ DVGA supports Beginner and Expert level game modes, which will change the exploi
 
 # Prerequisites
 The following Python3 libraries are required:
-* Python3
+* Python3 (3.6+)
 * Flask
 * Flask-SQLAlchemy
 * Graphene
