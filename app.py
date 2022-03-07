@@ -1,4 +1,6 @@
 import config
+import sys
+
 from os import urandom
 from core.helpers import initialize
 from flask import Flask
@@ -13,6 +15,7 @@ app.config["UPLOAD_FOLDER"] = config.WEB_UPLOADDIR
 db = SQLAlchemy(app)
 
 if __name__ == '__main__':
+  sys.setrecursionlimit(100000)
   initialize()
   from core.views import *
   app.run(debug = config.WEB_DEBUG,
