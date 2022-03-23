@@ -150,7 +150,7 @@ class Query(graphene.ObjectType):
   system_health = graphene.String()
   read_and_burn = graphene.Field(PasteObject, p_id=graphene.Int())
 
-  def resolve_pastes(self, info, public=False, limit=5):
+  def resolve_pastes(self, info, public=False, limit=1000):
     query = PasteObject.get_query(info)
     Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
     return query.filter_by(public=public, burn=False).order_by(Paste.id.desc()).limit(limit)
