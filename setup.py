@@ -7,7 +7,7 @@ import random
 from ipaddress import IPv4Network
 
 from app import db
-from core.models import Paste, Owner, User, Audit
+from core.models import Paste, Owner, User
 
 from db.agents import agents
 from db.owners import owners
@@ -59,7 +59,6 @@ def pump_db():
   db.create_all()
   admin = User(username="admin", password=random_password())
   owner = Owner(name='DVGAUser')
-  audit = Audit()
   paste = Paste()
   paste.title = random_title()
   paste.content = "My First Paste"
@@ -68,11 +67,9 @@ def pump_db():
   paste.owner = owner
   paste.ip_addr = '127.0.0.1'
   paste.user_agent = 'User-Agent not set'
-  audit.gqloperation = 'CreatePaste'
   db.session.add(admin)
   db.session.add(owner)
   db.session.add(paste)
-  db.session.add(audit)
 
   for _ in range(0, 10 ):
     owner = Owner(name=random_owner())

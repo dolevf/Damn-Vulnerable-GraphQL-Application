@@ -20,6 +20,7 @@
               <th scope="col">#</th>
               <th scope="col">Name</th>
               <th scope="col">GraphQL Operation</th>
+              <th scope="col">GraphQL Query</th>
               <th scope="col">Date</th>
             </tr>
           </thead>
@@ -29,6 +30,7 @@
               <th scope="row">{{loop.index}}. </th>
               <td>DVGAUser</td>
               <td>{{i.gqloperation}}</td>
+              <td>{{i.gqlquery}}</td>
               <td>{{i.timestamp.strftime('%Y-%m-%d %H:%M:%S')}}</td>
             </tr>
           </tbody>

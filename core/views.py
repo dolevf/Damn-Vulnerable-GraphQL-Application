@@ -1,4 +1,6 @@
 import graphene
+
+from core.directives import GraphQLNetworkDirective
 from db.solutions import solutions as list_of_solutions
 
 from flask import (
@@ -37,9 +39,16 @@ class UserObject(SQLAlchemyObjectType):
     model = User
 
 class PasteObject(SQLAlchemyObjectType):
-  p_id = graphene.String(source='id')
   class Meta:
     model = Paste
+  
+  def resolve_ip_addr(self, info):
+    for field_ast in info.field_asts:
+      for i in field_ast.directives:
+        if i.name.value == 'show_network':
+          if i.arguments[0].name.value == 'style':
+            return security.get_network(self.ip_addr, style=i.arguments[0].value.value)
+    return self.ip_addr
 
 class OwnerObject(SQLAlchemyObjectType):
   class Meta:
@@ -68,23 +77,27 @@ class CreatePaste(graphene.Mutation):
         user_agent=request.headers.get('User-Agent', '')
       )
 
-      Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
+      Audit.create_audit_entry(info)
 
       return CreatePaste(paste=paste_obj)
 
 class DeletePaste(graphene.Mutation):
-  ok = graphene.Boolean()
+  result = graphene.Boolean()
 
   class Arguments:
-    title = graphene.String()
+    id = graphene.Int()
 
-  def mutate(self, info, title):
-    Paste.query.filter_by(title=title).delete()
-    db.session.commit()
 
-    Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
+  def mutate(self, info, id):
+    result = False
+    
+    if Paste.query.filter_by(id=id).delete():
+      result = True
+      db.session.commit() 
 
-    return DeletePaste(ok=True)
+    Audit.create_audit_entry(info)
+
+    return DeletePaste(result=result)
 
 class UploadPaste(graphene.Mutation):
   content = graphene.String()
@@ -107,7 +120,7 @@ class UploadPaste(graphene.Mutation):
       user_agent=request.headers.get('User-Agent', '')
     )
 
-    Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
+    Audit.create_audit_entry(info)
 
     return UploadPaste(result=result)
 
@@ -132,7 +145,7 @@ class ImportPaste(graphene.Mutation):
         user_agent=request.headers.get('User-Agent', '')
     )
 
-    Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
+    Audit.create_audit_entry(info)
 
     return ImportPaste(result=cmd)
 
@@ -144,32 +157,32 @@ class Mutations(graphene.ObjectType):
 
 class Query(graphene.ObjectType):
   pastes = graphene.List(PasteObject, public=graphene.Boolean(), limit=graphene.Int())
-  paste = graphene.Field(PasteObject, p_id=graphene.String())
+  paste = graphene.Field(PasteObject, id=graphene.Int())
   system_update = graphene.String()
   system_diagnostics = graphene.String(username=graphene.String(), password=graphene.String(), cmd=graphene.String())
   system_health = graphene.String()
-  read_and_burn = graphene.Field(PasteObject, p_id=graphene.Int())
+  read_and_burn = graphene.Field(PasteObject, id=graphene.Int())
 
   def resolve_pastes(self, info, public=False, limit=1000):
     query = PasteObject.get_query(info)
-    Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
+    Audit.create_audit_entry(info)
     return query.filter_by(public=public, burn=False).order_by(Paste.id.desc()).limit(limit)
 
-  def resolve_paste(self, info, p_id):
+  def resolve_paste(self, info, id):
     query = PasteObject.get_query(info)
-    Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
-    return query.filter_by(id=p_id, burn=False).first()
+    Audit.create_audit_entry(info)
+    return query.filter_by(id=id, burn=False).first()
 
   def resolve_system_update(self, info):
     security.simulate_load()
-    Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
+    Audit.create_audit_entry(info)
     return 'no updates available'
 
   def resolve_system_diagnostics(self, info, username, password, cmd='whoami'):
     q = User.query.filter_by(username='admin').first()
     real_passw = q.password
     res, msg = security.check_creds(username, password, real_passw)
-    Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
+    Audit.create_audit_entry(info)
     if res:
       output = f'{cmd}: command not found'
       if security.allowed_cmds(cmd):
@@ -177,15 +190,15 @@ class Query(graphene.ObjectType):
       return output
     return msg
 
-  def resolve_read_and_burn(self, info, p_id):
-    result = Paste.query.filter_by(id=p_id, burn=True).first()
-    Paste.query.filter_by(id=p_id, burn=True).delete()
+  def resolve_read_and_burn(self, info, id):
+    result = Paste.query.filter_by(id=id, burn=True).first()
+    Paste.query.filter_by(id=id, burn=True).delete()
     db.session.commit()
-    Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
+    Audit.create_audit_entry(info)
     return result
 
   def resolve_system_health(self, info):
-    Audit.create_audit_entry(gqloperation=helpers.get_opname(info.operation))
+    Audit.create_audit_entry(info)
     return 'System Load: {}'.format(
       helpers.run_cmd("uptime | awk '{print $10, $11, $12}'")
     )
@@ -230,7 +243,6 @@ def audit():
   audit = Audit.query.all()
   return render_template("audit.html", audit=audit)
 
-
 @app.route('/start_over')
 def start_over():
   msg = "Restored to default state."
@@ -270,7 +282,7 @@ def set_difficulty():
     if session.get('difficulty') == None:
       helpers.set_mode('easy')
 
-schema = graphene.Schema(query=Query, mutation = Mutations)
+schema = graphene.Schema(query=Query, mutation=Mutations, directives=[GraphQLNetworkDirective])
 
 gql_middlew = [
   middleware.CostProtectionMiddleware(),
@@ -295,8 +307,7 @@ app.add_url_rule('/graphiql', view_func=GraphQLView.as_view(
   'graphiql',
   schema = schema,
   graphiql = True,
-  middleware = igql_middlew,
-  batch=True
+  middleware = igql_middlew
 ))
 
 

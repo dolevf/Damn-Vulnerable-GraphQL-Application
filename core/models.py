@@ -1,5 +1,7 @@
 import datetime
+
 from app import db
+from core import helpers
 
 # Models
 class User(db.Model):
@@ -12,11 +14,18 @@ class Audit(db.Model):
   __tablename__ = 'audits'
   id = db.Column(db.Integer, primary_key=True)
   gqloperation = db.Column(db.String)
+  gqlquery = db.Column(db.String)
   timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
   @classmethod
-  def create_audit_entry(cls, **kw):
-    obj = cls(**kw)
+  def create_audit_entry(cls, info):
+    gql_operation = helpers.get_opname(info.operation)
+    gql_query = '{}'
+    
+    if info.context.json:
+      gql_query = info.context.json.get("query")
+    
+    obj = cls(**{"gqloperation":gql_operation, "gqlquery":gql_query})
     db.session.add(obj)
     db.session.commit()
     return obj
@@ -48,3 +57,4 @@ class Paste(db.Model):
     db.session.add(obj)
     db.session.commit()
     return obj
+
