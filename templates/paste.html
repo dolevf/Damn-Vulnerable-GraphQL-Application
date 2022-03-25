@@ -100,7 +100,7 @@
       var query = `mutation CreatePaste ($title: String!, $content: String!, $public: Boolean!, $burn: Boolean!) {
         createPaste(title:$title, content:$content, public:$public, burn: $burn) {
            paste {
-             pId
+             id
              content
              title
              burn
@@ -124,8 +124,8 @@
         (data => {
           if (data.data.createPaste.paste.burn == true) {
               var host = window.location.protocol + "//" + window.location.host;
-              var p_id = parseInt(data.data.createPaste.paste.pId)
-              url = host + `/graphql?query=query%20readAndBurn%20%7B%0A%20%20readAndBurn(pId%3A${p_id})%7B%0A%20%20%20%20title%0A%20%20%20%20content%0A%20%20%20%20burn%0A%20%20%7D%0A%7D%0A`
+              var id = parseInt(data.data.createPaste.paste.id)
+              url = host + `/graphql?query=query%20readAndBurn%20%7B%0A%20%20readAndBurn(id %3A${id})%7B%0A%20%20%20%20title%0A%20%20%20%20content%0A%20%20%20%20burn%0A%20%20%7D%0A%7D%0A`
               $("#result").append(
                 `<div class="alert alert-success">
                 <h4 class="alert-heading">Well done!</h4>
