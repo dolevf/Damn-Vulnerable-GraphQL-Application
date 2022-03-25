@@ -1,6 +1,6 @@
 import graphene
 
-from core.directives import GraphQLNetworkDirective
+from core.directives import *
 from db.solutions import solutions as list_of_solutions
 
 from flask import (
@@ -55,11 +55,7 @@ class OwnerObject(SQLAlchemyObjectType):
     model = Owner
     
 class CreatePaste(graphene.Mutation):
-    title = graphene.String()
-    content = graphene.String()
-    public = graphene.Boolean()
     paste = graphene.Field(lambda:PasteObject)
-    burn = graphene.Boolean()
 
     class Arguments:
       title = graphene.String()
@@ -157,7 +153,7 @@ class Mutations(graphene.ObjectType):
 
 class Query(graphene.ObjectType):
   pastes = graphene.List(PasteObject, public=graphene.Boolean(), limit=graphene.Int())
-  paste = graphene.Field(PasteObject, id=graphene.Int())
+  paste = graphene.Field(PasteObject, id=graphene.Int(), title=graphene.String())
   system_update = graphene.String()
   system_diagnostics = graphene.String(username=graphene.String(), password=graphene.String(), cmd=graphene.String())
   system_health = graphene.String()
@@ -168,10 +164,14 @@ class Query(graphene.ObjectType):
     Audit.create_audit_entry(info)
     return query.filter_by(public=public, burn=False).order_by(Paste.id.desc()).limit(limit)
 
-  def resolve_paste(self, info, id):
+  def resolve_paste(self, info, id=None, title=None):
     query = PasteObject.get_query(info)
     Audit.create_audit_entry(info)
+    if title:
+      return query.filter_by(title=title, burn=False).first()
+    
     return query.filter_by(id=id, burn=False).first()
+      
 
   def resolve_system_update(self, info):
     security.simulate_load()
@@ -282,7 +282,7 @@ def set_difficulty():
     if session.get('difficulty') == None:
       helpers.set_mode('easy')
 
-schema = graphene.Schema(query=Query, mutation=Mutations, directives=[GraphQLNetworkDirective])
+schema = graphene.Schema(query=Query, mutation=Mutations, directives=[ShowNetworkDirective, SkipDirective, DeprecatedDirective])
 
 gql_middlew = [
   middleware.CostProtectionMiddleware(),
