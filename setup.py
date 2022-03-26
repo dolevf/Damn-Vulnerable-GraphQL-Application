@@ -45,7 +45,7 @@ def random_address():
   return random.choice(addresses)
 
 def random_password():
-  weak_passwords = ['changeme', 'password54321', 'letmein', 'admin123', 'iloveyou', '00000000']
+  weak_passwords = ['changeme']
   return random.choice(weak_passwords)
 
 def random_useragent():
