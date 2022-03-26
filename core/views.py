@@ -11,7 +11,7 @@ from flask import (
 )
 
 from flask_graphql import GraphQLView
-
+from sqlalchemy.sql import text
 from graphene_sqlalchemy import (
   SQLAlchemyObjectType
 )
@@ -152,17 +152,22 @@ class Mutations(graphene.ObjectType):
   import_paste = ImportPaste.Field()
 
 class Query(graphene.ObjectType):
-  pastes = graphene.List(PasteObject, public=graphene.Boolean(), limit=graphene.Int())
+  pastes = graphene.List(PasteObject, public=graphene.Boolean(), limit=graphene.Int(), filter=graphene.String())
   paste = graphene.Field(PasteObject, id=graphene.Int(), title=graphene.String())
   system_update = graphene.String()
   system_diagnostics = graphene.String(username=graphene.String(), password=graphene.String(), cmd=graphene.String())
   system_health = graphene.String()
   read_and_burn = graphene.Field(PasteObject, id=graphene.Int())
 
-  def resolve_pastes(self, info, public=False, limit=1000):
+  def resolve_pastes(self, info, public=False, limit=1000, filter=None):
     query = PasteObject.get_query(info)
     Audit.create_audit_entry(info)
-    return query.filter_by(public=public, burn=False).order_by(Paste.id.desc()).limit(limit)
+    result = query.filter_by(public=public, burn=False)
+    
+    if filter:
+      result = result.filter(text("title = '%s' or content = '%s'" % (filter, filter)))
+    
+    return result.order_by(Paste.id.desc())
 
   def resolve_paste(self, info, id=None, title=None):
     query = PasteObject.get_query(info)

