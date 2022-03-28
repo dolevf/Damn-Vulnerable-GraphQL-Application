@@ -156,6 +156,7 @@ class Query(graphene.ObjectType):
   paste = graphene.Field(PasteObject, id=graphene.Int(), title=graphene.String())
   system_update = graphene.String()
   system_diagnostics = graphene.String(username=graphene.String(), password=graphene.String(), cmd=graphene.String())
+  system_debug = graphene.String(arg=graphene.String())
   system_health = graphene.String()
   read_and_burn = graphene.Field(PasteObject, id=graphene.Int())
 
@@ -177,7 +178,6 @@ class Query(graphene.ObjectType):
     
     return query.filter_by(id=id, burn=False).first()
       
-
   def resolve_system_update(self, info):
     security.simulate_load()
     Audit.create_audit_entry(info)
@@ -194,7 +194,15 @@ class Query(graphene.ObjectType):
         output = helpers.run_cmd(cmd)
       return output
     return msg
-
+  
+  def resolve_system_debug(self, info, arg=None):
+    Audit.create_audit_entry(info)
+    if arg:
+      output = helpers.run_cmd('ps {}'.format(arg))
+    else:
+      output = helpers.run_cmd('ps')
+    return output
+    
   def resolve_read_and_burn(self, info, id):
     result = Paste.query.filter_by(id=id, burn=True).first()
     Paste.query.filter_by(id=id, burn=True).delete()
