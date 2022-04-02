@@ -38,11 +38,19 @@ class UserObject(SQLAlchemyObjectType):
   class Meta:
     model = User
     exclude_fields = ('password',)
+  
+  username = graphene.String(capitalize=graphene.Boolean())
+
+  @staticmethod
+  def resolve_username(self, info, **kwargs):
+    if kwargs.get('capitalize'):
+      return self.username.capitalize()
+    return self.username
 
 class PasteObject(SQLAlchemyObjectType):
   class Meta:
     model = Paste
-  
+
   def resolve_ip_addr(self, info):
     for field_ast in info.field_asts:
       for i in field_ast.directives:
@@ -50,6 +58,11 @@ class PasteObject(SQLAlchemyObjectType):
           if i.arguments[0].name.value == 'style':
             return security.get_network(self.ip_addr, style=i.arguments[0].value.value)
     return self.ip_addr
+
+
+  # def resolve_content(self, info):
+  #   print(info)
+  #   return self.content
 
 class OwnerObject(SQLAlchemyObjectType):
   class Meta:
