@@ -57,4 +57,3 @@ class Paste(db.Model):
     db.session.add(obj)
     db.session.commit()
     return obj
-
