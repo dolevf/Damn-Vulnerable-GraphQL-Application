@@ -96,14 +96,16 @@ class EditPaste(graphene.Mutation):
 
     class Arguments:
       id = graphene.Int()
-      title = graphene.String()
-      content = graphene.String()
+      title = graphene.String(required=False)
+      content = graphene.String(required=False)
 
     def mutate(self, info, id, title=None, content=None):
+      paste_obj = Paste.query.filter_by(id=id).first()
+      
       if title == None:
-        title = self.title
+        title = paste_obj.title
       if content == None:
-        content = self.content
+        content = paste_obj.content
 
       Paste.query.filter_by(id=id).update(dict(title=title, content=content))
       paste_obj = Paste.query.filter_by(id=id).first()
