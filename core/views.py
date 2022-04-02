@@ -222,7 +222,7 @@ class Query(graphene.ObjectType):
     query = UserObject.get_query(info)
     Audit.create_audit_entry(info)
     if id:
-      result = query.filter_by(id=1)
+      result = query.filter_by(id=id)
     else:
       result = query
       
