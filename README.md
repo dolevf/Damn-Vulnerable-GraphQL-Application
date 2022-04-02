@@ -120,7 +120,7 @@ In your browser, navigate to http://localhost:5013.
 # Maintainers
 * [Dolev Farhi](https://github.com/dolevf)
 * [Connor McKinnon](https://github.com/connormckinnon93)
-
+* [Nick Aleks](https://github.com/nicholasaleks)
 # Contributors
 A big Thank You to the kind people who helped make DVGA better:
  * [Halfluke](https://github.com/halfluke)
