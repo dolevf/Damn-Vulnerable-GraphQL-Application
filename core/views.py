@@ -37,6 +37,7 @@ from version import VERSION
 class UserObject(SQLAlchemyObjectType):
   class Meta:
     model = User
+    exclude_fields = ('password',)
 
 class PasteObject(SQLAlchemyObjectType):
   class Meta:
@@ -158,6 +159,7 @@ class Query(graphene.ObjectType):
   system_diagnostics = graphene.String(username=graphene.String(), password=graphene.String(), cmd=graphene.String())
   system_debug = graphene.String(arg=graphene.String())
   system_health = graphene.String()
+  users = graphene.List(UserObject, id=graphene.Int())
   read_and_burn = graphene.Field(PasteObject, id=graphene.Int())
 
   def resolve_pastes(self, info, public=False, limit=1000, filter=None):
@@ -215,6 +217,17 @@ class Query(graphene.ObjectType):
     return 'System Load: {}'.format(
       helpers.run_cmd("uptime | awk '{print $10, $11, $12}'")
     )
+
+  def resolve_users(self, info, id=None):
+    query = UserObject.get_query(info)
+    Audit.create_audit_entry(info)
+    if id:
+      result = query.filter_by(id=1)
+    else:
+      result = query
+      
+    return result
+
 
 
 @app.route('/')

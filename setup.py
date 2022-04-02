@@ -57,8 +57,15 @@ def random_useragent():
 def pump_db():
   print('Populating Database')
   db.create_all()
+
   admin = User(username="admin", password=random_password())
+  operator = User(username="operator", password=random_password())
+  db.session.add(admin)
+  db.session.add(operator)
+  
   owner = Owner(name='DVGAUser')
+  db.session.add(owner)
+  
   paste = Paste()
   paste.title = random_title()
   paste.content = "My First Paste"
@@ -67,8 +74,6 @@ def pump_db():
   paste.owner = owner
   paste.ip_addr = '127.0.0.1'
   paste.user_agent = 'User-Agent not set'
-  db.session.add(admin)
-  db.session.add(owner)
   db.session.add(paste)
 
   for _ in range(0, 10 ):
