@@ -331,7 +331,7 @@ def public_paste():
 
 @app.route('/audit')
 def audit():
-  audit = Audit.query.all()
+  audit = Audit.query.order_by(Audit.timestamp.desc())
   return render_template("audit.html", audit=audit)
 
 @app.route('/start_over')
