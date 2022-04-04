@@ -38,7 +38,7 @@
 
     function subscribeToPastes() {
 
-        var exampleSocket = new WebSocket("ws://localhost:5013/subscriptions");
+        var exampleSocket = new WebSocket("ws://{{host}}:{{port}}/subscriptions");
 
         exampleSocket.onopen = function () {
             console.log("subscription web socket opened");

@@ -43,6 +43,7 @@ from core.models import (
 )
 
 from version import VERSION
+from config import WEB_HOST, WEB_PORT
 
 # SQLAlchemy Types
 class UserObject(SQLAlchemyObjectType):
@@ -357,8 +358,8 @@ def difficulty(level):
 
 
 @app.context_processor
-def get_version():
-  return dict(version=VERSION)
+def get_server_info():
+  return dict(version=VERSION, host=WEB_HOST, port=WEB_PORT)
 
 @app.before_request
 def set_difficulty():
