@@ -2,6 +2,9 @@ import datetime
 
 from app import db
 from core import helpers
+from sqlalchemy import event
+
+from rx import Observable
 
 # Models
 class User(db.Model):
@@ -36,6 +39,7 @@ class Owner(db.Model):
   name = db.Column(db.String)
   paste = db.relationship('Paste', lazy='dynamic')
 
+
 class Paste(db.Model):
   __tablename__ = 'pastes'
   id = db.Column(db.Integer, primary_key=True)
@@ -56,4 +60,5 @@ class Paste(db.Model):
     obj = cls(**kw)
     db.session.add(obj)
     db.session.commit()
+
     return obj

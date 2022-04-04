@@ -34,6 +34,7 @@
     }
 
     function get_pastes(public=false) {
+      page_public=public
       var query = `query getPastes {
         pastes(public:${public}) {
           id
@@ -68,19 +69,34 @@
             var owner = obj.owner.name
             var ip_addr = obj.ipAddr
             var uas = obj.userAgent
-
-            $("#gallery").append(
-              `<div class="card-header">
-                <i class="fa fa-paste"></i> &nbsp; ${title}
-              </div>
-              <div class="card-body">
-                <p class="card-text">
-                <pre>${content}</pre>
-                <br><hr />
-                <i class="fa fa-user"></i>
-                <i><small><b>${owner}</b><br>- ${ip_addr}<br>- (${uas})</small></i></p>
-              </div>`
-            )
+            if(page_public){
+              $("#public_gallery").append(
+                `<div class="card-header">
+                  <i class="fa fa-paste"></i> &nbsp; ${title}
+                </div>
+                <div class="card-body">
+                  <p class="card-text">
+                  <pre>${content}</pre>
+                  <br><hr />
+                  <i class="fa fa-user"></i>
+                  <i><small><b>${owner}</b><br>- ${ip_addr}<br>- (${uas})</small></i></p>
+                </div>`
+              )
+            } else {
+              $("#private_gallery").append(
+                `<div class="card-header">
+                  <i class="fa fa-paste"></i> &nbsp; ${title}
+                </div>
+                <div class="card-body">
+                  <p class="card-text">
+                  <pre>${content}</pre>
+                  <br><hr />
+                  <i class="fa fa-user"></i>
+                  <i><small><b>${owner}</b><br>- ${ip_addr}<br>- (${uas})</small></i></p>
+                </div>`
+              )
+            }
+            
           }
         }
       );
