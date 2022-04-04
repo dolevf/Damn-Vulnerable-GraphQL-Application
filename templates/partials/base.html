@@ -41,11 +41,10 @@
         var exampleSocket = new WebSocket("ws://localhost:5013/subscriptions");
 
         exampleSocket.onopen = function () {
-            console.log("web socket opened");
+            console.log("subscription web socket opened");
 
             var query = 'subscription {paste { id title content ipAddr userAgent public owner {name} } }';
 
-            console.log(query)
             var graphqlMsg = {
                 type: GQL.START,
                 payload: {query}
@@ -59,7 +58,6 @@
           data = JSON.parse(event.data)
           paste = data.payload.data.paste
 
-          console.log(paste)
 
           var pasteHTML = `<div class="card-header">
               <i class="fa fa-paste"></i> &nbsp; ${paste.title}
