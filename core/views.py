@@ -1,14 +1,23 @@
 import graphene
-
+import asyncio
 from core.directives import *
 from db.solutions import solutions as list_of_solutions
+from flask_cors import CORS, cross_origin
+from rx import Observable
+from rx.subjects import Subject
 
+from sqlalchemy import create_engine, text
 from flask import (
   request,
   render_template,
   make_response,
   session
 )
+
+from flask_sockets import Sockets
+
+from graphql.backend import GraphQLCoreBackend
+from graphql_ws.gevent import  GeventSubscriptionServer
 
 from flask_graphql import GraphQLView
 from sqlalchemy.sql import text
@@ -23,6 +32,8 @@ from core import (
   helpers,
   middleware
 )
+from sqlalchemy import event
+from core.view_override import OverriddenView
 
 from core.models import (
   Owner,
@@ -32,6 +43,7 @@ from core.models import (
 )
 
 from version import VERSION
+from config import WEB_HOST, WEB_PORT
 
 # SQLAlchemy Types
 class UserObject(SQLAlchemyObjectType):
@@ -60,14 +72,10 @@ class PasteObject(SQLAlchemyObjectType):
     return self.ip_addr
 
 
-  # def resolve_content(self, info):
-  #   print(info)
-  #   return self.content
-
 class OwnerObject(SQLAlchemyObjectType):
   class Meta:
     model = Owner
-    
+
 class CreatePaste(graphene.Mutation):
     paste = graphene.Field(lambda:PasteObject)
 
@@ -190,6 +198,24 @@ class Mutations(graphene.ObjectType):
   delete_paste = DeletePaste.Field()
   upload_paste = UploadPaste.Field()
   import_paste = ImportPaste.Field()
+
+
+global_event = Subject()
+
+@event.listens_for(Paste, 'after_insert')
+def new_paste(mapper,cconnection,target):
+  global_event.on_next(target)
+
+
+class Subscription(graphene.ObjectType):
+
+  paste = graphene.Field(PasteObject, id=graphene.Int(), title=graphene.String())
+
+  def resolve_paste(self, info):
+    
+    return global_event.map(lambda i: i)
+
+
 
 class Query(graphene.ObjectType):
   pastes = graphene.List(PasteObject, public=graphene.Boolean(), limit=graphene.Int(), filter=graphene.String())
@@ -332,8 +358,8 @@ def difficulty(level):
 
 
 @app.context_processor
-def get_version():
-  return dict(version=VERSION)
+def get_server_info():
+  return dict(version=VERSION, host=WEB_HOST, port=WEB_PORT)
 
 @app.before_request
 def set_difficulty():
@@ -347,7 +373,17 @@ def set_difficulty():
     if session.get('difficulty') == None:
       helpers.set_mode('easy')
 
-schema = graphene.Schema(query=Query, mutation=Mutations, directives=[ShowNetworkDirective, SkipDirective, DeprecatedDirective])
+schema = graphene.Schema(query=Query, mutation=Mutations, subscription=Subscription, directives=[ShowNetworkDirective, SkipDirective, DeprecatedDirective])
+
+subscription_server = GeventSubscriptionServer(schema)
+
+sockets = Sockets(app)
+
+@sockets.route('/subscriptions')
+def echo_socket(ws):
+    subscription_server.handle(ws)
+    return []
+
 
 gql_middlew = [
   middleware.CostProtectionMiddleware(),
@@ -361,16 +397,23 @@ igql_middlew = [
   middleware.IGQLProtectionMiddleware()
 ]
 
-app.add_url_rule('/graphql', view_func=GraphQLView.as_view(
+class CustomBackend(GraphQLCoreBackend):
+    def __init__(self, executor=None):
+        super().__init__(executor)
+        self.execute_params['allow_subscriptions'] = True
+
+app.add_url_rule('/graphql', view_func=OverriddenView.as_view(
   'graphql',
   schema=schema,
   middleware=gql_middlew,
+  backend=CustomBackend(),
   batch=True
 ))
 
-app.add_url_rule('/graphiql', view_func=GraphQLView.as_view(
+app.add_url_rule('/graphiql', view_func=OverriddenView.as_view(
   'graphiql',
   schema = schema,
+  backend=CustomBackend(),
   graphiql = True,
   middleware = igql_middlew
 ))

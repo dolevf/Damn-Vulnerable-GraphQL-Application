@@ -25,6 +25,11 @@ Damn Vulnerable GraphQL Application is an intentionally vulnerable implementatio
 # About DVGA
 Damn Vulnerable GraphQL is a deliberately weak and insecure implementation of GraphQL that provides a safe environment to attack a GraphQL application, allowing developers and IT professionals to test for vulnerabilities.
 
+## DVGA Operation Support
+- Queries
+- Mutations
+- Subscriptions
+
 DVGA has numerous flaws, such as Injections, Code Executions, Bypasses, Denial of Service, and more. See the full list under the [Scenarios](#scenarios) section.
 
 # Operation Modes
@@ -65,8 +70,11 @@ The following Python3 libraries are required:
 * Python3 (3.6+)
 * Flask
 * Flask-SQLAlchemy
+* Flask-Sockets
+* Gevent
 * Graphene
 * Graphene-SQLAlchemy
+* Rx
 
 See [requirements.txt](requirements.txt) for dependencies.
 
