@@ -82,8 +82,6 @@ class OverriddenView(GraphQLView):
                 **extra_options
             )
 
-            #print(execution_results, dir(execution_results))
-
             result, status_code = encode_execution_results(
                 execution_results,
                 is_batch=isinstance(data, list),

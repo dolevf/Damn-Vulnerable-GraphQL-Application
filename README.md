@@ -65,8 +65,11 @@ The following Python3 libraries are required:
 * Python3 (3.6+)
 * Flask
 * Flask-SQLAlchemy
+* Flask-Sockets
+* Gevent
 * Graphene
 * Graphene-SQLAlchemy
+* Rx
 
 See [requirements.txt](requirements.txt) for dependencies.
 
