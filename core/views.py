@@ -13,7 +13,7 @@ from flask import (
   make_response,
   session
 )
-from sqlalchemy import and_, or_, not_
+
 from flask_sockets import Sockets
 
 from graphql.backend import GraphQLCoreBackend
