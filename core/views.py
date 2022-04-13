@@ -217,6 +217,11 @@ class Subscription(graphene.ObjectType):
 
 
 
+class SearchResult(graphene.Union):
+  class Meta:
+    types = (PasteObject, UserObject)
+
+
 class Query(graphene.ObjectType):
   pastes = graphene.List(PasteObject, public=graphene.Boolean(), limit=graphene.Int(), filter=graphene.String())
   paste = graphene.Field(PasteObject, id=graphene.Int(), title=graphene.String())
@@ -226,6 +231,22 @@ class Query(graphene.ObjectType):
   system_health = graphene.String()
   users = graphene.List(UserObject, id=graphene.Int())
   read_and_burn = graphene.Field(PasteObject, id=graphene.Int())
+  search = graphene.List(SearchResult, keyword=graphene.String())
+
+  def resolve_search(self, info, keyword=None):
+    items = []
+    if keyword:
+      search = "%{}%".format(keyword)
+      queryset1 = Paste.query.filter(Paste.title.like(search))
+      items.extend(queryset1)
+      queryset2 = User.query.filter(User.username.like(search))
+      items.extend(queryset2)
+    else:
+      queryset1 = Paste.query.all()
+      items.extend(queryset1)
+      queryset2 = User.query.all()
+      items.extend(queryset2)
+    return items
 
   def resolve_pastes(self, info, public=False, limit=1000, filter=None):
     query = PasteObject.get_query(info)
