@@ -242,7 +242,6 @@ class Query(graphene.ObjectType):
       queryset2 = User.query.filter(User.username.like(search))
       items.extend(queryset2)
     else:
-      search = "%{}%".format(keyword)
       queryset1 = Paste.query.all()
       items.extend(queryset1)
       queryset2 = User.query.all()
