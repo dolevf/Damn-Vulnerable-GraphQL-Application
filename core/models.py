@@ -13,6 +13,14 @@ class User(db.Model):
     username = db.Column(db.String(20),unique=True,nullable=False)
     password = db.Column(db.String(60),nullable=False)
 
+    @classmethod
+    def create_user(cls, **kw):
+      obj = cls(**kw)
+      db.session.add(obj)
+      db.session.commit()
+
+      return obj
+
 class Audit(db.Model):
   __tablename__ = 'audits'
   id = db.Column(db.Integer, primary_key=True)

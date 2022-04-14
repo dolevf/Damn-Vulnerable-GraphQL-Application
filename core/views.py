@@ -76,6 +76,29 @@ class OwnerObject(SQLAlchemyObjectType):
   class Meta:
     model = Owner
 
+
+class UserInput(graphene.InputObjectType):
+  username = graphene.String(required=True)
+  password = graphene.String(required=True)
+
+
+class CreateUser(graphene.Mutation):
+  class Arguments:
+    user_data = UserInput(required=True)
+
+  user = graphene.Field(lambda:UserObject)
+
+  def mutate(root, info, user_data=None):
+    user_obj = User.create_user(
+      username=user_data.username,
+      password=user_data.password
+    )
+
+    Audit.create_audit_entry(info)
+
+    return CreateUser(user=user_obj)
+
+
 class CreatePaste(graphene.Mutation):
     paste = graphene.Field(lambda:PasteObject)
 
@@ -198,6 +221,7 @@ class Mutations(graphene.ObjectType):
   delete_paste = DeletePaste.Field()
   upload_paste = UploadPaste.Field()
   import_paste = ImportPaste.Field()
+  create_user = CreateUser.Field()
 
 
 global_event = Subject()
