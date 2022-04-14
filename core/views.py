@@ -212,7 +212,7 @@ class Subscription(graphene.ObjectType):
   paste = graphene.Field(PasteObject, id=graphene.Int(), title=graphene.String())
 
   def resolve_paste(self, info):
-    
+
     return global_event.map(lambda i: i)
 
 
@@ -234,6 +234,7 @@ class Query(graphene.ObjectType):
   search = graphene.List(SearchResult, keyword=graphene.String())
 
   def resolve_search(self, info, keyword=None):
+    Audit.create_audit_entry(info)
     items = []
     if keyword:
       search = "%{}%".format(keyword)
