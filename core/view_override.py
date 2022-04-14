@@ -56,7 +56,6 @@ class OverriddenView(GraphQLView):
 
             show_graphiql = request_method == 'get' and self.should_display_graphiql()
             catch = show_graphiql
-
             pretty = self.pretty or show_graphiql or request.args.get('pretty')
 
             extra_options = {}

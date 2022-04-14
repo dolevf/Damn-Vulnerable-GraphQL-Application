@@ -1,9 +1,8 @@
+import json
 import graphene
-import asyncio
+
 from core.directives import *
 from db.solutions import solutions as list_of_solutions
-from flask_cors import CORS, cross_origin
-from rx import Observable
 from rx.subjects import Subject
 
 from sqlalchemy import create_engine, text
@@ -19,7 +18,6 @@ from flask_sockets import Sockets
 from graphql.backend import GraphQLCoreBackend
 from graphql_ws.gevent import  GeventSubscriptionServer
 
-from flask_graphql import GraphQLView
 from sqlalchemy.sql import text
 from graphene_sqlalchemy import (
   SQLAlchemyObjectType
@@ -381,8 +379,13 @@ sockets = Sockets(app)
 
 @sockets.route('/subscriptions')
 def echo_socket(ws):
-    subscription_server.handle(ws)
-    return []
+  msg = json.loads(ws.read_message())
+  
+  if msg.get('type', '') == 'start':
+    Audit.create_audit_entry(msg['payload']['query'], operation_type='subscription')
+  
+  subscription_server.handle(ws)
+  return []
 
 
 gql_middlew = [

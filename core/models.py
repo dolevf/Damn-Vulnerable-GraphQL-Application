@@ -3,6 +3,7 @@ import datetime
 from app import db
 from core import helpers
 from sqlalchemy import event
+from graphql import parse
 
 from rx import Observable
 
@@ -21,13 +22,25 @@ class Audit(db.Model):
   timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
   @classmethod
-  def create_audit_entry(cls, info):
-    gql_operation = helpers.get_opname(info.operation)
+  def create_audit_entry(cls, info, operation_type=None):
     gql_query = '{}'
+    gql_operation = None
+
+    if not operation_type:
+      gql_operation = helpers.get_opname(info.operation)
+      
+      if info.context.json:
+        gql_query = info.context.json.get("query")
     
-    if info.context.json:
-      gql_query = info.context.json.get("query")
-    
+    if operation_type == 'subscription' and info:
+      ast = parse(info)
+      gql_query = info
+      
+      try:
+        gql_operation = ast.definitions[0].name.value
+      except:
+        pass
+      
     obj = cls(**{"gqloperation":gql_operation, "gqlquery":gql_query})
     db.session.add(obj)
     db.session.commit()
