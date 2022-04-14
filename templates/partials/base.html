@@ -41,9 +41,7 @@
         var exampleSocket = new WebSocket("ws://{{host}}:{{port}}/subscriptions");
 
         exampleSocket.onopen = function () {
-            console.log("subscription web socket opened");
-
-            var query = 'subscription {paste { id title content ipAddr userAgent public owner {name} } }';
+            var query = 'subscription getPaste {paste { id title content ipAddr userAgent public owner {name} } }';
 
             var graphqlMsg = {
                 type: GQL.START,
