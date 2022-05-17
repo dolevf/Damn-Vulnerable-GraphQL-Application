@@ -324,7 +324,7 @@ class Query(graphene.ObjectType):
   def resolve_system_health(self, info):
     Audit.create_audit_entry(info)
     return 'System Load: {}'.format(
-      helpers.run_cmd("uptime | awk '{print $10, $11, $12}'")
+      helpers.run_cmd("uptime | awk -F': ' '{print $2}' | awk -F',' '{print $1}'")
     )
 
   def resolve_users(self, info, id=None):
