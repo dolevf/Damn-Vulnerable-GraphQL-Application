@@ -67,7 +67,7 @@ DVGA supports Beginner and Expert level game modes, which will change the exploi
 
 # Prerequisites
 The following Python3 libraries are required:
-* Python3 (3.6+)
+* Python3 (3.6 - 3.9) (3.10 is not supported) 
 * Flask
 * Flask-SQLAlchemy
 * Flask-Sockets
@@ -105,6 +105,8 @@ Note: if you need the application to bind on a specific port (e.g. 8080), use **
 In your browser, navigate to http://localhost:5013
 
 ## Server
+**Note**: Python 3.10 is **not supported** yet!
+
 ### Navigate to /opt
 `cd /opt/`
 
