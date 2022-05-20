@@ -1,11 +1,7 @@
 import datetime
 
 from app import db
-from core import helpers
-from sqlalchemy import event
 from graphql import parse
-
-from rx import Observable
 
 # Models
 class User(db.Model):
@@ -35,7 +31,10 @@ class Audit(db.Model):
     gql_operation = None
 
     if not operation_type:
-      gql_operation = helpers.get_opname(info.operation)
+      try:
+        gql_operation = info.operation.name.value
+      except:
+        gql_operation = "No Operation"
       
       if info.context.json:
         gql_query = info.context.json.get("query")
@@ -79,6 +78,24 @@ class Paste(db.Model):
   @classmethod
   def create_paste(cls, **kw):
     obj = cls(**kw)
+    db.session.add(obj)
+    db.session.commit()
+
+    return obj
+
+class ServerMode(db.Model):
+  __tablename__ = 'servermode'
+  id = db.Column(db.Integer, primary_key=True)
+  hardened = db.Column(db.Boolean, default=False)
+  
+  @classmethod
+  def set_mode(cls, mode):
+    obj = ServerMode.query.one()
+    if mode == 'easy':
+      obj.hardened = False
+    else:
+      obj.hardened = True
+      
     db.session.add(obj)
     db.session.commit()
 
