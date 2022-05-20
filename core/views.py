@@ -419,10 +419,6 @@ def set_difficulty():
 
 schema = graphene.Schema(query=Query, mutation=Mutations, subscription=Subscription, directives=[ShowNetworkDirective, SkipDirective, DeprecatedDirective])
 
-
-
-
-
 subscription_server = GeventSubscriptionServerCustom(schema)
 
 
@@ -431,18 +427,8 @@ sockets = Sockets(app)
 @sockets.route('/subscriptions')
 def echo_socket(ws):
 
-  
-
   subscription_server.handle(ws)
 
-
-
-  msg = json.loads(ws.read_message())
-  
-  if msg.get('type', '') == 'start':
-    Audit.create_audit_entry(msg['payload']['query'], operation_type='subscription')
-  
-  
   return []
 
 
