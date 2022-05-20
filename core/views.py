@@ -31,7 +31,7 @@ from core import (
   middleware
 )
 from sqlalchemy import event
-from core.view_override import OverriddenView
+from core.view_override import OverriddenView, GeventSubscriptionServerCustom
 
 from core.models import (
   Owner,
@@ -419,18 +419,30 @@ def set_difficulty():
 
 schema = graphene.Schema(query=Query, mutation=Mutations, subscription=Subscription, directives=[ShowNetworkDirective, SkipDirective, DeprecatedDirective])
 
-subscription_server = GeventSubscriptionServer(schema)
+
+
+
+
+subscription_server = GeventSubscriptionServerCustom(schema)
+
 
 sockets = Sockets(app)
 
 @sockets.route('/subscriptions')
 def echo_socket(ws):
+
+  
+
+  subscription_server.handle(ws)
+
+
+
   msg = json.loads(ws.read_message())
   
   if msg.get('type', '') == 'start':
     Audit.create_audit_entry(msg['payload']['query'], operation_type='subscription')
   
-  subscription_server.handle(ws)
+  
   return []
 
 
