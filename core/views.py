@@ -400,8 +400,18 @@ def difficulty(level):
 
 
 @app.context_processor
+def get_difficulty():
+  level = None
+  if helpers.is_level_easy():
+    level = 'easy'
+  else:
+    level = 'hard'
+  return dict(difficulty=level)
+  
+@app.context_processor
 def get_server_info():
   return dict(version=VERSION, host=WEB_HOST, port=WEB_PORT)
+
 
 @app.before_request
 def set_difficulty():
@@ -410,9 +420,6 @@ def set_difficulty():
     if mode_header == 'Expert':
       helpers.set_mode('hard')
     else:
-      helpers.set_mode('easy')
-  else:
-    if session.get('difficulty') == None:
       helpers.set_mode('easy')
 
 schema = graphene.Schema(query=Query, mutation=Mutations, subscription=Subscription, directives=[ShowNetworkDirective, SkipDirective, DeprecatedDirective])

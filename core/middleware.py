@@ -73,7 +73,10 @@ class OpNameProtectionMiddleware(object):
     if helpers.is_level_easy():
       return next(root, info, **kwargs)
 
-    opname = helpers.get_opname(info.operation)
+    try:
+      opname = info.operation.name.value
+    except:
+      opname = "No Operation"
 
     if opname != 'No Operation' and not security.operation_name_allowed(opname):
       raise werkzeug.exceptions.SecurityError('Operation Name "{}" is not allowed.'.format(opname))
