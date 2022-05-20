@@ -50,12 +50,9 @@
             exampleSocket.send(JSON.stringify(graphqlMsg));
         };
 
-        var PASTE_UPDATES = {};
-
         exampleSocket.onmessage = function (event) {
           data = JSON.parse(event.data)
           paste = data.payload.data.paste
-
 
           var pasteHTML = `<div class="card-header">
               <i class="fa fa-paste"></i> &nbsp; ${paste.title}

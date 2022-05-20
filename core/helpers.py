@@ -4,6 +4,8 @@ import base64
 import uuid
 import os
 
+from core.models import ServerMode
+
 def run_cmd(cmd):
   return os.popen(cmd).read()
 
@@ -26,16 +28,12 @@ def save_file(filename, text):
   return text
 
 def is_level_easy():
-  return session.get('difficulty') == 'easy'
+  mode = ServerMode.query.one()
+  return mode.hardened == False
 
 def is_level_hard():
-  return session.get('difficulty') == 'hard'
+  mode = ServerMode.query.one()
+  return mode.hardened == True
 
 def set_mode(mode):
-  session['difficulty'] = mode
-
-def get_opname(operation):
-  try:
-    return operation.name.value
-  except:
-    return "No Operation"
+  mode = ServerMode.set_mode(mode)

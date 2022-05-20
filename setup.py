@@ -7,7 +7,7 @@ import random
 from ipaddress import IPv4Network
 
 from app import db
-from core.models import Paste, Owner, User
+from core.models import Paste, Owner, User, ServerMode
 
 from db.agents import agents
 from db.owners import owners
@@ -89,6 +89,10 @@ def pump_db():
 
     db.session.add(owner)
     db.session.add(paste)
+
+  mode = ServerMode()
+  mode.hardened = False
+  db.session.add(mode)
 
   db.session.commit()
 
