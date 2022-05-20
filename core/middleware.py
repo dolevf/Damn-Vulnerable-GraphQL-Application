@@ -105,7 +105,7 @@ class IntrospectionMiddleware(object):
     if helpers.is_level_easy():
       return next(root, info, **kwargs)
 
-    if info.field_name.lower() in ['__schema', '__introspection']:
+    if info.field_name.lower() in ['__schema']:
       raise werkzeug.exceptions.SecurityError('Introspection is Disabled')
 
     return next(root, info, **kwargs)
