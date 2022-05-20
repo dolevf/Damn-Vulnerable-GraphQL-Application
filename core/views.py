@@ -1,4 +1,3 @@
-import json
 import graphene
 
 from core.directives import *
