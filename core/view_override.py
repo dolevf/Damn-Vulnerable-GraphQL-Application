@@ -6,7 +6,6 @@ from rx import AnonymousObservable
 from graphql_ws.gevent import GeventConnectionContext
 from graphql_ws.base_sync import BaseSyncSubscriptionServer
 from graphql_ws.base import (
-    BaseConnectionContext,
     ConnectionClosedException,
 )
 from core.models import (
@@ -120,6 +119,8 @@ class OverriddenView(GraphQLView):
                 content_type='application/json'
             )
 
+import copy
+
 class GeventSubscriptionServerCustom(BaseSyncSubscriptionServer):
     def handle(self, ws, request_context=None):
         connection_context = GeventConnectionContext(ws, request_context)
@@ -132,11 +133,13 @@ class GeventSubscriptionServerCustom(BaseSyncSubscriptionServer):
             except ConnectionClosedException:
                 self.on_close(connection_context)
                 return
-            
-            msg = json.loads(message)
-  
-            if msg.get('type', '') == 'start':
-              Audit.create_audit_entry(msg['payload']['query'], operation_type='subscription')
+
+            if message:
+
+                msg = json.loads(message)
+      
+                if msg.get('type', '') == 'start':
+                  Audit.create_audit_entry(msg['payload']['query'], operation_type='subscription')
 
 
             self.on_message(connection_context, message)

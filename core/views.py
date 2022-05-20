@@ -4,7 +4,7 @@ from core.directives import *
 from db.solutions import solutions as list_of_solutions
 from rx.subjects import Subject
 
-from sqlalchemy import create_engine, text
+from sqlalchemy import text
 from flask import (
   request,
   render_template,
@@ -15,7 +15,6 @@ from flask import (
 from flask_sockets import Sockets
 
 from graphql.backend import GraphQLCoreBackend
-from graphql_ws.gevent import  GeventSubscriptionServer
 
 from sqlalchemy.sql import text
 from graphene_sqlalchemy import (
