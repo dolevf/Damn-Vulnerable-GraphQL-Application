@@ -21,63 +21,6 @@
   <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="/static/jquery/graphql.js"></script>
 
-  <script type="text/javascript">
-
-    const GQL = {
-      CONNECTION_INIT: 'connection_init',
-      CONNECTION_ACK: 'connection_ack',
-      CONNECTION_ERROR: 'connection_error',
-      CONNECTION_KEEP_ALIVE: 'ka',
-      START: 'start',
-      STOP: 'stop',
-      CONNECTION_TERMINATE: 'connection_terminate',
-      DATA: 'data',
-      ERROR: 'error',
-      COMPLETE: 'complete'
-    }
-
-    function subscribeToPastes() {
-
-        var exampleSocket = new WebSocket("ws://{{host}}:{{port}}/subscriptions");
-
-        exampleSocket.onopen = function () {
-            var query = 'subscription getPaste {paste { id title content ipAddr userAgent public owner {name} } }';
-
-            var graphqlMsg = {
-                type: GQL.START,
-                payload: {query}
-            };
-            exampleSocket.send(JSON.stringify(graphqlMsg));
-        };
-
-        exampleSocket.onmessage = function (event) {
-          data = JSON.parse(event.data)
-          paste = data.payload.data.paste
-
-          var pasteHTML = `<div class="card-header">
-              <i class="fa fa-paste"></i> &nbsp; ${paste.title}
-            </div>
-            <div class="card-body">
-              <p class="card-text">
-              <pre>${paste.content}</pre>
-              <br><hr />
-              <i class="fa fa-user"></i>
-              <i><small><b>${paste.owner.name}</b><br>- ${paste.ipAddr}<br>- (${paste.userAgent})</small></i></p>
-            </div>`
-
-          if(paste.public){
-            $(pasteHTML).hide().prependTo("#public_gallery").fadeIn(1000);
-          } else {
-            $(pasteHTML).hide().prependTo("#private_gallery").fadeIn(1000);
-          }
-          
-
-        }
-    }
-
-    window.addEventListener("load", subscribeToPastes);
-  </script>
-
   {% block scripts %}
   {% endblock %}
 </body>

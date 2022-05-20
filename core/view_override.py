@@ -3,7 +3,15 @@ from graphql_server import (HttpQueryError, run_http_query, FormattedResult)
 from functools import partial
 from flask import Response, request
 from rx import AnonymousObservable
-
+from graphql_ws.gevent import GeventConnectionContext
+from graphql_ws.base_sync import BaseSyncSubscriptionServer
+from graphql_ws.base import (
+    ConnectionClosedException,
+)
+from core.models import (
+  Audit
+)
+import json
 
 def format_execution_result(execution_result, format_error,):
     status_code = 200
@@ -110,3 +118,28 @@ class OverriddenView(GraphQLView):
                 headers=e.headers,
                 content_type='application/json'
             )
+
+import copy
+
+class GeventSubscriptionServerCustom(BaseSyncSubscriptionServer):
+    def handle(self, ws, request_context=None):
+        connection_context = GeventConnectionContext(ws, request_context)
+        self.on_open(connection_context)
+        while True:
+            try:
+                if connection_context.closed:
+                    raise ConnectionClosedException()
+                message = connection_context.receive()
+            except ConnectionClosedException:
+                self.on_close(connection_context)
+                return
+
+            if message:
+
+                msg = json.loads(message)
+      
+                if msg.get('type', '') == 'start':
+                  Audit.create_audit_entry(msg['payload']['query'], operation_type='subscription')
+
+
+            self.on_message(connection_context, message)
