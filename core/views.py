@@ -67,16 +67,17 @@ class PasteObject(SQLAlchemyObjectType):
             return security.get_network(self.ip_addr, style=i.arguments[0].value.value)
     return self.ip_addr
 
-
 class OwnerObject(SQLAlchemyObjectType):
   class Meta:
     model = Owner
 
-
+class AuditObject(SQLAlchemyObjectType):
+  class Meta:
+    model = Audit
+  
 class UserInput(graphene.InputObjectType):
   username = graphene.String(required=True)
   password = graphene.String(required=True)
-
 
 class CreateUser(graphene.Mutation):
   class Arguments:
@@ -93,7 +94,6 @@ class CreateUser(graphene.Mutation):
     Audit.create_audit_entry(info)
 
     return CreateUser(user=user_obj)
-
 
 class CreatePaste(graphene.Mutation):
     paste = graphene.Field(lambda:PasteObject)
@@ -219,28 +219,21 @@ class Mutations(graphene.ObjectType):
   import_paste = ImportPaste.Field()
   create_user = CreateUser.Field()
 
-
 global_event = Subject()
 
 @event.listens_for(Paste, 'after_insert')
 def new_paste(mapper,cconnection,target):
   global_event.on_next(target)
 
-
 class Subscription(graphene.ObjectType):
-
   paste = graphene.Field(PasteObject, id=graphene.Int(), title=graphene.String())
 
   def resolve_paste(self, info):
-
     return global_event.map(lambda i: i)
-
-
 
 class SearchResult(graphene.Union):
   class Meta:
     types = (PasteObject, UserObject)
-
 
 class Query(graphene.ObjectType):
   pastes = graphene.List(PasteObject, public=graphene.Boolean(), limit=graphene.Int(), filter=graphene.String())
@@ -252,6 +245,7 @@ class Query(graphene.ObjectType):
   users = graphene.List(UserObject, id=graphene.Int())
   read_and_burn = graphene.Field(PasteObject, id=graphene.Int())
   search = graphene.List(SearchResult, keyword=graphene.String())
+  audits = graphene.List(AuditObject)
 
   def resolve_search(self, info, keyword=None):
     Audit.create_audit_entry(info)
@@ -335,7 +329,10 @@ class Query(graphene.ObjectType):
       
     return result
 
-
+  def resolve_audits(self, info):
+    query = Audit.query.all()
+    Audit.create_audit_entry(info)
+    return query
 
 @app.route('/')
 def index():
