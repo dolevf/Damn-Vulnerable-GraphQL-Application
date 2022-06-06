@@ -11,7 +11,7 @@ ShowNetworkDirective = GraphQLDirective(
     ],
     args={
         "style": GraphQLArgument(
-            GraphQLNonNull(GraphQLString)            
+            GraphQLNonNull(GraphQLString)
         )
     },
     description="Displays the network associated with an IP Address (CIDR or Net)."

@@ -1,22 +1,64 @@
-from flask_graphql import GraphQLView
-from graphql_server import (HttpQueryError, run_http_query, FormattedResult)
+import json
+import traceback
+import inspect
+
+from core.models import Audit
 from functools import partial
 from flask import Response, request
+from flask_graphql import GraphQLView
 from rx import AnonymousObservable
+from graphql_server import (
+    HttpQueryError,
+    run_http_query,
+    FormattedResult
+)
+from graphql import GraphQLError
+from graphql.error import format_error as format_graphql_error
 from graphql_ws.gevent import GeventConnectionContext
 from graphql_ws.base_sync import BaseSyncSubscriptionServer
-from graphql_ws.base import (
-    ConnectionClosedException,
-)
-from core.models import (
-  Audit
-)
-import json
+from graphql_ws.base import ConnectionClosedException
+
+def format_custom_error(error):
+    try:
+        message = str(error)
+    except UnicodeEncodeError:
+        message = error.message.encode("utf-8")
+
+    formatted_error = {"message": message}
+
+    if isinstance(error, GraphQLError):
+        if error.locations is not None:
+            formatted_error["locations"] = [
+                {"line": loc.line, "column": loc.column} for loc in error.locations
+            ]
+
+        if error.path is not None:
+            formatted_error["path"] = error.path
+
+        if error.extensions is not None:
+            formatted_error["extensions"] = error.extensions
+
+        # A user who has not yet altered their cookie to bypass the GraphiQL protection will see the debug information and may get bamboozled
+        # Do not show tracing error the first time a user hits the GraphiQL endpoint.
+        if 'GraphiQL Access Rejected' not in message:
+            if 'extensions' not in formatted_error:
+                formatted_error['extensions'] = {}
+
+            # Get some stack traces and caller file information
+            frame = inspect.currentframe()
+            caller_frame = inspect.stack()[0]
+            caller_filename_full = caller_frame.filename
+
+            formatted_error['extensions']['exception'] = {}
+            formatted_error['extensions']['exception']['stack'] = traceback.format_stack(frame)
+            formatted_error['extensions']['exception']['debug'] = traceback.format_exc()
+            formatted_error['extensions']['exception']['path'] = caller_filename_full
+
+    return formatted_error
 
 def format_execution_result(execution_result, format_error,):
     status_code = 200
     if execution_result:
-        #print(type(execution_result))
         target_result = None
 
         def override_target_result(value):
@@ -34,16 +76,9 @@ def format_execution_result(execution_result, format_error,):
             response = execution_result.to_dict(format_error=format_error)
     else:
         response = None
-    #print(response)
     return FormattedResult(response, status_code)
 
-def encode_execution_results(
-    execution_results,
-    format_error, 
-    is_batch, 
-    encode,
-):
-
+def encode_execution_results(execution_results, format_error, is_batch,encode):
     responses = [
         format_execution_result(execution_result, format_error)
         for execution_result in execution_results
@@ -135,7 +170,7 @@ class GeventSubscriptionServerCustom(BaseSyncSubscriptionServer):
             if message:
 
                 msg = json.loads(message)
-      
+
                 if msg.get('type', '') == 'start':
                   Audit.create_audit_entry(msg['payload']['query'], operation_type='subscription')
 

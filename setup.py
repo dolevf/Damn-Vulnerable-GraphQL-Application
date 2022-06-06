@@ -62,10 +62,10 @@ def pump_db():
   operator = User(username="operator", password=random_password())
   db.session.add(admin)
   db.session.add(operator)
-  
+
   owner = Owner(name='DVGAUser')
   db.session.add(owner)
-  
+
   paste = Paste()
   paste.title = random_title()
   paste.content = "My First Paste"

@@ -1,42 +1,36 @@
 import graphene
 
-from core.directives import *
-from db.solutions import solutions as list_of_solutions
-from rx.subjects import Subject
-
-from sqlalchemy import text
-from flask import (
-  request,
-  render_template,
-  make_response,
-  session
-)
-
-from flask_sockets import Sockets
-
-from graphql.backend import GraphQLCoreBackend
-
-from sqlalchemy.sql import text
-from graphene_sqlalchemy import (
-  SQLAlchemyObjectType
-)
-
-from app import app, db
-
 from core import (
   security,
   helpers,
   middleware
 )
-from sqlalchemy import event
-from core.view_override import OverriddenView, GeventSubscriptionServerCustom
-
+from core.directives import *
 from core.models import (
   Owner,
   Paste,
   User,
   Audit
 )
+from core.view_override import (
+  OverriddenView,
+  GeventSubscriptionServerCustom,
+  format_custom_error
+)
+from db.solutions import solutions as list_of_solutions
+from rx.subjects import Subject
+from flask import (
+  request,
+  render_template,
+  make_response,
+  session
+)
+from flask_sockets import Sockets
+from graphql.backend import GraphQLCoreBackend
+from sqlalchemy import event, text
+from graphene_sqlalchemy import SQLAlchemyObjectType
+
+from app import app, db
 
 from version import VERSION
 from config import WEB_HOST, WEB_PORT
@@ -46,7 +40,7 @@ class UserObject(SQLAlchemyObjectType):
   class Meta:
     model = User
     exclude_fields = ('password',)
-  
+
   username = graphene.String(capitalize=graphene.Boolean())
 
   @staticmethod
@@ -74,7 +68,7 @@ class OwnerObject(SQLAlchemyObjectType):
 class AuditObject(SQLAlchemyObjectType):
   class Meta:
     model = Audit
-  
+
 class UserInput(graphene.InputObjectType):
   username = graphene.String(required=True)
   password = graphene.String(required=True)
@@ -128,7 +122,7 @@ class EditPaste(graphene.Mutation):
 
     def mutate(self, info, id, title=None, content=None):
       paste_obj = Paste.query.filter_by(id=id).first()
-      
+
       if title == None:
         title = paste_obj.title
       if content == None:
@@ -152,10 +146,10 @@ class DeletePaste(graphene.Mutation):
 
   def mutate(self, info, id):
     result = False
-    
+
     if Paste.query.filter_by(id=id).delete():
       result = True
-      db.session.commit() 
+      db.session.commit()
 
     Audit.create_audit_entry(info)
 
@@ -267,10 +261,10 @@ class Query(graphene.ObjectType):
     query = PasteObject.get_query(info)
     Audit.create_audit_entry(info)
     result = query.filter_by(public=public, burn=False)
-    
+
     if filter:
       result = result.filter(text("title = '%s' or content = '%s'" % (filter, filter)))
-    
+
     return result.order_by(Paste.id.desc())
 
   def resolve_paste(self, info, id=None, title=None):
@@ -278,9 +272,9 @@ class Query(graphene.ObjectType):
     Audit.create_audit_entry(info)
     if title:
       return query.filter_by(title=title, burn=False).first()
-    
+
     return query.filter_by(id=id, burn=False).first()
-      
+
   def resolve_system_update(self, info):
     security.simulate_load()
     Audit.create_audit_entry(info)
@@ -297,7 +291,7 @@ class Query(graphene.ObjectType):
         output = helpers.run_cmd(cmd)
       return output
     return msg
-  
+
   def resolve_system_debug(self, info, arg=None):
     Audit.create_audit_entry(info)
     if arg:
@@ -305,7 +299,7 @@ class Query(graphene.ObjectType):
     else:
       output = helpers.run_cmd('ps')
     return output
-    
+
   def resolve_read_and_burn(self, info, id):
     result = Paste.query.filter_by(id=id, burn=True).first()
     Paste.query.filter_by(id=id, burn=True).delete()
@@ -326,7 +320,7 @@ class Query(graphene.ObjectType):
       result = query.filter_by(id=id)
     else:
       result = query
-      
+
     return result
 
   def resolve_audits(self, info):
@@ -404,7 +398,7 @@ def get_difficulty():
   else:
     level = 'hard'
   return dict(difficulty=level)
-  
+
 @app.context_processor
 def get_server_info():
   return dict(version=VERSION, host=WEB_HOST, port=WEB_PORT)
@@ -422,7 +416,6 @@ def set_difficulty():
 schema = graphene.Schema(query=Query, mutation=Mutations, subscription=Subscription, directives=[ShowNetworkDirective, SkipDirective, DeprecatedDirective])
 
 subscription_server = GeventSubscriptionServerCustom(schema)
-
 
 sockets = Sockets(app)
 
@@ -464,7 +457,8 @@ app.add_url_rule('/graphiql', view_func=OverriddenView.as_view(
   schema = schema,
   backend=CustomBackend(),
   graphiql = True,
-  middleware = igql_middlew
+  middleware = igql_middlew,
+  format_error=format_custom_error
 ))
 
 

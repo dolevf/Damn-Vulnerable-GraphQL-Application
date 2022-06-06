@@ -50,6 +50,7 @@ DVGA supports Beginner and Expert level game modes, which will change the exploi
   * GraphiQL Interface
   * GraphQL Field Suggestions
   * Server Side Request Forgery
+  * Debug Information Leakage
 * **Code Execution**
   * OS Command Injection #1
   * OS Command Injection #2
@@ -67,7 +68,7 @@ DVGA supports Beginner and Expert level game modes, which will change the exploi
 
 # Prerequisites
 The following Python3 libraries are required:
-* Python3 (3.6 - 3.9) (3.10 is not supported) 
+* Python3 (3.6 - 3.9) (3.10 is not supported)
 * Flask
 * Flask-SQLAlchemy
 * Flask-Sockets
@@ -153,8 +154,8 @@ A big Thank You to the kind people who helped make DVGA better:
 * [Hacking APIs (Ch14) by Corey Ball - No Starch Press](https://nostarch.com/hacking-apis)
 * [Hacking Simplified Part #1](https://www.youtube.com/watch?v=w0QOAacuPgQ)
 * [Hacking Simplified Part #2](https://www.youtube.com/watch?v=YA-mL9Z8SNI)
+* [Hacking Simplified Part #3](https://www.youtube.com/watch?v=kUTIFx8vGQs)
 
-                                                                                                                                              
 # Disclaimer
 DVGA is highly insecure, and as such, should not be deployed on internet facing servers. By default, the application is listening on 127.0.0.1 to avoid misconfigurations.
 

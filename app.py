@@ -14,7 +14,6 @@ app.config["UPLOAD_FOLDER"] = config.WEB_UPLOADDIR
 
 sockets = Sockets(app)
 
-
 app.app_protocol = lambda environ_path_info: 'graphql-ws'
 
 db = SQLAlchemy(app)
