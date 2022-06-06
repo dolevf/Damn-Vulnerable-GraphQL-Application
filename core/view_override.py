@@ -119,8 +119,6 @@ class OverriddenView(GraphQLView):
                 content_type='application/json'
             )
 
-import copy
-
 class GeventSubscriptionServerCustom(BaseSyncSubscriptionServer):
     def handle(self, ws, request_context=None):
         connection_context = GeventConnectionContext(ws, request_context)
