@@ -35,19 +35,19 @@ class Audit(db.Model):
         gql_operation = info.operation.name.value
       except:
         gql_operation = "No Operation"
-      
+
       if info.context.json:
         gql_query = info.context.json.get("query")
-    
+
     if operation_type == 'subscription' and info:
       ast = parse(info)
       gql_query = info
-      
+
       try:
         gql_operation = ast.definitions[0].name.value
       except:
         pass
-      
+
     obj = cls(**{"gqloperation":gql_operation, "gqlquery":gql_query})
     db.session.add(obj)
     db.session.commit()
@@ -87,7 +87,7 @@ class ServerMode(db.Model):
   __tablename__ = 'servermode'
   id = db.Column(db.Integer, primary_key=True)
   hardened = db.Column(db.Boolean, default=False)
-  
+
   @classmethod
   def set_mode(cls, mode):
     obj = ServerMode.query.one()
@@ -95,7 +95,7 @@ class ServerMode(db.Model):
       obj.hardened = False
     else:
       obj.hardened = True
-      
+
     db.session.add(obj)
     db.session.commit()
 

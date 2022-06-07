@@ -23,7 +23,7 @@ def get_network(addr, style='cidr'):
       return str(ipaddress.ip_network(addr).netmask)
   except:
     return 'Could not identify network'
-  
+
 def is_port(port):
   if isinstance(port, int):
     if port >= 0 and port <= 65535:
