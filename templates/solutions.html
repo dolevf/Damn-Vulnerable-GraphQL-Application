@@ -48,6 +48,9 @@
                         <li>
                           <a href="#dos-aliases">Aliases based Attack</a>
                         </li>
+                        <li>
+                          <a href="#dos-circular-fragment">Circular Fragment</a>
+                        </li>
                       </ul>
                     </li>
 
@@ -65,6 +68,9 @@
                         </li>
                         <li>
                           <a href="#info-ssrf">Server Side Request Forgery</a>
+                        </li>
+                        <li>
+                          <a href="#info-stacktrace">Stack Trace Errors</a>
                         </li>
                       </ul>
                     </li>
@@ -138,7 +144,7 @@
                 <br>
                 <small style="color:grey"><i class="fa fa-info"></i> &nbsp; Some solutions include code snippets that are written in Python and use the requests library for HTTP requests.</small>
               </p>
-              
+
               <h3 style="color:purple"><b>Getting Started</b></h3>
               <hr />
               <p>The first essential step in every security test is to gain a bit of insight into the technology the remote server is using. By knowing the technologies in use, you can start building up a plan how to attack the application or the underlying infrastructure.</p>
@@ -148,27 +154,27 @@
               <p>Detecting where GraphQL lives is pretty trivial, there are common places where you would typically see a graphql endpoint. For example, <i>/graphql</i>, <i>/v1/graphql</i>, etc.</p>
               <p>Point graphw00f at DVGA to figure out where GraphQL lives:</p>
               <p><b><pre>
-$>  python3 graphw00f.py -d -t http://localhost:5013/graphql                 
-                +-------------------+                 
-                |     graphw00f     |                 
-                +-------------------+                 
-                  ***            ***                  
-                **                  ***               
-              **                       **             
-    +--------------+              +--------------+       
-    |    Node X    |              |    Node Y    |       
-    +--------------+              +--------------+     
-                  ***            ***                  
-                     **        **                     
-                       **    **                       
-                    +------------+                      
-                    |   Node Z   |                      
-                    +------------+    
+$>  python3 graphw00f.py -d -t http://localhost:5013/graphql
+                +-------------------+
+                |     graphw00f     |
+                +-------------------+
+                  ***            ***
+                **                  ***
+              **                       **
+    +--------------+              +--------------+
+    |    Node X    |              |    Node Y    |
+    +--------------+              +--------------+
+                  ***            ***
+                     **        **
+                       **    **
+                    +------------+
+                    |   Node Z   |
+                    +------------+
 
-                graphw00f - v1.0.3 
+                graphw00f - v1.0.3
           The fingerprinting tool for GraphQL
            Dolev Farhi (dolev@lethalbit.com)
-  
+
 Checking http://dvga.example.local:5013/graphql
 [*] Found GraphQL at http://dvga.example.local:5013/graphql
 [*] You can now try and fingerprint GraphQL using: graphw00f.py -t http://dvga.example.local:5013/graphql
@@ -181,7 +187,7 @@ Checking http://dvga.example.local:5013/graphql
               <p>Point graphw00f at DVGA to figure out what technology it's running.</p>
               <p><b><pre>
 $> python3 graphw00f.py -t http://dvga.example.local:5013/graphql -f
-                
+
 [*] Checking if GraphQL is available at http://dvga.example.local:5013/graphql...
 [*] Found GraphQL...
 [*] Attempting to fingerprint...

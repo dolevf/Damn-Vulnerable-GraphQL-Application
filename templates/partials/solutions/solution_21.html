@@ -1,0 +1,20 @@
+<!-- Start -->
+<h3 style="color:purple" id="info-stacktrace"><b>Information Disclosure :: Stack Trace Errors</b></h3>
+<hr />
+<h5>Problem Statement</h5>
+<p>
+  The dedicated GraphiQL API endpoint <code>/graphiql</code> throws stack traces and debugging messages upon erroneous queries.
+</p>
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-info-stacktrace')">Show</button></h5>
+<div id="sol-info-stacktrace" style="display:none">
+  <pre class="bash">
+# Navigate to /graphiql
+# Query using invalid syntax and observe the response.
+query {
+    pastes {
+        conteeeent
+    }
+}
+</pre>
+</div>
+<!-- End -->

@@ -50,7 +50,7 @@ DVGA supports Beginner and Expert level game modes, which will change the exploi
   * GraphiQL Interface
   * GraphQL Field Suggestions
   * Server Side Request Forgery
-  * Debug Information Leakage
+  * Stack Trace Errors
 * **Code Execution**
   * OS Command Injection #1
   * OS Command Injection #2
