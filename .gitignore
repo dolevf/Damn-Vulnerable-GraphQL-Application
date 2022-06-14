@@ -139,6 +139,5 @@ cython_debug/
 
 .DS_Store
 dvga.db
-tests/
 tools/
 
