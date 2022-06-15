@@ -22,7 +22,7 @@ def test_query_pastes():
     '''
     r = graph_query(GRAPHQL_URL, query)
 
-    assert r.json()['data']['pastes'][0]['id'] == '1'
+    assert r.json()['data']['pastes'][0]['id']
     assert r.json()['data']['pastes'][0]['ipAddr'] == '127.0.0.1'
     assert r.json()['data']['pastes'][0]['ownerId'] == 1
     assert r.json()['data']['pastes'][0]['burn'] == False
@@ -30,7 +30,7 @@ def test_query_pastes():
     assert r.json()['data']['pastes'][0]['owner']['name'] == 'DVGAUser'
     assert r.json()['data']['pastes'][0]['title']
     assert r.json()['data']['pastes'][0]['userAgent']
-    assert r.json()['data']['pastes'][0]['content'] == 'My First Paste'
+    assert r.json()['data']['pastes'][0]['content']
 
 def test_query_paste_by_id():
     query = '''

@@ -28,3 +28,15 @@ def test_check_introspect_fields():
 
     assert len(fields) == 0
 
+def test_check_introspect_when_expert_mode():
+  query = """
+    query {
+       __schema {
+          __typename
+       }
+    }
+  """
+  r = graph_query(GRAPHQL_URL, query, headers={"X-DVGA-MODE":'Expert'})
+  assert r.status_code == 200
+  assert r.json()['errors'][0]['message'] == '400 Bad Request: Introspection is Disabled'
+

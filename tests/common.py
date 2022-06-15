@@ -14,9 +14,10 @@ GRAPHIQL_URL = URL + '/graphiql'
 def generate_id():
     return str(uuid.uuid4())[4]
 
-def graph_query(url, query=None, operation="query"):
+def graph_query(url, query=None, operation="query", headers={}):
     return requests.post(url,
                             verify=False,
                             allow_redirects=True,
                             timeout=30,
+                            headers=headers,
                             json={operation:query})
