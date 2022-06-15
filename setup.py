@@ -76,6 +76,8 @@ def pump_db():
   paste.user_agent = 'User-Agent not set'
   db.session.add(paste)
 
+  db.session.commit()
+
   for _ in range(0, 10):
     owner = Owner(name=random_owner())
     paste = Paste()

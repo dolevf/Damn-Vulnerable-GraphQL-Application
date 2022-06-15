@@ -58,39 +58,9 @@ def test_query_paste_by_id():
     assert r.json()['data']['paste']['burn'] == False
     assert r.json()['data']['paste']['owner']['id'] == '1'
     assert r.json()['data']['paste']['owner']['name'] == 'DVGAUser'
-    assert r.json()['data']['paste']['title'] == 'Testing Testing'
+    assert r.json()['data']['paste']['title']
     assert r.json()['data']['paste']['userAgent'] == 'User-Agent not set'
-    assert r.json()['data']['paste']['content'] == 'My First Paste'
-
-def test_query_paste_by_title():
-    query = '''
-        query {
-            paste (title: "Testing Testing") {
-                id
-                ipAddr
-                ownerId
-                burn
-                owner {
-                    id
-                    name
-                }
-                title
-                content
-                userAgent
-            }
-        }
-    '''
-    r = graph_query(GRAPHQL_URL, query)
-
-    assert r.json()['data']['paste']['id'] == '1'
-    assert r.json()['data']['paste']['ipAddr'] == '127.0.0.1'
-    assert r.json()['data']['paste']['ownerId'] == 1
-    assert r.json()['data']['paste']['burn'] == False
-    assert r.json()['data']['paste']['owner']['id'] == '1'
-    assert r.json()['data']['paste']['owner']['name'] == 'DVGAUser'
-    assert r.json()['data']['paste']['title'] == 'Testing Testing'
-    assert r.json()['data']['paste']['userAgent'] == 'User-Agent not set'
-    assert r.json()['data']['paste']['content'] == 'My First Paste'
+    assert r.json()['data']['paste']['content']
 
 def test_query_systemHealth():
     query = '''
@@ -162,7 +132,7 @@ def test_query_search_on_user_object():
 def test_query_search_on_paste_object():
     query = '''
         query {
-            search(keyword:"Testing") {
+            search {
                 ... on PasteObject {
                 owner {
                     name
@@ -181,7 +151,7 @@ def test_query_search_on_paste_object():
 
     r = graph_query(GRAPHQL_URL, query)
     assert r.status_code == 200
-    assert r.json()['data']['search'][0]['owner']['name'] == 'DVGAUser'
+    assert len(r.json()['data']['search']) > 0
     assert r.json()['data']['search'][0]['owner']['id']
     assert r.json()['data']['search'][0]['title']
     assert r.json()['data']['search'][0]['content']
