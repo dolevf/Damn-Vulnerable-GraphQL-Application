@@ -65,19 +65,19 @@ def test_query_paste_by_id():
 def test_query_paste_by_title():
     query = '''
         query {
-        paste (title: "Testing Testing") {
-            id
-            ipAddr
-            ownerId
-            burn
-            owner {
+            paste (title: "Testing Testing") {
                 id
-                name
+                ipAddr
+                ownerId
+                burn
+                owner {
+                    id
+                    name
+                }
+                title
+                content
+                userAgent
             }
-            title
-            content
-            userAgent
-        }
         }
     '''
     r = graph_query(GRAPHQL_URL, query)
@@ -101,3 +101,111 @@ def test_query_systemHealth():
     r = graph_query(GRAPHQL_URL, query)
     assert 'System Load' in r.json()['data']['systemHealth']
     assert '.' in r.json()['data']['systemHealth'].split('System Load: ')[1]
+
+def test_query_systemUpdate():
+    pass
+
+def test_query_systemDebug():
+    query = '''
+        query {
+           systemDebug
+        }
+    '''
+    r = graph_query(GRAPHQL_URL, query)
+    assert r.status_code == 200
+    assert 'pts' in r.json()['data']['systemDebug']
+
+def test_query_users():
+    query = '''
+        query {
+           users {
+               id
+               username
+           }
+        }
+    '''
+
+    r = graph_query(GRAPHQL_URL, query)
+    assert r.status_code == 200
+    assert len(r.json()['data']['users']) > 1
+
+def test_query_read_and_burn():
+    query = '''
+        query {
+            readAndBurn(id: 155){
+                id
+            }
+        }
+    '''
+    r = graph_query(GRAPHQL_URL, query)
+    assert r.status_code == 200
+    assert r.json()['data']['readAndBurn'] == None
+
+def test_query_search_on_user_object():
+    query = '''
+        query {
+         search(keyword:"operator") {
+            ... on UserObject {
+                username
+                id
+              }
+          }
+        }
+    '''
+
+    r = graph_query(GRAPHQL_URL, query)
+    assert r.status_code == 200
+    assert r.json()['data']['search'][0]['username'] == 'operator'
+    assert r.json()['data']['search'][0]['id']
+
+
+def test_query_search_on_paste_object():
+    query = '''
+        query {
+            search(keyword:"Testing") {
+                ... on PasteObject {
+                owner {
+                    name
+                    id
+                }
+                title
+                content
+                id
+                ipAddr
+                burn
+                ownerId
+                }
+            }
+        }
+    '''
+
+    r = graph_query(GRAPHQL_URL, query)
+    assert r.status_code == 200
+    assert r.json()['data']['search'][0]['owner']['name'] == 'DVGAUser'
+    assert r.json()['data']['search'][0]['owner']['id']
+    assert r.json()['data']['search'][0]['title']
+    assert r.json()['data']['search'][0]['content']
+    assert r.json()['data']['search'][0]['id']
+    assert r.json()['data']['search'][0]['ipAddr']
+    assert r.json()['data']['search'][0]['burn'] == False
+    assert r.json()['data']['search'][0]['ownerId']
+
+def test_query_audits():
+    query = '''
+       query {
+            audits {
+                id
+                gqloperation
+                gqlquery
+                timestamp
+            }
+        }
+    '''
+
+    r = graph_query(GRAPHQL_URL, query)
+    assert r.status_code == 200
+    assert len(r.json()['data']['audits']) > 0
+    assert r.json()['data']['audits'][0]['id']
+    assert r.json()['data']['audits'][0]['gqloperation']
+    assert r.json()['data']['audits'][0]['gqlquery']
+    assert r.json()['data']['audits'][0]['timestamp']
