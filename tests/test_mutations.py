@@ -60,11 +60,11 @@ def test_mutation_editPaste():
 
 def test_mutation_deletePaste():
     query = '''
-    mutation {
-        deletePaste(id: 91000) {
-            result
+        mutation {
+            deletePaste(id: 91000) {
+                result
+            }
         }
-    }
     '''
     r = graph_query(GRAPHQL_URL, query)
 
@@ -83,11 +83,11 @@ def test_mutation_deletePaste():
 
 def test_mutation_uploadPaste():
     query = '''
-    mutation {
-         uploadPaste(content:"Uploaded Content", filename:"test.txt") {
-            result
+        mutation {
+            uploadPaste(content:"Uploaded Content", filename:"test.txt") {
+                result
+            }
         }
-    }
     '''
     r = graph_query(GRAPHQL_URL, query)
 
@@ -112,11 +112,11 @@ def test_mutation_uploadPaste():
 
 def test_mutation_importPaste():
     query = '''
-    mutation {
-        importPaste(scheme: "https", host:"icanhazip.com", path:"/", port:443) {
-            result
+        mutation {
+            importPaste(scheme: "https", host:"icanhazip.com", path:"/", port:443) {
+                 result
+            }
         }
-    }
     '''
     r = graph_query(GRAPHQL_URL, query)
 
@@ -137,3 +137,60 @@ def test_mutation_createUser():
     r = graph_query(GRAPHQL_URL, query)
 
     assert r.json()['data']['createUser']['user']['username'] == 'integrationuser'
+
+def test_mutation_createBurnPaste():
+    query = '''
+        mutation {
+            createPaste(burn: true, content: "Burn Me", title: "Burn Me", public: true) {
+                paste {
+                  content
+                  burn
+                  title
+                  id
+                }
+            }
+        }
+    '''
+    r = graph_query(GRAPHQL_URL, query)
+
+    assert r.status_code == 200
+    assert r.json()['data']['createPaste']['paste']['content'] == 'Burn Me'
+    assert r.json()['data']['createPaste']['paste']['title'] == 'Burn Me'
+    assert r.json()['data']['createPaste']['paste']['id']
+
+    paste_id = r.json()['data']['createPaste']['paste']['id']
+
+    query = '''
+        query {
+            readAndBurn(id: %s) {
+                content
+                burn
+                title
+                id
+            }
+        }
+    ''' % paste_id
+
+    r = graph_query(GRAPHQL_URL, query)
+
+    assert r.status_code == 200
+    assert r.json()['data']['readAndBurn']['content'] == 'Burn Me'
+    assert r.json()['data']['readAndBurn']['title'] == 'Burn Me'
+    assert r.json()['data']['readAndBurn']['id']
+
+
+    query = '''
+        query {
+            readAndBurn(id: %s) {
+                content
+                burn
+                title
+                id
+            }
+        }
+    ''' % paste_id
+    r = graph_query(GRAPHQL_URL, query)
+
+    assert r.status_code == 200
+    assert r.json()['data']['readAndBurn'] == None
+
