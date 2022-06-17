@@ -83,7 +83,7 @@ def test_query_systemDebug():
     '''
     r = graph_query(GRAPHQL_URL, query)
     assert r.status_code == 200
-    assert 'pts' in r.json()['data']['systemDebug']
+    assert 'tty' in r.json()['data']['systemDebug'].lower()
 
 def test_query_users():
     query = '''
