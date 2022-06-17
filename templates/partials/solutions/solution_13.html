@@ -30,7 +30,9 @@
 # Log spoof the operation to getPaste instead of createPaste
 mutation getPaste{
   createPaste(title:"&lt;script&gt;alert(1)&lt;/script&gt;", content:"zzzz", public:true) {
-    pasteId
+    paste {
+      id
+    }
   }
 }
 

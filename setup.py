@@ -67,7 +67,7 @@ def pump_db():
   db.session.add(owner)
 
   paste = Paste()
-  paste.title = random_title()
+  paste.title = 'Testing Testing'
   paste.content = "My First Paste"
   paste.public = False
   paste.owner_id = owner.id
@@ -76,7 +76,9 @@ def pump_db():
   paste.user_agent = 'User-Agent not set'
   db.session.add(paste)
 
-  for _ in range(0, 10 ):
+  db.session.commit()
+
+  for _ in range(0, 10):
     owner = Owner(name=random_owner())
     paste = Paste()
     paste.title = random_title()

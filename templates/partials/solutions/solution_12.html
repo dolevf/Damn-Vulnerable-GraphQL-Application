@@ -19,7 +19,9 @@
 # Create New Paste allows special characters that would render in HTML.
 mutation {
   createPaste(title:"&lt;script&gt;alert(1)&lt;/script&gt;", content:"zzzz", public:true) {
-    pasteId
+    paste {
+      id
+    }
   }
 }
 
