@@ -3,7 +3,7 @@ import requests
 from common import URL, GRAPHQL_URL, graph_query
 
 def test_check_introspect_fields():
-    fields = ['pastes', 'paste', 'systemUpdate', 'systemDiagnostics', 'systemDebug', 'systemHealth', 'users', 'readAndBurn', 'search', 'audits']
+    fields = ['pastes', 'paste', 'systemUpdate', 'systemDiagnostics', 'systemDebug', 'systemHealth', 'users', 'readAndBurn', 'search', 'audits', 'deleteAllPastes']
     r = requests.get(URL + '/difficulty/easy')
     assert r.status_code == 200
 

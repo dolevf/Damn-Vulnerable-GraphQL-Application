@@ -179,3 +179,19 @@ def test_query_audits():
     assert r.json()['data']['audits'][0]['gqloperation']
     assert r.json()['data']['audits'][0]['gqlquery']
     assert r.json()['data']['audits'][0]['timestamp']
+
+def test_query_audits():
+    query = '''
+       query {
+            deleteAllPastes
+        }
+    '''
+
+    r = graph_query(GRAPHQL_URL, query)
+    assert r.status_code == 200
+    assert r.json()['data']['deleteAllPastes']
+
+    # Rebuild
+    r = requests.get(URL + '/start_over')
+    assert r.status_code == 200
+    assert 'Restored to default state' in r.text
