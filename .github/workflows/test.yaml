@@ -20,6 +20,10 @@ jobs:
           cache: 'pip'
       - run: pip install -r requirements.txt
 
+      - name: Run DVGA
+        run: |
+          python3 ./app.py
+
       - name: Run DVGA Tests
         run: |
-          python3 ./app.py & python3 -m pytest tests/*
+          python3 -m pytest tests/*
