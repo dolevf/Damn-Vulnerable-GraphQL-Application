@@ -37,7 +37,7 @@ Rx==1.6.1
 singledispatch==3.4.0.3
 six==1.15.0
 SQLAlchemy==1.3.22
-tomli==2.0.1
+tomli==1.2.3
 urllib3==1.26.3
 Werkzeug==1.0.1
 zope.event==4.5.0
