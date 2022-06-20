@@ -333,7 +333,7 @@ class Query(graphene.ObjectType):
     Audit.create_audit_entry(info)
     Paste.query.delete()
     db.session.commit()
-    return Paste.query.count() == 0:
+    return Paste.query.count() == 0
 
 
 @app.route('/')
