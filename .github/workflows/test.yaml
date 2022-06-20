@@ -22,7 +22,7 @@ jobs:
 
       - name: Run DVGA
         run: |
-          nohup python3 ./app.py
+          nohup python3 ./app.py &
 
       - name: Wait for server (sleep 5 secs)
         run: |
