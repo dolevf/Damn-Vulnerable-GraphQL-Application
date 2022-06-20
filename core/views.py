@@ -240,6 +240,7 @@ class Query(graphene.ObjectType):
   read_and_burn = graphene.Field(PasteObject, id=graphene.Int())
   search = graphene.List(SearchResult, keyword=graphene.String())
   audits = graphene.List(AuditObject)
+  delete_all_pastes = graphene.Boolean()
 
   def resolve_search(self, info, keyword=None):
     Audit.create_audit_entry(info)
@@ -327,6 +328,15 @@ class Query(graphene.ObjectType):
     query = Audit.query.all()
     Audit.create_audit_entry(info)
     return query
+
+  def resolve_delete_all_pastes(self, info):
+    Audit.create_audit_entry(info)
+    result = graphene.Boolean()
+    Paste.query.delete()
+    db.session.commit()
+    if Paste.query.count() == 0:
+      return True
+    return False
 
 @app.route('/')
 def index():
