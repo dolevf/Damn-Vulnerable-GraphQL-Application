@@ -1,0 +1,33 @@
+name: Build & Test
+
+on:
+  pull_request:
+    branches:
+      - master
+
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.6'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+
+      - name: Run DVGA
+        run: |
+          nohup python3 ./app.py &
+
+      - name: Wait for server (sleep 5 secs)
+        run: |
+          sleep 5
+
+      - name: Run DVGA Tests
+        run: |
+          python3 -m pytest tests/*
