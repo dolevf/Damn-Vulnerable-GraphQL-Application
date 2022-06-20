@@ -331,7 +331,6 @@ class Query(graphene.ObjectType):
 
   def resolve_delete_all_pastes(self, info):
     Audit.create_audit_entry(info)
-    result = graphene.Boolean()
     Paste.query.delete()
     db.session.commit()
     if Paste.query.count() == 0:
