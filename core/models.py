@@ -30,15 +30,6 @@ class Audit(db.Model):
     gql_query = '{}'
     gql_operation = None
 
-    if not operation_type:
-      try:
-        gql_operation = info.operation.name.value
-      except:
-        gql_operation = "No Operation"
-
-      if info.context.json:
-        gql_query = info.context.json.get("query")
-
     if operation_type == 'subscription' and info:
       ast = parse(info)
       gql_query = info
@@ -48,8 +39,29 @@ class Audit(db.Model):
       except:
         pass
 
-    obj = cls(**{"gqloperation":gql_operation, "gqlquery":gql_query})
-    db.session.add(obj)
+      obj = cls(**{"gqloperation":gql_operation, "gqlquery":gql_query})
+      db.session.add(obj)
+
+    if not operation_type:
+      try:
+        gql_operation = info.operation.name.value
+      except:
+        gql_operation = "No Operation"
+
+    obj = False
+
+    if not isinstance(info, str):
+      if isinstance(info.context.json, list):
+        """ Array-based Batch """
+        for i in info.context.json:
+          gql_query = i.get("query")
+          obj = cls(**{"gqloperation":gql_operation, "gqlquery":gql_query})
+          db.session.add(obj)
+      else:
+        gql_query = info.context.json.get("query")
+        obj = cls(**{"gqloperation":gql_operation, "gqlquery":gql_query})
+        db.session.add(obj)
+
     db.session.commit()
     return obj
 
