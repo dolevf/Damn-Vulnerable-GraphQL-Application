@@ -25,6 +25,17 @@ from flask import (
   make_response,
   session
 )
+from flask_graphql_auth import (
+    AuthInfoField,
+    GraphQLAuth,
+    get_jwt_identity,
+    create_access_token,
+    create_refresh_token,
+    query_header_jwt_required,
+    mutation_jwt_refresh_token_required,
+    mutation_jwt_required,
+    mutation_header_jwt_required
+)
 from flask_sockets import Sockets
 from graphql.backend import GraphQLCoreBackend
 from sqlalchemy import event, text
