@@ -5,13 +5,18 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_sockets import Sockets
+from flask_graphql_auth import GraphQLAuth
 
 app = Flask(__name__, static_folder="static/")
 app.secret_key = os.urandom(24)
 app.config["SQLALCHEMY_DATABASE_URI"] = config.SQLALCHEMY_DATABASE_URI
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = config.SQLALCHEMY_TRACK_MODIFICATIONS
 app.config["UPLOAD_FOLDER"] = config.WEB_UPLOADDIR
+app.config["JWT_SECRET_KEY"] = "dvga"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = 10
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = 30
 
+auth = GraphQLAuth(app)
 sockets = Sockets(app)
 
 app.app_protocol = lambda environ_path_info: 'graphql-ws'
