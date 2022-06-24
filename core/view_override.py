@@ -172,7 +172,7 @@ class GeventSubscriptionServerCustom(BaseSyncSubscriptionServer):
                 msg = json.loads(message)
 
                 if msg.get('type', '') == 'start':
-                  Audit.create_audit_entry(msg['payload']['query'], operation_type='subscription')
+                  Audit.create_audit_entry(msg['payload']['query'], subscription_type=True)
 
 
             self.on_message(connection_context, message)

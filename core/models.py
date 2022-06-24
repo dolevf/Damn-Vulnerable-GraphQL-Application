@@ -2,6 +2,7 @@ import datetime
 
 from app import db
 from graphql import parse
+from graphql.execution.base import ResolveInfo
 
 # Models
 class User(db.Model):
@@ -26,41 +27,45 @@ class Audit(db.Model):
   timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
   @classmethod
-  def create_audit_entry(cls, info, operation_type=None):
+  def create_audit_entry(cls, info, subscription_type=False):
     gql_query = '{}'
     gql_operation = None
+    obj = False
 
-    if operation_type == 'subscription' and info:
-      ast = parse(info)
+    """
+      GraphQL subscriptions pass a String, conversion to AST is required.
+    """
+    if subscription_type and isinstance(info, str):
+      """Subscriptions"""
       gql_query = info
+      ast = parse(gql_query)
 
       try:
         gql_operation = ast.definitions[0].name.value
       except:
-        pass
+        gql_operation = 'No Operation'
 
       obj = cls(**{"gqloperation":gql_operation, "gqlquery":gql_query})
       db.session.add(obj)
-
-    if not operation_type:
+    else:
+      """Queries and Mutations"""
       try:
         gql_operation = info.operation.name.value
       except:
         gql_operation = "No Operation"
 
-    obj = False
-
-    if not isinstance(info, str):
-      if isinstance(info.context.json, list):
-        """ Array-based Batch """
-        for i in info.context.json:
-          gql_query = i.get("query")
-          obj = cls(**{"gqloperation":gql_operation, "gqlquery":gql_query})
-          db.session.add(obj)
-      else:
-        gql_query = info.context.json.get("query")
-        obj = cls(**{"gqloperation":gql_operation, "gqlquery":gql_query})
-        db.session.add(obj)
+      if isinstance(info, ResolveInfo):
+        if isinstance(info.context.json, list):
+          """Array-based Batch"""
+          for i in info.context.json:
+            gql_query = i.get("query")
+            obj = cls(**{"gqloperation":gql_operation, "gqlquery":gql_query})
+            db.session.add(obj)
+        else:
+          if info.context.json:
+            gql_query = info.context.json.get("query")
+            obj = cls(**{"gqloperation":gql_operation, "gqlquery":gql_query})
+            db.session.add(obj)
 
     db.session.commit()
     return obj
