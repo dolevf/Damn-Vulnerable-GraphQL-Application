@@ -59,7 +59,9 @@ def pump_db():
   db.create_all()
 
   admin = User(username="admin", email="admin@blackhatgraphql.com", password=random_password())
-  operator = User(username="operator", email="operator@blackhatgraphql.com", password=random_password())
+  operator = User(username="operator", email="operator@blackhatgraphql.com", password="password123")
+  # create tokens for admin & operator
+
   db.session.add(admin)
   db.session.add(operator)
 
