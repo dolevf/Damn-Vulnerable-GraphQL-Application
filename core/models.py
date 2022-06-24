@@ -1,6 +1,7 @@
 import datetime
 
 from app import db
+import re
 from graphql import parse
 
 # Models
@@ -18,6 +19,13 @@ class User(db.Model):
       db.session.commit()
 
       return obj
+
+
+def clean_query(gql_query):
+  clean = re.sub(r'(?<=token:")(.*)(?=")', "*****", gql_query)
+  clean = re.sub(r'(?<=password:")(.*)(?=")', "*****", clean)
+  return clean
+
 
 class Audit(db.Model):
   __tablename__ = 'audits'
@@ -56,10 +64,12 @@ class Audit(db.Model):
         """ Array-based Batch """
         for i in info.context.json:
           gql_query = i.get("query")
+          gql_query = clean_query(gql_query)
           obj = cls(**{"gqloperation":gql_operation, "gqlquery":gql_query})
           db.session.add(obj)
       else:
         gql_query = info.context.json.get("query")
+        gql_query = clean_query(gql_query)
         obj = cls(**{"gqloperation":gql_operation, "gqlquery":gql_query})
         db.session.add(obj)
 

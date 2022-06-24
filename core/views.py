@@ -5,6 +5,7 @@ from core import (
   helpers,
   middleware
 )
+from graphql.error import GraphQLError
 from core.directives import *
 from core.models import (
   Owner,
@@ -26,16 +27,19 @@ from flask import (
   session
 )
 from flask_graphql_auth import (
-    AuthInfoField,
     GraphQLAuth,
+    AuthInfoField,
+    get_raw_jwt,
     get_jwt_identity,
     create_access_token,
     create_refresh_token,
+    query_jwt_required,
     query_header_jwt_required,
     mutation_jwt_refresh_token_required,
     mutation_jwt_required,
     mutation_header_jwt_required
 )
+from flask_graphql_auth.decorators import verify_jwt_in_argument
 from flask_sockets import Sockets
 from graphql.backend import GraphQLCoreBackend
 from sqlalchemy import event, text
@@ -261,6 +265,7 @@ class SearchResult(graphene.Union):
   class Meta:
     types = (PasteObject, UserObject)
 
+
 class Query(graphene.ObjectType):
   pastes = graphene.List(PasteObject, public=graphene.Boolean(), limit=graphene.Int(), filter=graphene.String())
   paste = graphene.Field(PasteObject, id=graphene.Int(), title=graphene.String())
@@ -273,6 +278,21 @@ class Query(graphene.ObjectType):
   search = graphene.List(SearchResult, keyword=graphene.String())
   audits = graphene.List(AuditObject)
   delete_all_pastes = graphene.Boolean()
+  me = graphene.Field(UserObject, token=graphene.String())
+
+  def resolve_me(self, info, token):
+    Audit.create_audit_entry(info)
+    try:
+        verify_jwt_in_argument(token)
+    except Exception as e:
+        return GraphQLError('Bad token')
+
+    query = UserObject.get_query(info)
+
+    current_user = get_jwt_identity()
+
+    result = query.filter_by(username=current_user).first()
+    return result
 
   def resolve_search(self, info, keyword=None):
     Audit.create_audit_entry(info)
