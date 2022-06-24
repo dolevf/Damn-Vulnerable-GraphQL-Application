@@ -58,8 +58,8 @@ def pump_db():
   print('Populating Database')
   db.create_all()
 
-  admin = User(username="admin", password=random_password())
-  operator = User(username="operator", password=random_password())
+  admin = User(username="admin", email="admin@blackhatgraphql.com", password=random_password())
+  operator = User(username="operator", email="operator@blackhatgraphql.com", password=random_password())
   db.session.add(admin)
   db.session.add(operator)
 

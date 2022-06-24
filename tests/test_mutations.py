@@ -127,7 +127,7 @@ def test_mutation_importPaste():
 def test_mutation_createUser():
     query = '''
     mutation {
-        createUser(userData:{username:"integrationuser", password:"strongpass"}) {
+        createUser(userData:{username:"integrationuser", email:"test@blackhatgraphql.com", password:"strongpass"}) {
             user {
              username
             }

@@ -39,7 +39,7 @@ from config import WEB_HOST, WEB_PORT
 class UserObject(SQLAlchemyObjectType):
   class Meta:
     model = User
-    exclude_fields = ('password',)
+    exclude_fields = ('email', 'password',)
 
   username = graphene.String(capitalize=graphene.Boolean())
 
@@ -71,6 +71,7 @@ class AuditObject(SQLAlchemyObjectType):
 
 class UserInput(graphene.InputObjectType):
   username = graphene.String(required=True)
+  email = graphene.String(required=True)
   password = graphene.String(required=True)
 
 class CreateUser(graphene.Mutation):
@@ -82,6 +83,7 @@ class CreateUser(graphene.Mutation):
   def mutate(root, info, user_data=None):
     user_obj = User.create_user(
       username=user_data.username,
+      email=user_data.email,
       password=user_data.password
     )
 
