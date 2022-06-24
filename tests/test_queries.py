@@ -99,6 +99,22 @@ def test_query_users():
     assert r.status_code == 200
     assert len(r.json()['data']['users']) > 1
 
+def test_query_users_by_id():
+    query = '''
+        query {
+           users(id: 1) {
+               id
+               username
+           }
+        }
+    '''
+
+    r = graph_query(GRAPHQL_URL, query)
+    assert r.status_code == 200
+    assert r.json()['data']['users'][0]['id']
+    assert len(r.json()['data']['users']) == 1
+
+
 def test_query_read_and_burn():
     query = '''
         query {
