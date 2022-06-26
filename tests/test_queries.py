@@ -195,3 +195,29 @@ def test_query_audits():
     r = requests.get(URL + '/start_over')
     assert r.status_code == 200
     assert 'Restored to default state' in r.text
+
+def test_query_pastes_with_limit():
+    query = '''
+        query {
+            pastes(limit: 2, public: true) {
+                content
+                title
+                owner {
+                    name
+                }
+                ownerId
+                userAgent
+                public
+            }
+    }
+    '''
+
+    r = graph_query(GRAPHQL_URL, query)
+    assert r.status_code == 200
+    assert len(r.json()['data']['pastes']) == 2
+    assert r.json()['data']['pastes'][0]['content']
+    assert r.json()['data']['pastes'][0]['title']
+    assert r.json()['data']['pastes'][0]['owner']['name']
+    assert r.json()['data']['pastes'][0]['ownerId']
+    assert r.json()['data']['pastes'][0]['userAgent']
+    assert r.json()['data']['pastes'][0]['public']
