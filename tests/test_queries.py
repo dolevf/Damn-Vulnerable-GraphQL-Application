@@ -221,3 +221,22 @@ def test_query_pastes_with_limit():
     assert r.json()['data']['pastes'][0]['ownerId']
     assert r.json()['data']['pastes'][0]['userAgent']
     assert r.json()['data']['pastes'][0]['public']
+
+def test_query_pastes_with_fragments():
+    query = '''
+        query {
+            pastes {
+                ...A
+            }
+        }
+
+        fragment A on PasteObject {
+            content
+            title
+        }
+    '''
+
+    r = graph_query(GRAPHQL_URL, query)
+    assert r.status_code == 200
+    assert r.json()['data']['pastes'][0]['content']
+    assert r.json()['data']['pastes'][0]['title']
