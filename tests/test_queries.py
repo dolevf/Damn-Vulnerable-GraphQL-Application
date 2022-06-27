@@ -176,6 +176,34 @@ def test_query_search_on_paste_object():
     assert r.json()['data']['search'][0]['burn'] == False
     assert r.json()['data']['search'][0]['ownerId']
 
+
+def test_query_search_on_user_and_paste_object():
+    query = '''
+        query {
+            search(keyword: "p") {
+                ... on UserObject {
+                    username
+                }
+                ... on PasteObject {
+                    title
+                }
+            }
+        }
+    '''
+    result = {"username":0, "title":0}
+
+    r = graph_query(GRAPHQL_URL, query)
+    assert r.status_code == 200
+
+    for i in r.json()['data']['search']:
+        if 'title' in i:
+            result['title'] = 1
+        elif 'username' in i:
+            result['username'] = 1
+
+    assert result['username'] == 1
+    assert result['title'] == 1
+
 def test_query_audits():
     query = '''
        query {
