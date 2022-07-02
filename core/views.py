@@ -26,6 +26,7 @@ from flask import (
   make_response,
   session
 )
+
 from flask_graphql_auth import (
     GraphQLAuth,
     AuthInfoField,
@@ -54,7 +55,7 @@ from config import WEB_HOST, WEB_PORT
 class UserObject(SQLAlchemyObjectType):
   class Meta:
     model = User
-    exclude_fields = ('email', 'password',)
+    exclude_fields = ('email',)
 
   username = graphene.String(capitalize=graphene.Boolean())
 
@@ -63,6 +64,13 @@ class UserObject(SQLAlchemyObjectType):
     if kwargs.get('capitalize'):
       return self.username.capitalize()
     return self.username
+
+  @staticmethod
+  def resolve_password(self, info, **kwargs):
+    if get_jwt_identity() == 'admin':
+      return self.password
+    else:
+      return '******'
 
 class PasteObject(SQLAlchemyObjectType):
   class Meta:
@@ -473,7 +481,7 @@ def set_difficulty():
     else:
       helpers.set_mode('easy')
 
-schema = graphene.Schema(query=Query, mutation=Mutations, subscription=Subscription, directives=[ShowNetworkDirective, SkipDirective, DeprecatedDirective])
+schema = graphene.Schema(query=Query, mutation=Mutations, subscription=Subscription, directives=[Auth, ShowNetworkDirective, SkipDirective, DeprecatedDirective])
 
 subscription_server = GeventSubscriptionServerCustom(schema)
 
