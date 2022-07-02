@@ -99,6 +99,22 @@ def test_query_users():
     assert r.status_code == 200
     assert len(r.json()['data']['users']) > 1
 
+def test_query_users_by_id():
+    query = '''
+        query {
+           users(id: 1) {
+               id
+               username
+           }
+        }
+    '''
+
+    r = graph_query(GRAPHQL_URL, query)
+    assert r.status_code == 200
+    assert r.json()['data']['users'][0]['id']
+    assert len(r.json()['data']['users']) == 1
+
+
 def test_query_read_and_burn():
     query = '''
         query {
@@ -160,6 +176,34 @@ def test_query_search_on_paste_object():
     assert r.json()['data']['search'][0]['burn'] == False
     assert r.json()['data']['search'][0]['ownerId']
 
+
+def test_query_search_on_user_and_paste_object():
+    query = '''
+        query {
+            search(keyword: "p") {
+                ... on UserObject {
+                    username
+                }
+                ... on PasteObject {
+                    title
+                }
+            }
+        }
+    '''
+    result = {"username":0, "title":0}
+
+    r = graph_query(GRAPHQL_URL, query)
+    assert r.status_code == 200
+
+    for i in r.json()['data']['search']:
+        if 'title' in i:
+            result['title'] = 1
+        elif 'username' in i:
+            result['username'] = 1
+
+    assert result['username'] == 1
+    assert result['title'] == 1
+
 def test_query_audits():
     query = '''
        query {
@@ -195,3 +239,48 @@ def test_query_audits():
     r = requests.get(URL + '/start_over')
     assert r.status_code == 200
     assert 'Restored to default state' in r.text
+
+def test_query_pastes_with_limit():
+    query = '''
+        query {
+            pastes(limit: 2, public: true) {
+                content
+                title
+                owner {
+                    name
+                }
+                ownerId
+                userAgent
+                public
+            }
+    }
+    '''
+
+    r = graph_query(GRAPHQL_URL, query)
+    assert r.status_code == 200
+    assert len(r.json()['data']['pastes']) == 2
+    assert r.json()['data']['pastes'][0]['content']
+    assert r.json()['data']['pastes'][0]['title']
+    assert r.json()['data']['pastes'][0]['owner']['name']
+    assert r.json()['data']['pastes'][0]['ownerId']
+    assert r.json()['data']['pastes'][0]['userAgent']
+    assert r.json()['data']['pastes'][0]['public']
+
+def test_query_pastes_with_fragments():
+    query = '''
+        query {
+            pastes {
+                ...A
+            }
+        }
+
+        fragment A on PasteObject {
+            content
+            title
+        }
+    '''
+
+    r = graph_query(GRAPHQL_URL, query)
+    assert r.status_code == 200
+    assert r.json()['data']['pastes'][0]['content']
+    assert r.json()['data']['pastes'][0]['title']
