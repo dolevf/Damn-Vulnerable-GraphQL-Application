@@ -27,7 +27,7 @@ packaging==21.3
 pluggy==1.0.0
 promise==2.3
 py==1.11.0
-PyJWT==2.3.0
+PyJWT==1.7.1
 pyparsing==3.0.9
 Pypubsub==4.0.3
 pytest==7.0.1
