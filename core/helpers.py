@@ -1,9 +1,8 @@
-from config import WEB_UPLOADDIR
-from flask import session
 import base64
 import uuid
 import os
-
+from config import WEB_UPLOADDIR
+from jwt import decode
 from core.models import ServerMode
 
 def run_cmd(cmd):
@@ -17,6 +16,9 @@ def generate_uuid():
 
 def decode_base64(text):
   return base64.b64decode(text).decode('utf-8')
+
+def get_identity(token):
+  return decode(token, options={"verify_signature":False}).get('identity')
 
 def save_file(filename, text):
   try:

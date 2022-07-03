@@ -5,6 +5,7 @@ from core import (
   helpers,
   middleware
 )
+from graphql.error import GraphQLError
 from core.directives import *
 from core.models import (
   Owner,
@@ -25,11 +26,19 @@ from flask import (
   make_response,
   session
 )
+
+from flask_graphql_auth import (
+    get_jwt_identity,
+    create_access_token,
+    create_refresh_token,
+)
+
+from flask_graphql_auth.decorators import verify_jwt_in_argument
 from flask_sockets import Sockets
 from graphql.backend import GraphQLCoreBackend
 from sqlalchemy import event, text
 from graphene_sqlalchemy import SQLAlchemyObjectType
-
+from core.helpers import get_identity
 from app import app, db
 
 from version import VERSION
@@ -39,7 +48,7 @@ from config import WEB_HOST, WEB_PORT
 class UserObject(SQLAlchemyObjectType):
   class Meta:
     model = User
-    exclude_fields = ('password',)
+    exclude_fields = ('email',)
 
   username = graphene.String(capitalize=graphene.Boolean())
 
@@ -48,6 +57,13 @@ class UserObject(SQLAlchemyObjectType):
     if kwargs.get('capitalize'):
       return self.username.capitalize()
     return self.username
+
+  @staticmethod
+  def resolve_password(self, info, **kwargs):
+    if info.context.json.get('identity') == 'admin':
+      return self.password
+    else:
+      return '******'
 
 class PasteObject(SQLAlchemyObjectType):
   class Meta:
@@ -71,6 +87,7 @@ class AuditObject(SQLAlchemyObjectType):
 
 class UserInput(graphene.InputObjectType):
   username = graphene.String(required=True)
+  email = graphene.String(required=True)
   password = graphene.String(required=True)
 
 class CreateUser(graphene.Mutation):
@@ -82,6 +99,7 @@ class CreateUser(graphene.Mutation):
   def mutate(root, info, user_data=None):
     user_obj = User.create_user(
       username=user_data.username,
+      email=user_data.email,
       password=user_data.password
     )
 
@@ -205,6 +223,24 @@ class ImportPaste(graphene.Mutation):
 
     return ImportPaste(result=cmd)
 
+class Login(graphene.Mutation):
+    access_token = graphene.String()
+    refresh_token = graphene.String()
+
+    class Arguments:
+        username = graphene.String()
+        password = graphene.String()
+    
+    def mutate(self, info , username, password) :
+        user = User.query.filter_by(username=username, password=password).first()
+        Audit.create_audit_entry(info)
+        if not user:
+            raise Exception('Authentication Failure')
+        return Login(
+            access_token = create_access_token(username),
+            refresh_token = create_refresh_token(username)
+        )
+
 class Mutations(graphene.ObjectType):
   create_paste = CreatePaste.Field()
   edit_paste = EditPaste.Field()
@@ -212,6 +248,7 @@ class Mutations(graphene.ObjectType):
   upload_paste = UploadPaste.Field()
   import_paste = ImportPaste.Field()
   create_user = CreateUser.Field()
+  login = Login.Field()
 
 global_event = Subject()
 
@@ -229,6 +266,7 @@ class SearchResult(graphene.Union):
   class Meta:
     types = (PasteObject, UserObject)
 
+
 class Query(graphene.ObjectType):
   pastes = graphene.List(PasteObject, public=graphene.Boolean(), limit=graphene.Int(), filter=graphene.String())
   paste = graphene.Field(PasteObject, id=graphene.Int(), title=graphene.String())
@@ -241,6 +279,19 @@ class Query(graphene.ObjectType):
   search = graphene.List(SearchResult, keyword=graphene.String())
   audits = graphene.List(AuditObject)
   delete_all_pastes = graphene.Boolean()
+  me = graphene.Field(UserObject, token=graphene.String())
+
+  def resolve_me(self, info, token):
+    Audit.create_audit_entry(info)
+
+    identity = get_identity(token)
+
+    info.context.json['identity'] = identity
+
+    query = UserObject.get_query(info)
+
+    result = query.filter_by(username=identity).first()
+    return result
 
   def resolve_search(self, info, keyword=None):
     Audit.create_audit_entry(info)

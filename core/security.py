@@ -66,7 +66,7 @@ def on_denylist(query):
   return False
 
 def operation_name_allowed(operation_name):
-  opnames_allowed = ['CreatePaste', 'EditPaste', 'getPastes', 'UploadPaste', 'ImportPaste']
+  opnames_allowed = ['CreatePaste', 'CreateUser', 'EditPaste', 'getPastes', 'UploadPaste', 'ImportPaste']
   if operation_name in opnames_allowed:
     return True
   return False

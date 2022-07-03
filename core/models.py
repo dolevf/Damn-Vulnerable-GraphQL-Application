@@ -1,6 +1,7 @@
 import datetime
 
 from app import db
+import re
 from graphql import parse
 from graphql.execution.base import ResolveInfo
 
@@ -9,6 +10,7 @@ class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20),unique=True,nullable=False)
+    email = db.Column(db.String(20),unique=True,nullable=False)
     password = db.Column(db.String(60),nullable=False)
 
     @classmethod
@@ -18,6 +20,13 @@ class User(db.Model):
       db.session.commit()
 
       return obj
+
+
+def clean_query(gql_query):
+  clean = re.sub(r'(?<=token:")(.*)(?=")', "*****", gql_query)
+  clean = re.sub(r'(?<=password:")(.*)(?=")', "*****", clean)
+  return clean
+
 
 class Audit(db.Model):
   __tablename__ = 'audits'
@@ -59,11 +68,13 @@ class Audit(db.Model):
           """Array-based Batch"""
           for i in info.context.json:
             gql_query = i.get("query")
+            gql_query = clean_query(gql_query)
             obj = cls(**{"gqloperation":gql_operation, "gqlquery":gql_query})
             db.session.add(obj)
         else:
           if info.context.json:
             gql_query = info.context.json.get("query")
+            gql_query = clean_query(gql_query)
             obj = cls(**{"gqloperation":gql_operation, "gqlquery":gql_query})
             db.session.add(obj)
 

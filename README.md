@@ -60,6 +60,7 @@ DVGA supports Beginner and Expert level game modes, which will change the exploi
   * HTML Injection
   * SQL Injection
 * **Authorization Bypass**
+  * GraphQL JWT Token Forge
   * GraphQL Interface Protection Bypass
   * GraphQL Query Deny List Bypass
 * **Miscellaneous**
