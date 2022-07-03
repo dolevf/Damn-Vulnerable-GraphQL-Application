@@ -472,7 +472,7 @@ def set_difficulty():
     else:
       helpers.set_mode('easy')
 
-schema = graphene.Schema(query=Query, mutation=Mutations, subscription=Subscription, directives=[Auth, ShowNetworkDirective, SkipDirective, DeprecatedDirective])
+schema = graphene.Schema(query=Query, mutation=Mutations, subscription=Subscription, directives=[ShowNetworkDirective, SkipDirective, DeprecatedDirective])
 
 subscription_server = GeventSubscriptionServerCustom(schema)
 
