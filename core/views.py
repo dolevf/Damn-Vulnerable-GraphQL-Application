@@ -32,12 +32,13 @@ from flask_graphql_auth import (
     create_access_token,
     create_refresh_token,
 )
+
 from flask_graphql_auth.decorators import verify_jwt_in_argument
 from flask_sockets import Sockets
 from graphql.backend import GraphQLCoreBackend
 from sqlalchemy import event, text
 from graphene_sqlalchemy import SQLAlchemyObjectType
-
+from core.helpers import get_identity
 from app import app, db
 
 from version import VERSION
@@ -59,7 +60,7 @@ class UserObject(SQLAlchemyObjectType):
 
   @staticmethod
   def resolve_password(self, info, **kwargs):
-    if get_jwt_identity() == 'admin':
+    if info.context.json.get('identity') == 'admin':
       return self.password
     else:
       return '******'
@@ -234,7 +235,7 @@ class Login(graphene.Mutation):
         user = User.query.filter_by(username=username, password=password).first()
         Audit.create_audit_entry(info)
         if not user:
-            raise Exception('Authenication Failure')
+            raise Exception('Authentication Failure')
         return Login(
             access_token = create_access_token(username),
             refresh_token = create_refresh_token(username)
@@ -282,16 +283,14 @@ class Query(graphene.ObjectType):
 
   def resolve_me(self, info, token):
     Audit.create_audit_entry(info)
-    try:
-        verify_jwt_in_argument(token)
-    except Exception as e:
-        return GraphQLError('Bad token')
+
+    identity = get_identity(token)
+
+    info.context.json['identity'] = identity
 
     query = UserObject.get_query(info)
 
-    current_user = get_jwt_identity()
-
-    result = query.filter_by(username=current_user).first()
+    result = query.filter_by(username=identity).first()
     return result
 
   def resolve_search(self, info, keyword=None):
