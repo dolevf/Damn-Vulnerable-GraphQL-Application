@@ -78,6 +78,16 @@ def pump_db():
   paste.user_agent = 'User-Agent not set'
   db.session.add(paste)
 
+  paste = Paste()
+  paste.title = '555-555-1337'
+  paste.content = "My Phone Number"
+  paste.public = False
+  paste.owner_id = owner.id
+  paste.owner = owner
+  paste.ip_addr = '127.0.0.1'
+  paste.user_agent = 'User-Agent not set'
+  db.session.add(paste)
+
   db.session.commit()
 
   for _ in range(0, 10):
