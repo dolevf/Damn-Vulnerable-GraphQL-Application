@@ -5,7 +5,7 @@ from core import (
   helpers,
   middleware
 )
-from graphql.error import GraphQLError
+
 from core.directives import *
 from core.models import (
   Owner,
@@ -23,17 +23,14 @@ from rx.subjects import Subject
 from flask import (
   request,
   render_template,
-  make_response,
-  session
+  make_response
 )
 
 from flask_graphql_auth import (
-    get_jwt_identity,
     create_access_token,
     create_refresh_token,
 )
 
-from flask_graphql_auth.decorators import verify_jwt_in_argument
 from flask_sockets import Sockets
 from graphql.backend import GraphQLCoreBackend
 from sqlalchemy import event, text
@@ -285,7 +282,6 @@ class Query(graphene.ObjectType):
     Audit.create_audit_entry(info)
 
     identity = get_identity(token)
-
     info.context.json['identity'] = identity
 
     query = UserObject.get_query(info)
