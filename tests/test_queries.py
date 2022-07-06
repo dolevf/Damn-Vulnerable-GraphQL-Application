@@ -23,7 +23,7 @@ def test_query_pastes():
     r = graph_query(GRAPHQL_URL, query)
 
     assert r.json()['data']['pastes'][0]['id']
-    assert r.json()['data']['pastes'][0]['ipAddr'] == '127.0.0.1'
+    assert r.json()['data']['pastes'][0]['ipAddr']
     assert r.json()['data']['pastes'][0]['ownerId'] == 1
     assert r.json()['data']['pastes'][0]['burn'] == False
     assert r.json()['data']['pastes'][0]['owner']['id'] == '1'
@@ -83,7 +83,7 @@ def test_query_systemDebug():
     '''
     r = graph_query(GRAPHQL_URL, query)
     assert r.status_code == 200
-    assert 'tty' in r.json()['data']['systemDebug'].lower()
+    assert 'COMMAND' in r.json()['data']['systemDebug']
 
 def test_query_users():
     query = '''
