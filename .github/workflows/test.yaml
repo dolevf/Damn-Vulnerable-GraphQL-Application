@@ -4,10 +4,12 @@ on:
   pull_request:
     branches:
       - master
+      - blackhatgraphql
 
   push:
     branches:
       - master
+      - blackhatgraphql
 
 jobs:
   test:
