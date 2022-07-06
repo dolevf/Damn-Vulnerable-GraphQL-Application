@@ -285,7 +285,6 @@ class Query(graphene.ObjectType):
     Audit.create_audit_entry(info)
 
     identity = get_identity(token)
-
     info.context.json['identity'] = identity
 
     query = UserObject.get_query(info)

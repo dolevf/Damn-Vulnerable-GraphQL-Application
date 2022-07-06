@@ -18,7 +18,7 @@ def decode_base64(text):
   return base64.b64decode(text).decode('utf-8')
 
 def get_identity(token):
-  return decode(token, options={"verify_signature":False}).get('identity')
+  return decode(token, options={"verify_signature":False, "verify_exp":False}).get('identity')
 
 def save_file(filename, text):
   try:
