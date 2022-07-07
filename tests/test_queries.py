@@ -83,7 +83,9 @@ def test_query_systemDebug():
     '''
     r = graph_query(GRAPHQL_URL, query)
     assert r.status_code == 200
-    assert 'COMMAND' in r.json()['data']['systemDebug']
+
+    systemdebug_indicators = ['TTY', 'COMMAND']
+    assert any(substring in r.json()['data']['systemDebug'] for substring in systemdebug_indicators)
 
 def test_query_users():
     query = '''
