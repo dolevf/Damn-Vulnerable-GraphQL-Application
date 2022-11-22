@@ -101,7 +101,7 @@ See [requirements.txt](requirements.txt) for dependencies.
 
 ### Create a container from the image
 
-`docker run -t -p 5013:5013 -e WEB_HOST=0.0.0.0 --name dvga dvga`
+`docker run -d -t -p 5013:5013 -e WEB_HOST=0.0.0.0 --name dvga dvga`
 
 In your browser, navigate to http://localhost:5013
 
