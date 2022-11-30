@@ -93,7 +93,7 @@ See [requirements.txt](requirements.txt) for dependencies.
 
 ### Clone the repository
 
-`git clone https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application.git dvga && dvga`
+`git clone https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application.git && cd Damn-Vulnerable-GraphQL-Application`
 
 ### Build the Docker image
 
