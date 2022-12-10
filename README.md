@@ -30,7 +30,7 @@ Damn Vulnerable GraphQL is a deliberately weak and insecure implementation of Gr
 - Mutations
 - Subscriptions
 
-DVGA has numerous flaws, such as Injections, Code Executions, Bypasses, Denial of Service, and more. See the full list under the [Scenarios](#scenarios) section.
+DVGA has numerous flaws, such as Injections, Code Executions, Bypasses, Denial of Service, and more. See the full list under the [Scenarios](#scenarios) section. A [postman collection](https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application/blob/master/collection.json) is available to replay solutions to the challenges.
 
 # Operation Modes
 DVGA supports Beginner and Expert level game modes, which will change the exploitation difficulty.
