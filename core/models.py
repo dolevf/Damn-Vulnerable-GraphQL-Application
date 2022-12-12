@@ -85,7 +85,7 @@ class Owner(db.Model):
   __tablename__ = 'owners'
   id = db.Column(db.Integer, primary_key=True)
   name = db.Column(db.String)
-  paste = db.relationship('Paste', lazy='dynamic')
+  paste = db.relationship('Paste', lazy='dynamic', overlaps="pastes")
 
 
 class Paste(db.Model):
@@ -99,7 +99,8 @@ class Paste(db.Model):
   owner_id = db.Column(db.Integer, db.ForeignKey(Owner.id))
   owner = db.relationship(
     Owner,
-    backref='pastes'
+    backref='pastes',
+    overlaps="paste"
   )
   burn = db.Column(db.Boolean, default=False)
 
