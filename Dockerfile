@@ -1,4 +1,4 @@
-FROM python:3.7-alpine
+FROM python:3.10-alpine
 
 LABEL description="Damn Vulnerable GraphQL Application"
 LABEL github="https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application"
@@ -8,6 +8,7 @@ ARG TARGET_FOLDER=/opt/dvga
 WORKDIR $TARGET_FOLDER/
 
 RUN apk add --update curl
+RUN apk add --update git
 
 RUN adduser -D dvga
 RUN chown dvga. $TARGET_FOLDER/
