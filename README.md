@@ -32,7 +32,9 @@ Damn Vulnerable GraphQL is a deliberately weak and insecure implementation of Gr
 - Mutations
 - Subscriptions
 
-DVGA has numerous flaws, such as Injections, Code Executions, Bypasses, Denial of Service, and more. See the full list under the [Scenarios](#scenarios) section. A [postman collection](https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application/blob/master/collection.json) is available to replay solutions to the challenges.
+DVGA has numerous flaws, such as Injections, Code Executions, Bypasses, Denial of Service, and more. See the full list under the [Scenarios](#scenarios) section. A public [Postman collection](https://www.postman.com/devrel/workspace/ab3d0551-b65d-4588-b464-1a317e8d7e98/collection/14270212-b5875c90-d36e-43f4-8bd7-2c81b556245d?action=share&creator=14270212) is also available to replay solutions to the challenges. You can import the collection by clicking on the Run in Postman button below.
+
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://god.gw.postman.com/run-collection/14270212-b5875c90-d36e-43f4-8bd7-2c81b556245d?action=collection%2Ffork&collection-url=entityId%3D14270212-b5875c90-d36e-43f4-8bd7-2c81b556245d%26entityType%3Dcollection%26workspaceId%3Dab3d0551-b65d-4588-b464-1a317e8d7e98)
 
 # Operation Modes
 
