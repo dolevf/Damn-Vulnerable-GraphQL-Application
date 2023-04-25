@@ -162,7 +162,7 @@ A big Thank You to the kind people who helped make DVGA better:
  * [Halfluke](https://github.com/halfluke)
 
 # Mentions
-
+* [Black Hat GraphQL - No Starch Press](https://blackhatgraphql.com)
 * [OWASP Vulnerable Web Applications Directory](https://owasp.org/www-project-vulnerable-web-applications-directory/)
 * [GraphQL Weekly](https://www.graphqlweekly.com/issues/221/#content)
 * [DZone API Security Weekly](https://dzone.com/articles/api-security-weekly-issue-121)
