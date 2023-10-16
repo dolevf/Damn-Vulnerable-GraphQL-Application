@@ -101,6 +101,10 @@ See [requirements.txt](requirements.txt) for dependencies.
 
 `docker build -t dvga .`
 
+#### ARM-based Macs
+
+`docker build -t dvga -f Dockerfile.arm64 .`
+
 ### Create a container from the image
 
 `docker run -d -t -p 5013:5013 -e WEB_HOST=0.0.0.0 --name dvga dvga`
