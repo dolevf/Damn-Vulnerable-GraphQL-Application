@@ -231,9 +231,12 @@ class Login(graphene.Mutation):
         password = graphene.String()
     
     def mutate(self, info , username, password) :
+        user_name = User.query.filter_by(username=username).first()
         user = User.query.filter_by(username=username, password=password).first()
         Audit.create_audit_entry(info)
-        if not user:
+        if not user_name:
+            raise Exception('No such user')
+        elif not user:
             raise Exception('Authentication Failure')
         return Login(
             access_token = create_access_token(username),
