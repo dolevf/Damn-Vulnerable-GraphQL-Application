@@ -1,0 +1,52 @@
+FROM python:3.13-alpine
+
+LABEL description="Damn Vulnerable GraphQL Application"
+LABEL github="https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application"
+LABEL maintainers="Dolev Farhi & Connor McKinnon & Nick Aleks"
+
+ARG TARGET_FOLDER=/opt/dvga
+WORKDIR $TARGET_FOLDER/
+
+# Install build dependencies required for compiling Python packages
+RUN apk add --update --virtual build-deps file make curl gcc musl-dev libffi-dev g++
+
+RUN adduser -D dvga
+RUN chown dvga:dvga $TARGET_FOLDER/
+USER dvga
+
+# Create and activate virtual environment
+RUN python -m venv venv
+ENV PATH="/opt/dvga/venv/bin:$PATH"
+RUN pip install --upgrade pip --no-warn-script-location --disable-pip-version-check
+
+# Copy application files
+ADD --chown=dvga:dvga core /opt/dvga/core
+ADD --chown=dvga:dvga db /opt/dvga/db
+ADD --chown=dvga:dvga static /opt/dvga/static
+ADD --chown=dvga:dvga templates /opt/dvga/templates
+
+COPY --chown=dvga:dvga app.py /opt/dvga
+COPY --chown=dvga:dvga config.py /opt/dvga
+COPY --chown=dvga:dvga setup.py /opt/dvga/
+COPY --chown=dvga:dvga version.py /opt/dvga/
+COPY --chown=dvga:dvga requirements.txt /opt/dvga/
+COPY --chown=dvga:dvga PYTHON3.13_SETUP.md /opt/dvga/
+
+# Install dependencies - installing one by one for better control
+RUN pip install Flask==1.1.2 \
+    && pip install Flask-Sockets==0.2.1 \
+    && pip install Werkzeug==1.0.1 \
+    && pip install itsdangerous==1.1.0 \
+    && pip install SQLAlchemy==1.3.22 \
+    && pip install -r requirements.txt --no-warn-script-location
+
+# Initialize the application
+RUN python setup.py
+
+# Clean up build dependencies to reduce image size
+USER root
+RUN apk del build-deps
+USER dvga
+
+EXPOSE 5013/tcp
+CMD ["python", "app.py"] 
