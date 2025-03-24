@@ -30,7 +30,6 @@ COPY --chown=dvga:dvga config.py /opt/dvga
 COPY --chown=dvga:dvga setup.py /opt/dvga/
 COPY --chown=dvga:dvga version.py /opt/dvga/
 COPY --chown=dvga:dvga requirements.txt /opt/dvga/
-COPY --chown=dvga:dvga PYTHON3.13_SETUP.md /opt/dvga/
 
 # Install dependencies - installing one by one for better control
 RUN pip install Flask==1.1.2 \
