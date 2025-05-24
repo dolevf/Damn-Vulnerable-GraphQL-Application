@@ -125,8 +125,6 @@ In your browser, navigate to http://localhost:5013
 
 ## Server
 
-**Note**: Python 3.10 is **not supported** yet!
-
 ### Navigate to /opt
 
 `cd /opt/`
