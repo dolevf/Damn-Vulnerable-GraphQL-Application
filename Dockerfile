@@ -1,21 +1,21 @@
-FROM python:3.7-alpine
+FROM python:3.10
 
 LABEL description="Damn Vulnerable GraphQL Application"
 LABEL github="https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application"
-LABEL maintainers="Dolev Farhi & Connor McKinnon & Nick Aleks"
+LABEL maintainers="Dolev Farhi & Nick Aleks"
 
 ARG TARGET_FOLDER=/opt/dvga
 WORKDIR $TARGET_FOLDER/
 
-RUN apk add --update curl
+RUN apt install curl git
 
-RUN adduser -D dvga
+RUN useradd dvga -m 
 RUN chown dvga. $TARGET_FOLDER/
 USER dvga
 
 RUN python -m venv venv
-RUN source venv/bin/activate
-RUN pip3 install --upgrade pip --no-warn-script-location --disable-pip-version-check
+RUN . venv/bin/activate
+RUN pip3 install --user --upgrade pip --no-warn-script-location --disable-pip-version-check
 
 ADD --chown=dvga:dvga core /opt/dvga/core
 ADD --chown=dvga:dvga db /opt/dvga/db

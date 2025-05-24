@@ -4,7 +4,6 @@ import os
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_sockets import Sockets
 from flask_graphql_auth import GraphQLAuth
 
 app = Flask(__name__, static_folder="static/")
@@ -18,7 +17,6 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = 120
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = 30
 
 auth = GraphQLAuth(app)
-sockets = Sockets(app)
 
 app.app_protocol = lambda environ_path_info: 'graphql-ws'
 

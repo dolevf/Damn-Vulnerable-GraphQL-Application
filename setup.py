@@ -6,7 +6,8 @@ import random
 
 from ipaddress import IPv4Network
 
-from app import db
+from app import db, app
+
 from core.models import Paste, Owner, User, ServerMode
 
 from db.agents import agents
@@ -56,61 +57,62 @@ def random_useragent():
 
 def pump_db():
   print('Populating Database')
-  db.create_all()
+  with app.app_context():
+    db.create_all()
 
-  admin = User(username="admin", email="admin@blackhatgraphql.com", password=random_password())
-  operator = User(username="operator", email="operator@blackhatgraphql.com", password="password123")
-  # create tokens for admin & operator
+    admin = User(username="admin", email="admin@blackhatgraphql.com", password=random_password())
+    operator = User(username="operator", email="operator@blackhatgraphql.com", password="password123")
+    # create tokens for admin & operator
 
-  db.session.add(admin)
-  db.session.add(operator)
+    db.session.add(admin)
+    db.session.add(operator)
 
-  owner = Owner(name='DVGAUser')
-  db.session.add(owner)
+    owner = Owner(name='DVGAUser')
+    db.session.add(owner)
 
-  paste = Paste()
-  paste.title = 'Testing Testing'
-  paste.content = "My First Paste"
-  paste.public = False
-  paste.owner_id = owner.id
-  paste.owner = owner
-  paste.ip_addr = '127.0.0.1'
-  paste.user_agent = 'User-Agent not set'
-  db.session.add(paste)
-
-  paste = Paste()
-  paste.title = '555-555-1337'
-  paste.content = "My Phone Number"
-  paste.public = False
-  paste.owner_id = owner.id
-  paste.owner = owner
-  paste.ip_addr = '127.0.0.1'
-  paste.user_agent = 'User-Agent not set'
-  db.session.add(paste)
-
-  db.session.commit()
-
-  for _ in range(0, 10):
-    owner = Owner(name=random_owner())
     paste = Paste()
-    paste.title = random_title()
-    paste.content = random_content()
-    paste.public = True
+    paste.title = 'Testing Testing'
+    paste.content = "My First Paste"
+    paste.public = False
     paste.owner_id = owner.id
     paste.owner = owner
-    paste.ip_addr = random_address()
-    paste.user_agent = random_useragent()
-
-    db.session.add(owner)
+    paste.ip_addr = '127.0.0.1'
+    paste.user_agent = 'User-Agent not set'
     db.session.add(paste)
 
-  mode = ServerMode()
-  mode.hardened = False
-  db.session.add(mode)
+    paste = Paste()
+    paste.title = '555-555-1337'
+    paste.content = "My Phone Number"
+    paste.public = False
+    paste.owner_id = owner.id
+    paste.owner = owner
+    paste.ip_addr = '127.0.0.1'
+    paste.user_agent = 'User-Agent not set'
+    db.session.add(paste)
 
-  db.session.commit()
+    db.session.commit()
 
-  print('done')
+    for _ in range(0, 10):
+      owner = Owner(name=random_owner())
+      paste = Paste()
+      paste.title = random_title()
+      paste.content = random_content()
+      paste.public = True
+      paste.owner_id = owner.id
+      paste.owner = owner
+      paste.ip_addr = random_address()
+      paste.user_agent = random_useragent()
+
+      db.session.add(owner)
+      db.session.add(paste)
+
+    mode = ServerMode()
+    mode.hardened = False
+    db.session.add(mode)
+
+    db.session.commit()
+
+    print('done')
 
 if __name__ == '__main__':
   clean_up()

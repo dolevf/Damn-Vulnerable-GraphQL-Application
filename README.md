@@ -77,7 +77,7 @@ DVGA supports Beginner and Expert level game modes, which will change the exploi
 
 The following Python3 libraries are required:
 
-* Python3 (3.6 - 3.9) (3.10 is not supported)
+* Python3 (3.6 - 3.10)
 * Flask
 * Flask-SQLAlchemy
 * Flask-Sockets
@@ -100,10 +100,6 @@ See [requirements.txt](requirements.txt) for dependencies.
 ### Build the Docker image
 
 `docker build -t dvga .`
-
-**Note:** If you are using an ARM-based Mac, use the dedicated Dockerfile.arm64 file:
-
-`docker build -t dvga -f Dockerfile.arm64 .`
 
 ### Create a container from the image
 
