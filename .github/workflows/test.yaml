@@ -13,12 +13,26 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-22.04
+          - ubuntu-20.04
+        pyver:
+          - '3.6'
+          - '3.7'
+          - '3.8'
+          - '3.9'
+        exclude:
+          - os: ubuntu-22.04
+            pyver: 3.6
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.6'
+          python-version: ${{ matrix.pyver }}
           cache: 'pip'
       - run: pip install -r requirements.txt
 
